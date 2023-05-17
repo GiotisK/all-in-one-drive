@@ -1,6 +1,7 @@
-import styled from "styled-components";
+import styled, { DefaultTheme, useTheme } from "styled-components";
 
 interface ButtonWrapperProps {
+	theme: DefaultTheme;
 	styles: string;
 }
 
@@ -8,7 +9,7 @@ const ButtonWrapper = styled.button<ButtonWrapperProps>`
 	${({ styles }) => styles};
 	width: 80px;
 	height: 50px;
-	background-color: #24a0ed;
+	background-color: ${({ theme }) => theme.colors.bluePrimary};
 	border-width: 0px;
 	border-radius: 5px;
 	cursor: pointer;
@@ -16,7 +17,7 @@ const ButtonWrapper = styled.button<ButtonWrapperProps>`
 	transition: transform 0.15s linear;
 
 	&:hover {
-		opacity: 96%;
+		opacity: 95%;
 	}
 
 	&:active {
@@ -44,8 +45,10 @@ interface IProps {
 }
 
 export const Button = ({ text, styles = "" }: IProps) => {
+	const theme = useTheme();
+
 	return (
-		<ButtonWrapper styles={styles}>
+		<ButtonWrapper theme={theme} styles={styles}>
 			<ButtonText>{text}</ButtonText>
 		</ButtonWrapper>
 	);

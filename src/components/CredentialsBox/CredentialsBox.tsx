@@ -39,7 +39,7 @@ export const CredentialsBox = () => {
 		confirmPassword: "",
 	});
 
-	const [redirect, setRedirect] = useState(false);
+	/* const [redirect, setRedirect] = useState(false); */
 
 	function onRegisterTabClick() {
 		setInputFieldTitlesTemp(inputFieldTitles);
