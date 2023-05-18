@@ -9,12 +9,16 @@ interface ThemeProps {
 const lightTheme: DefaultTheme = {
 	colors: {
 		bluePrimary: "#24a0ed",
+		blueSecondary: "#9ad1f3",
+		textPrimary: "#363636",
 	},
 };
 
 const darkTheme: DefaultTheme = {
 	colors: {
 		bluePrimary: "blue",
+		blueSecondary: "#9ad1f3",
+		textPrimary: "#363636",
 	},
 };
 

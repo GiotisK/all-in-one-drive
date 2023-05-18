@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { Input } from "../Input/Input";
-import { ErrorText } from "../ErrorText/ErrorText";
+import { Input } from "../Input";
+import { ResponseText } from "../ResponseText";
 
 import "./CredentialsBox.css";
 import { Button } from "../Button";
@@ -31,7 +31,6 @@ export const CredentialsBox = () => {
 		errorType: "",
 		errorText: "",
 		errorColor: "",
-		errorImage: "",
 	});
 	const [formInputValuesObj, setFormInputValuesObj] = useState({
 		email: "",
@@ -59,7 +58,6 @@ export const CredentialsBox = () => {
 			errorType: "",
 			errorText: "",
 			errorColor: "",
-			errorImage: "",
 		});
 	}
 
@@ -81,7 +79,6 @@ export const CredentialsBox = () => {
 			errorType: "",
 			errorText: "",
 			errorColor: "",
-			errorImage: "",
 		});
 	}
 
@@ -115,21 +112,18 @@ export const CredentialsBox = () => {
 				errorType: res.resType,
 				errorText: "This email is already in use.",
 				errorColor: "red",
-				errorImage: "emoji-sad",
 			});
 		} else if (res.resType === "register_success") {
 			setErrorObj({
 				errorType: res.resType,
 				errorText: "Sign up successful! You can now log in.",
 				errorColor: "green",
-				errorImage: "emoji-happy",
 			});
 		} else if (res.resType === "login_success") {
 			setErrorObj({
 				errorType: res.resType,
 				errorText: "Log in successful",
 				errorColor: "green",
-				errorImage: "emoji-happy",
 			});
 			setRedirect(true);
 		} else if (
@@ -140,14 +134,12 @@ export const CredentialsBox = () => {
 				errorType: res.resType,
 				errorText: "Internal Error...Please try again later.",
 				errorColor: "red",
-				errorImage: "emoji-sad",
 			});
 		} else if (res.resType === "user_not_exists") {
 			setErrorObj({
 				errorType: res.resType,
 				errorText: "Username/Password combination is not correct",
 				errorColor: "red",
-				errorImage: "emoji-sad",
 			});
 		} else {
 			//dunno what else is left
@@ -171,7 +163,6 @@ export const CredentialsBox = () => {
 						errorType: "password",
 						errorText: "Passwords must be the same",
 						errorColor: "red",
-						errorImage: "emoji-sad",
 					});
 				}
 			}
@@ -180,7 +171,6 @@ export const CredentialsBox = () => {
 				errorType: "email",
 				errorText: "This email format is not correct",
 				errorColor: "red",
-				errorImage: "emoji-sad",
 			});
 		}
 	}
@@ -210,11 +200,9 @@ export const CredentialsBox = () => {
 	function getCorrectErrorMessage() {
 		if (errorObj.errorType !== "") {
 			return (
-				<ErrorText
-					errorText={errorObj.errorText}
-					imageColor={errorObj.errorColor}
-					textColor={errorObj.errorColor}
-					image={errorObj.errorImage}
+				<ResponseText
+					text={errorObj.errorText}
+					color={errorObj.errorColor}
 				/>
 			);
 		}
@@ -267,16 +255,13 @@ export const CredentialsBox = () => {
 						key={inputFieldKeys[index]}
 						title={title}
 						type={inputFieldTypes[index]}
-						value={
-							"adadas" /* formInputValuesObj[inputFieldKeys[index]] */
-						}
+						value={formInputValuesObj[inputFieldKeys[index]]}
 						onChange={(event: any) => {
 							onFormInputValuesChange(
 								inputFieldKeys[index],
 								event
 							);
 						}}
-						outlineStyle="login"
 					/>
 				))}
 			</div>
@@ -284,10 +269,6 @@ export const CredentialsBox = () => {
 			<div className="button-container">
 				{getCorrectErrorMessage()}
 				<Button styles="margin: 2% 10% 4% 0%" text={buttonText} />
-				{/* <Button
-					buttonText={buttonText}
-					buttonStyle={{ margin: "2% 10% 4% 0%" }}
-				/> */}
 			</div>
 		</form>
 	);

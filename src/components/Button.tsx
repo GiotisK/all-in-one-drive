@@ -1,7 +1,6 @@
-import styled, { DefaultTheme, useTheme } from "styled-components";
+import styled from "styled-components";
 
 interface ButtonWrapperProps {
-	theme: DefaultTheme;
 	styles: string;
 }
 
@@ -26,8 +25,7 @@ const ButtonWrapper = styled.button<ButtonWrapperProps>`
 	}
 
 	&:focus {
-		outline: none;
-		box-shadow: 0px 0px 0px 2px #9ad1f3;
+		outline: 2px solid ${({ theme }) => theme.colors.blueSecondary};
 	}
 `;
 
@@ -45,10 +43,8 @@ interface IProps {
 }
 
 export const Button = ({ text, styles = "" }: IProps) => {
-	const theme = useTheme();
-
 	return (
-		<ButtonWrapper theme={theme} styles={styles}>
+		<ButtonWrapper styles={styles}>
 			<ButtonText>{text}</ButtonText>
 		</ButtonWrapper>
 	);
