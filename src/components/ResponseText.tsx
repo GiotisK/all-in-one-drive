@@ -26,7 +26,7 @@ interface IProps {
 	color: string;
 }
 
-export const ResponseText = ({ text, color }: IProps) => {
+export const ResponseText = ({ text, color }: IProps): JSX.Element => {
 	return (
 		<ErrorTextContainer>
 			<LoginErrorText style={{ color: color }}>{text}</LoginErrorText>

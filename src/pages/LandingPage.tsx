@@ -1,13 +1,32 @@
-import { CredentialsBox } from "../components/CredentialsBox/CredentialsBox";
-import "./LandingPage.css";
+import styled from "styled-components";
+import { CredentialsBox } from "../components/CredentialsBox";
 import { ReactComponent as Banner } from "../assets/svgs/landing_page_banner.svg";
 
-export const LandingPage = () => {
+const LandingPageContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	align-items: center;
+`;
+
+const LandingPageTitle = styled.p`
+	position: absolute;
+	font-family: "Arciform";
+	font-size: 50px;
+	color: white;
+	left: 1%;
+	top: 1%;
+	margin: 0;
+	font-size: 32px;
+	user-select: none;
+`;
+
+export const LandingPage = (): JSX.Element => {
 	return (
-		<div className="landing-page-container">
-			<p className="landing-page-title">aio drive</p>
+		<LandingPageContainer>
+			<LandingPageTitle>aio drive</LandingPageTitle>
 			<Banner />
 			<CredentialsBox />
-		</div>
+		</LandingPageContainer>
 	);
 };

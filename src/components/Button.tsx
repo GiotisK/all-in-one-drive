@@ -42,7 +42,7 @@ interface IProps {
 	styles?: string;
 }
 
-export const Button = ({ text, styles = "" }: IProps) => {
+export const Button = ({ text, styles = "" }: IProps): JSX.Element => {
 	return (
 		<ButtonWrapper styles={styles}>
 			<ButtonText>{text}</ButtonText>

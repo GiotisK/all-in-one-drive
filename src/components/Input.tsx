@@ -31,11 +31,12 @@ interface IProps extends InputHTMLAttributes<HTMLInputElement> {
 	title: string;
 }
 
-export const Input = (props: IProps) => {
+export const Input = (props: IProps): JSX.Element => {
 	return (
 		<InputFieldDiv>
 			<InputLabel>{props.title}</InputLabel>
 			<InputFieldContainer
+				name={props.name}
 				value={props.value}
 				onChange={props.onChange}
 				type={props.type}
