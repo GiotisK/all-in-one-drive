@@ -1,5 +1,6 @@
 import styled, { css } from "styled-components";
 import { Loader } from "./Loader";
+import { ReactComponent as Burger } from "../assets/svgs/burger.svg";
 
 const BannerContainer = styled.div`
 	display: flex;
@@ -18,6 +19,7 @@ const LogoMenuContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: flex-end;
+	margin-left: 8px;
 `;
 
 const LogoTitle = styled.p`
@@ -36,14 +38,12 @@ interface BurgerMenuButtonProps {
 }
 const BurgerMenuButton = styled.div<BurgerMenuButtonProps>`
 	transition: all 0.2s ease;
-
-	${(props) =>
-		props.hover &&
-		css`
-			-webkit-transform: scale(1.05);
-			-ms-transform: scale(1.05);
-			transform: scale(1.05);
-		`}
+	margin-bottom: 5px;
+	&:hover {
+		-webkit-transform: scale(1.05);
+		-ms-transform: scale(1.05);
+		transform: scale(1.05);
+	}
 `;
 
 const QuotaLoaderContainer = styled.div`
@@ -106,13 +106,7 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 						hover={true}
 						onClick={handleBurgerMenuClick}
 					>
-						{/* <Icon
-                            font="Entypo"
-                            name="menu"
-                            color="white"
-                            size={38}
-                            style={{ userSelect: "none", cursor: "pointer" }}
-                            /> */}
+						<Burger width={30} height={30} />
 					</BurgerMenuButton>
 				)}
 
