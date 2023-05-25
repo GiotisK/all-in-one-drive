@@ -66,7 +66,7 @@ export const ErrorPage = (props: ErrorPageProps): JSX.Element => {
 
 	return (
 		<ErrorPageBody>
-			<TitleBanner virtualDriveEnabled={false} popupMenu={false} />{" "}
+			<TitleBanner virtualDriveEnabled={false} popupMenu={false} />
 			{/*TODO: refactor the props */}
 			<ErrorElementsContainer>
 				<OopsText>{errorObj.greet}</OopsText>
@@ -74,7 +74,7 @@ export const ErrorPage = (props: ErrorPageProps): JSX.Element => {
 				<ErrorCodeText>
 					(Error Code: {errorObj.errorCode})
 				</ErrorCodeText>
-				<a href="http://localhost:3000">Go {errorObj.buttonType}</a>{" "}
+				<a href="http://localhost:3000">Go {errorObj.buttonType}</a>
 				{/**TODO: refactor href to correct */}
 			</ErrorElementsContainer>
 		</ErrorPageBody>

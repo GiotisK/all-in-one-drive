@@ -22,7 +22,10 @@ const darkTheme: DefaultTheme = {
 	},
 };
 
-export const Theme = ({ children, mode }: PropsWithChildren<ThemeProps>) => {
+export const Theme = ({
+	children,
+	mode,
+}: PropsWithChildren<ThemeProps>): JSX.Element => {
 	const theme = mode === "light" ? lightTheme : darkTheme;
 
 	return <ThemeProvider theme={theme}>{children}</ThemeProvider>;

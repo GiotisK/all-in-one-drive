@@ -4,7 +4,15 @@ import { ResponseText } from "./ResponseText";
 import { Button } from "./Button";
 import { styled } from "styled-components";
 
+const centerAbsoluteDivInPage = `
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	margin-top: auto;
+	margin-bottom: auto;`;
+
 const FormContainer = styled.form`
+	${centerAbsoluteDivInPage}
 	display: flex;
 	flex-direction: column;
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);

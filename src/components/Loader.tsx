@@ -4,16 +4,16 @@ const spinAnimation = keyframes`
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 `;
-
 interface LoaderContainerProps {
-	loadingText: boolean;
+	$showLoadingText: boolean;
 }
+
 const LoaderContainer = styled.div<LoaderContainerProps>`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	margin-top: ${({ loadingText }) => (loadingText ? "15px" : "0px")};
+	margin-top: ${(props) => (props.$showLoadingText ? "15px" : "0px")};
 `;
 
 interface LoaderElementProps {
@@ -35,15 +35,18 @@ const LoadingText = styled.p`
 `;
 
 interface LoaderProps {
-	loadingText: boolean;
 	size: string;
+	showLoadingText?: boolean;
 }
 
-export const Loader = (props: LoaderProps): JSX.Element => {
+export const Loader = ({
+	showLoadingText = false,
+	size,
+}: LoaderProps): JSX.Element => {
 	return (
-		<LoaderContainer loadingText={props.loadingText}>
-			<LoaderElement size={props.size} />
-			{props.loadingText && <LoadingText>Loading...</LoadingText>}
+		<LoaderContainer $showLoadingText={showLoadingText}>
+			<LoaderElement size={size} />
+			{showLoadingText && <LoadingText>Loading...</LoadingText>}
 		</LoaderContainer>
 	);
 };

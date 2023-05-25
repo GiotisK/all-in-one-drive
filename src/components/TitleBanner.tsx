@@ -1,9 +1,11 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import { Loader } from "./Loader";
 import { ReactComponent as Burger } from "../assets/svgs/burger.svg";
+import { UserMenu } from "./UserMenu";
 
 const BannerContainer = styled.div`
 	display: flex;
+	position: relative;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: baseline;
@@ -37,6 +39,7 @@ interface BurgerMenuButtonProps {
 	hover: boolean;
 }
 const BurgerMenuButton = styled.div<BurgerMenuButtonProps>`
+	cursor: pointer;
 	transition: all 0.2s ease;
 	margin-bottom: 5px;
 	&:hover {
@@ -50,17 +53,12 @@ const QuotaLoaderContainer = styled.div`
 	margin-right: 150px;
 	display: flex;
 	flex-direction: row;
+	align-items: center;
 `;
 
 const QuotaStringLoader = styled.p`
 	margin: 0;
 	margin-right: 5px;
-	color: white;
-	font-size: 14px;
-`;
-
-const QuotaString = styled.p`
-	margin-right: 95px;
 	color: white;
 	font-size: 14px;
 `;
@@ -98,10 +96,15 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 		props.onSwitchDriveModeClick?.();
 	};
 
+	const isLoggedIn = true;
+	const virtualQuotaLoading = false;
+	const virtualQuotaStr = "5 / 5 GB";
+	const virtualDriveEnabled = true;
+
 	return (
 		<BannerContainer>
 			<LogoMenuContainer>
-				{props.virtualDriveEnabled || !props.popupMenu ? null : (
+				{virtualDriveEnabled && (
 					<BurgerMenuButton
 						hover={true}
 						onClick={handleBurgerMenuClick}
@@ -113,29 +116,18 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 				<LogoTitle>aio drive</LogoTitle>
 			</LogoMenuContainer>
 
-			{props.virtualDriveEnabled &&
-				props.popupMenu &&
-				(props.virtualQuota === null ? (
-					<QuotaLoaderContainer>
-						<QuotaStringLoader>Virtual Quota:</QuotaStringLoader>
-						<Loader loadingText={false} size={"10px"} />
-					</QuotaLoaderContainer>
-				) : (
-					<QuotaString>
-						Virtual Quota:{" "}
-						<QuotaGigabytes>{props.virtualQuota}</QuotaGigabytes>
-					</QuotaString>
-				))}
+			{virtualDriveEnabled && (
+				<QuotaLoaderContainer>
+					<QuotaStringLoader>Virtual Quota:</QuotaStringLoader>
+					{virtualQuotaLoading ? (
+						<Loader size={"10px"} />
+					) : (
+						<QuotaGigabytes>{virtualQuotaStr}</QuotaGigabytes>
+					)}
+				</QuotaLoaderContainer>
+			)}
 
-			{/* {props.popupMenu === false ? null : (
-				<UserMenu
-					email={props.email}
-					virtualDriveEnabled={props.virtualDriveEnabled}
-					onAddDriveClick={handleAddDriveClick}
-					onSignOutClick={handleSignOutClick}
-					onSwitchDriveModeClick={handleSwitchDriveModeClick}
-				/>
-			)} */}
+			{isLoggedIn && <UserMenu />}
 		</BannerContainer>
 	);
 };
