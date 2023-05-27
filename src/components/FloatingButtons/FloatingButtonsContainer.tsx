@@ -1,7 +1,14 @@
 import { useState, useRef } from "react";
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import FloatingButton from "./FloatingButton";
 import { SvgNames } from "../../Shared/utils/svg-utils";
+import { Keyframes } from "styled-components/dist/types";
+import {
+	rotate45deg,
+	rotate45degBackwards,
+	slideUp40pxAnimation,
+	slideUp70pxAnimation,
+} from "./animation-keyframes";
 
 const Container = styled.div`
 	position: absolute;
@@ -9,14 +16,19 @@ const Container = styled.div`
 	right: 5%;
 `;
 
+const FileOpenerInput = styled.input`
+	display: none;
+`;
+
 export const FloatingButtonsContainer = (): JSX.Element => {
 	const [menuOpen, setMenuOpen] = useState(false);
-	const [plusButtonClass, setPlusButtonClass] = useState("");
+	const [plusButtonAnimation, setPlusButtonAnimation] = useState<Keyframes>();
+	const theme = useTheme();
 
 	const uploaderRef = useRef<HTMLInputElement | null>(null);
 
 	const openFloatingMenu = (): void => {
-		setPlusButtonClass(menuOpen ? "reset-rotate-45-deg" : "rotate-45");
+		setPlusButtonAnimation(menuOpen ? rotate45degBackwards : rotate45deg);
 		setMenuOpen((prevMenuOpen) => !prevMenuOpen);
 	};
 
@@ -35,31 +47,30 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 				<>
 					<FloatingButton
 						color="orange"
-						classes={"slide-up-70px"}
 						icon={SvgNames.AddFile}
 						onClick={openFilePicker}
+						animation={slideUp70pxAnimation}
 					>
-						<input
+						<FileOpenerInput
 							type="file"
 							id="file"
 							ref={uploaderRef}
-							style={{ display: "none" }}
 							onChange={uploadFile}
 						/>
 					</FloatingButton>
 					<FloatingButton
 						icon={SvgNames.AddFolder}
 						color="red"
-						classes={"slide-up-40px"}
+						animation={slideUp40pxAnimation}
 					/>
 				</>
 			)}
 
 			<FloatingButton
 				icon={SvgNames.Plus}
-				color="#24a0ed"
+				color={`${theme?.colors.bluePrimary}`}
 				onClick={openFloatingMenu}
-				classes={plusButtonClass}
+				animation={plusButtonAnimation}
 			/>
 		</Container>
 	);
