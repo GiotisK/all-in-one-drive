@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Loader } from "./Loader";
-import { ReactComponent as Burger } from "../assets/svgs/burger.svg";
 import { UserMenu } from "./UserMenu";
+import { SvgNames, createSvg } from "../Shared/utils/svg-utils";
 
 const BannerContainer = styled.div`
 	display: flex;
@@ -109,7 +109,7 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 						hover={true}
 						onClick={handleBurgerMenuClick}
 					>
-						<Burger width={30} height={30} />
+						{createSvg(SvgNames.Burger, 30)}
 					</BurgerMenuButton>
 				)}
 
