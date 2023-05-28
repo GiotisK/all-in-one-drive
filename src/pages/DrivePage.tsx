@@ -1,12 +1,14 @@
-import FloatingButton from "../components/FloatingButtons/FloatingButton";
-import { FloatingButtonsContainer } from "../components/FloatingButtons/FloatingButtonsContainer";
-import { SvgNames } from "../Shared/utils/svg-utils";
+import { useState } from "react";
+import { Checkbox } from "../components/Checkbox";
 
 export const DrivePage = (): JSX.Element => {
+	const [kek, setkek] = useState(false);
 	return (
-		<>
-			<FloatingButton color="red" icon={SvgNames.AddFile} />
-			<FloatingButtonsContainer />
-		</>
+		<Checkbox
+			checked={kek}
+			onChange={() => {
+				setkek(!kek);
+			}}
+		/>
 	);
 };
