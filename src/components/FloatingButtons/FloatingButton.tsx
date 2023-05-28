@@ -50,7 +50,7 @@ const FloatingAddButton = ({
 			onClick={onClick}
 		>
 			{children}
-			{createSvg(icon, 35)}
+			{createSvg(icon, 35, "white")}
 		</Container>
 	);
 };

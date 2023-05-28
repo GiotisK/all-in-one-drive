@@ -35,10 +35,8 @@ const LogoTitle = styled.p`
 	font-size: 32px;
 	user-select: none;
 `;
-interface BurgerMenuButtonProps {
-	hover: boolean;
-}
-const BurgerMenuButton = styled.div<BurgerMenuButtonProps>`
+
+const BurgerMenuButton = styled.div`
 	cursor: pointer;
 	transition: all 0.2s ease;
 	margin-bottom: 5px;
@@ -105,11 +103,8 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 		<BannerContainer>
 			<LogoMenuContainer>
 				{virtualDriveEnabled && (
-					<BurgerMenuButton
-						hover={true}
-						onClick={handleBurgerMenuClick}
-					>
-						{createSvg(SvgNames.Burger, 30)}
+					<BurgerMenuButton onClick={handleBurgerMenuClick}>
+						{createSvg(SvgNames.Burger, 30, "white")}
 					</BurgerMenuButton>
 				)}
 

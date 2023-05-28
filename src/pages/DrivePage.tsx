@@ -1,14 +1,44 @@
-import { useState } from "react";
-import { Checkbox } from "../components/Checkbox";
+import { DriveRow } from "../components/DriveRow";
 
 export const DrivePage = (): JSX.Element => {
-	const [kek, setkek] = useState(false);
 	return (
-		<Checkbox
-			checked={kek}
-			onChange={() => {
-				setkek(!kek);
-			}}
-		/>
+		<>
+			<DriveRow
+				drive="dropbox"
+				email="kostas.yiotis@ghotmail.com"
+				onClick={() => {
+					return;
+				}}
+				onDeleteDriveClick={() => {
+					return;
+				}}
+				quota="15 / 20"
+				enabled={false}
+			/>
+			<DriveRow
+				drive="googledrive"
+				email="kostas.yiotis@ghotmail.com"
+				onClick={() => {
+					return;
+				}}
+				onDeleteDriveClick={() => {
+					return;
+				}}
+				quota="15 / 20"
+				enabled={false}
+			/>
+			<DriveRow
+				drive="onedrive"
+				email="kostas.yiotis@ghotmail.com"
+				onClick={() => {
+					return;
+				}}
+				onDeleteDriveClick={() => {
+					return;
+				}}
+				quota="15 / 20"
+				enabled={true}
+			/>
+		</>
 	);
 };
