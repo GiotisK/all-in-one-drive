@@ -1,43 +1,27 @@
-import { DriveRow } from "../components/DriveRow";
+import { Drive, FileType } from "../Shared/types/types";
+import { FileElement } from "../components/FileElement";
+import { FileRow } from "../components/FileRow";
 
 export const DrivePage = (): JSX.Element => {
 	return (
 		<>
-			<DriveRow
-				drive="dropbox"
-				email="kostas.yiotis@ghotmail.com"
-				onClick={() => {
-					return;
-				}}
-				onDeleteDriveClick={() => {
-					return;
-				}}
-				quota="15 / 20"
-				enabled={false}
-			/>
-			<DriveRow
-				drive="googledrive"
-				email="kostas.yiotis@ghotmail.com"
-				onClick={() => {
-					return;
-				}}
-				onDeleteDriveClick={() => {
-					return;
-				}}
-				quota="15 / 20"
-				enabled={false}
-			/>
-			<DriveRow
-				drive="onedrive"
-				email="kostas.yiotis@ghotmail.com"
-				onClick={() => {
-					return;
-				}}
-				onDeleteDriveClick={() => {
-					return;
-				}}
-				quota="15 / 20"
-				enabled={true}
+			<FileRow
+				date="12/12/12"
+				drive={Drive.GoogleDrive}
+				fileEmail="KOSTAS.Yioyis@gotmail.com"
+				extension=".jpg"
+				name="palaris"
+				permissions="moloris"
+				size={123124}
+				type={FileType.File}
+				onCopyShareLinkClick={() => console.log("copy share link")}
+				onDeleteClick={() => console.log("delete")}
+				onDownloadClick={() => console.log("download")}
+				onFileClick={() => console.log("file click")}
+				onRenameClick={() => console.log("rename")}
+				onShareClick={(isShared: boolean) => console.log("share")}
+				ownerEmail="palaris@moloris.kek"
+				isShared={true}
 			/>
 		</>
 	);

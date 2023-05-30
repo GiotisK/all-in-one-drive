@@ -1,2 +1,10 @@
 export type ThemeMode = "light" | "dark";
-export type Drive = "googledrive" | "dropbox" | "onedrive";
+export enum Drive {
+	GoogleDrive = "googledrive",
+	Dropbox = "dropbox",
+	OneDrive = "onedrive",
+}
+export enum FileType {
+	Folder = "folder",
+	File = "file",
+}

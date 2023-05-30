@@ -1,6 +1,7 @@
-import styled, { useTheme } from "styled-components";
+import styled from "styled-components";
 import { SvgNames, createSvg } from "../Shared/utils/svg-utils";
 import { Drive } from "../Shared/types/types";
+import { CreateDriveSvg } from "../Shared/utils/utils";
 
 const DriveElementContainer = styled.div`
 	display: flex;
@@ -86,31 +87,12 @@ interface IProps {
 }
 
 export const DriveRow = (props: IProps): JSX.Element => {
-	const theme = useTheme();
-
-	const createDriveSvg = (drive: Drive) => {
-		let svgName: SvgNames;
-
-		switch (drive) {
-			case "googledrive":
-				svgName = SvgNames.GoogleDrive;
-				break;
-			case "dropbox":
-				svgName = SvgNames.Dropbox;
-				break;
-			case "onedrive":
-				svgName = SvgNames.OneDrive;
-				break;
-		}
-		return createSvg(svgName, 35, theme?.colors.textSecondary);
-	};
-
 	return (
 		<DriveElementContainer
 			style={{ opacity: props.enabled ? 1 : 0.8 }}
 			onClick={props.onClick}
 		>
-			<DriveSvgContainer>{createDriveSvg(props.drive)}</DriveSvgContainer>
+			<DriveSvgContainer>{CreateDriveSvg(props.drive)}</DriveSvgContainer>
 
 			<EmailQuotaContainer>
 				<DriveElementEmail>{props.email}</DriveElementEmail>

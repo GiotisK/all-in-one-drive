@@ -1,6 +1,4 @@
 body {
 	height: 100%;
 	margin: 0;
-	overflow: hidden; /*use this to avoid and unnecessary scroll list on the landing page*/
-	color: black;
 }

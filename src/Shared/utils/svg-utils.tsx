@@ -7,6 +7,8 @@ import { ReactComponent as Trashcan } from "../../assets/svgs/trashcan.svg";
 import { ReactComponent as OneDrive } from "../../assets/svgs/onedrive.svg";
 import { ReactComponent as GoogleDrive } from "../../assets/svgs/googledrive.svg";
 import { ReactComponent as Dropbox } from "../../assets/svgs/dropbox.svg";
+import { ReactComponent as Link } from "../../assets/svgs/link.svg";
+import { ReactComponent as Dots } from "../../assets/svgs/dots.svg";
 
 export enum SvgNames {
 	AddFile = "add-file",
@@ -18,6 +20,8 @@ export enum SvgNames {
 	OneDrive = "onedrive",
 	GoogleDrive = "googledrive",
 	Dropbox = "dropbox",
+	Link = "link",
+	Dots = "dots",
 }
 
 export const createSvg = (
@@ -44,6 +48,10 @@ export const createSvg = (
 			return <GoogleDrive color={color} width={size} height={size} />;
 		case SvgNames.Dropbox:
 			return <Dropbox color={color} width={size} height={size} />;
+		case SvgNames.Link:
+			return <Link color={color} width={size} height={size} />;
+		case SvgNames.Dots:
+			return <Dots color={color} width={size} height={size} />;
 		default:
 			return null;
 	}
