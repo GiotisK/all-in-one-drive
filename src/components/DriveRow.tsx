@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { SvgNames, createSvg } from "../Shared/utils/svg-utils";
-import { Drive } from "../Shared/types/types";
+import { DriveType } from "../Shared/types/types";
 import { CreateDriveSvg } from "../Shared/utils/utils";
 
 const DriveElementContainer = styled.div`
@@ -82,7 +82,7 @@ interface IProps {
 	quota: string;
 	onClick: () => void;
 	onDeleteDriveClick: () => void;
-	drive: Drive;
+	drive: DriveType;
 	enabled: boolean;
 }
 

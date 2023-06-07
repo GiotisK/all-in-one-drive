@@ -39,12 +39,13 @@ const ButtonText = styled.p`
 
 interface IProps {
 	text: string;
+	onClick?: () => void;
 	styles?: string;
 }
 
-export const Button = ({ text, styles = "" }: IProps): JSX.Element => {
+export const Button = ({ text, styles = "", onClick }: IProps): JSX.Element => {
 	return (
-		<ButtonWrapper styles={styles}>
+		<ButtonWrapper onClick={onClick} styles={styles}>
 			<ButtonText>{text}</ButtonText>
 		</ButtonWrapper>
 	);

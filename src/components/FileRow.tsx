@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { FileElement } from "./FileElement";
-import { SvgNames } from "../Shared/utils/svg-utils.js";
-import { CreateDriveSvg, formatBytes } from "../Shared/utils/utils.js";
-import { Drive, FileType } from "../Shared/types/types.js";
-import { IconButton } from "./IconButton.js";
-import { styled } from "styled-components";
+import { SvgNames } from "../Shared/utils/svg-utils";
+import { CreateDriveSvg, formatBytes } from "../Shared/utils/utils";
+import { IconButton } from "./IconButton";
+import { styled, useTheme } from "styled-components";
+import { FileEntity } from "../Shared/types/types";
 
 const Container = styled.div`
 	display: flex;
@@ -82,18 +82,9 @@ const MenuRowText = styled.p`
 `;
 
 interface IProps {
-	permissions: string;
-	type: FileType;
-	drive: Drive;
-	name: string;
-	size: number;
-	fileEmail: string;
-	ownerEmail: string;
-	date: string;
+	file: FileEntity;
 	onFileClick: () => void;
-	extension: string;
 	onCopyShareLinkClick: () => void;
-	isShared: boolean;
 }
 
 type FileMenuRow = {
@@ -101,7 +92,12 @@ type FileMenuRow = {
 	onClick: () => void;
 };
 
-export const FileRow = (props: IProps): JSX.Element => {
+export const FileRow = ({
+	file,
+	onFileClick,
+	onCopyShareLinkClick,
+}: IProps): JSX.Element => {
+	const theme = useTheme();
 	const [menuToggle, setMenuToggle] = useState(false);
 	const fileMenuRows: FileMenuRow[] = [
 		{
@@ -117,7 +113,7 @@ export const FileRow = (props: IProps): JSX.Element => {
 			},
 		},
 		{
-			...(props.isShared ? { text: "Unshare" } : { text: "Share" }),
+			...(file.isShared ? { text: "Unshare" } : { text: "Share" }),
 			onClick: () => {
 				console.log("share");
 			},
@@ -156,25 +152,25 @@ export const FileRow = (props: IProps): JSX.Element => {
 
 	return (
 		<Container>
-			<FirstColumn onClick={props.onFileClick}>
-				<FileElement type={props.type} extension={props.extension} />
-				<Text>{props.name}</Text>
+			<FirstColumn onClick={onFileClick}>
+				<FileElement type={file.type} extension={file.extension} />
+				<Text>{file.name}</Text>
 			</FirstColumn>
 			<SecondColumn>
-				{CreateDriveSvg(props.drive)}
-				<Text>{props.fileEmail}</Text>
+				{CreateDriveSvg(file.drive)}
+				<Text>{file.fileEmail}</Text>
 			</SecondColumn>
 			<ThirdColumn>
-				<Text>{formatBytes(props.size)}</Text>
+				<Text>{formatBytes(file.size)}</Text>
 			</ThirdColumn>
 			<FourthColumn>
-				<Text>{props.date}</Text>
+				<Text>{file.date}</Text>
 				{filemenu}
 
-				{props.isShared && (
+				{file.isShared && (
 					<IconButton
 						icon={SvgNames.Link}
-						color="#82d882"
+						color={theme?.colors.green}
 						size={20}
 						onClick={() => {
 							console.log("share");

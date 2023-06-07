@@ -12,6 +12,7 @@ const lightTheme: DefaultTheme = {
 		blueSecondary: "#9ad1f3",
 		textPrimary: "#363636",
 		textSecondary: "gray",
+		green: "#82d882",
 	},
 };
 
@@ -21,6 +22,7 @@ const darkTheme: DefaultTheme = {
 		blueSecondary: "#9ad1f3",
 		textPrimary: "#363636",
 		textSecondary: "gray",
+		green: "#82d882",
 	},
 };
 

@@ -10,6 +10,8 @@ const Container = styled.div<{ styles: string }>`
 	padding: 3px;
 	border: 1px solid transparent;
 	border-radius: 5px;
+	cursor: pointer;
+	user-select: none;
 
 	&:hover {
 		border: 1px solid #f0f0f0;
@@ -25,7 +27,7 @@ interface IProps {
 	size?: number;
 	color?: string;
 	styles?: string;
-	onClick: () => void;
+	onClick?: () => void;
 }
 
 export const IconButton = ({
