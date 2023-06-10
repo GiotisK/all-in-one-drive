@@ -7,6 +7,7 @@ const PopupMenuContainer = styled.div`
 	flex-direction: column;
 	align-items: flex-end;
 	right: 1%;
+	z-index: 2;
 `;
 
 const CircleButtonContainer = styled.div`

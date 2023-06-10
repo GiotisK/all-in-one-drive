@@ -1,17 +1,15 @@
 import styled from "styled-components";
 
-const CheckboxContainer = styled.p`
-	/* Base for label styling */
+const CheckboxContainer = styled.p<{ styles: string }>`
+	${({ styles }) => styles};
+	position: relative;
 
-	/* hover style just for information */
 	label:hover:before {
 		border: 2px solid #99c6f3 !important;
 	}
 `;
 
-const Label = styled.label`
-	/* Additional styles for the checkbox appearance can be added here if needed */
-`;
+const Label = styled.label``;
 
 const CheckboxInput = styled.input`
 	display: none;
@@ -24,9 +22,8 @@ const CheckboxInput = styled.input`
 	/* the box element */
 	&:not(:checked) + ${Label}:before, &:checked + ${Label}:before {
 		content: "";
-		position: absolute;
-		left: 0;
-		top: 0;
+		position: relative;
+		display: block;
 		width: 1em;
 		height: 1em;
 		border: 2px solid #ccc;
@@ -38,10 +35,10 @@ const CheckboxInput = styled.input`
 	/* the tick element */
 	&:not(:checked) + ${Label}:after, &:checked + ${Label}:after {
 		content: "\\2713\\0020";
+		top: 0.3em;
+		left: 0.2em;
 		position: absolute;
-		top: 0.15em;
-		left: 0.15em;
-		font-size: 1.2em;
+		font-size: 1.1em;
 		line-height: 0.8;
 		color: #09ad7e;
 		transition: all 0.2s;
@@ -63,12 +60,17 @@ const CheckboxInput = styled.input`
 
 interface IProps {
 	checked: boolean;
+	styles?: string;
 	onChange: () => void;
 }
 
-export const Checkbox = ({ checked, onChange }: IProps): JSX.Element => {
+export const Checkbox = ({
+	checked,
+	styles = "",
+	onChange,
+}: IProps): JSX.Element => {
 	return (
-		<CheckboxContainer>
+		<CheckboxContainer styles={styles}>
 			<CheckboxInput
 				type="checkbox"
 				id="checkbox-input"

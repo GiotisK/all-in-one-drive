@@ -9,7 +9,7 @@ const DriveElementContainer = styled.div`
 	align-items: center;
 	height: 73px;
 	background-color: white;
-	margin: 2% 2% 1% 2%;
+	margin: 2% 0% 0% 0%;
 	border: solid 1px lightgray;
 	border-radius: 5px;
 	width: 300px;

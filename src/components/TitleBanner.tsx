@@ -64,6 +64,7 @@ const QuotaStringLoader = styled.p`
 const QuotaGigabytes = styled.span`
 	font-weight: bold;
 	font-size: 13px;
+	color: white;
 `;
 
 interface TitleBannerProps {
@@ -78,10 +79,6 @@ interface TitleBannerProps {
 }
 
 export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
-	const handleBurgerMenuClick = () => {
-		props.onBurgerMenuClick?.();
-	};
-
 	const handleAddDriveClick = () => {
 		props.onAddDriveClick?.();
 	};
@@ -103,7 +100,7 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 		<BannerContainer>
 			<LogoMenuContainer>
 				{virtualDriveEnabled && (
-					<BurgerMenuButton onClick={handleBurgerMenuClick}>
+					<BurgerMenuButton onClick={props.onBurgerMenuClick}>
 						{createSvg(SvgNames.Burger, 30, "white")}
 					</BurgerMenuButton>
 				)}
