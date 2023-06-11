@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { FileElement } from "./FileElement";
 import { SvgNames } from "../Shared/utils/svg-utils";
 import { CreateDriveSvg, formatBytes } from "../Shared/utils/utils";
 import { IconButton } from "./IconButton";
 import { styled, useTheme } from "styled-components";
 import { FileEntity } from "../Shared/types/types";
+import { useModalOutsideCloser } from "../hooks/useModalOutsideCloser";
 
 const Container = styled.div`
 	display: flex;
@@ -99,6 +100,10 @@ export const FileRow = ({
 }: IProps): JSX.Element => {
 	const theme = useTheme();
 	const [menuToggle, setMenuToggle] = useState(false);
+	const menuRef = useRef(null);
+
+	useModalOutsideCloser(menuRef, () => setMenuToggle(false));
+
 	const fileMenuRows: FileMenuRow[] = [
 		{
 			text: "Download",
@@ -139,7 +144,7 @@ export const FileRow = ({
 			onClick={toggleMenu}
 		>
 			{menuToggle && (
-				<PopupMenu>
+				<PopupMenu ref={menuRef}>
 					{fileMenuRows.map((row, index) => (
 						<MenuRow key={index} onClick={row.onClick}>
 							<MenuRowText>{row.text}</MenuRowText>

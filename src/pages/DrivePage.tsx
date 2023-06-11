@@ -9,6 +9,7 @@ import { DropZone } from "../components/DropZone";
 import { FileRow } from "../components/FileRow";
 import { SideMenu } from "../components/SideMenu";
 import { TitleBanner } from "../components/TitleBanner";
+import { UploadModal } from "../components/Modals/UploadModal";
 
 export const DrivePage = (): JSX.Element => {
 	/* const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -16,6 +17,8 @@ export const DrivePage = (): JSX.Element => {
 	const [renameModalVisible, setRenameModalVisible] = useState(false);
 	const [exportFormatModalVisible, setExportFormatModalVisible] =
 		useState(false); */
+
+	const [uploadModalVisible, setUploadModalVisible] = useState(true);
 	const [sideMenuVisible, setSideMenuVisible] = useState(false);
 	return (
 		<div
@@ -155,6 +158,13 @@ export const DrivePage = (): JSX.Element => {
 					</DropZone>
 				</div>
 			</div>
+			<UploadModal
+				closeModal={() => {
+					setUploadModalVisible(false);
+				}}
+				fileType={FileType.Folder}
+				visible={uploadModalVisible}
+			/>
 			{/* <ExportFormatModal
 				visible={exportFormatModalVisible}
 				closeModal={() => {

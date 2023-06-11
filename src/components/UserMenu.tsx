@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import styled from "styled-components";
+import { useModalOutsideCloser } from "../hooks/useModalOutsideCloser";
 
 const PopupMenuContainer = styled.div`
 	position: absolute;
@@ -96,6 +97,9 @@ const SettingsText = styled.p`
 
 export const UserMenu = (): JSX.Element => {
 	const [menuVisible, setMenuVisible] = useState(false);
+	const menuRef = useRef(null);
+
+	useModalOutsideCloser(menuRef, () => setMenuVisible(false));
 
 	const virtualDriveEnabled = true;
 	const email = "kostas@giotis.com";
@@ -154,7 +158,7 @@ export const UserMenu = (): JSX.Element => {
 				</CircleButtonLetter>
 			</CircleButtonContainer>
 			{menuVisible && (
-				<PopupMenu>
+				<PopupMenu ref={menuRef}>
 					<UsernameContainer>
 						<UserText>User</UserText>
 						<UsernameText>{email}</UsernameText>

@@ -10,7 +10,7 @@ const Container = styled.div`
 	justify-content: center;
 	align-items: center;
 	z-index: 2;
-	height: 100%;
+	height: 100vh;
 	width: 100%;
 	background-color: rgb(0, 0, 0);
 	background-color: rgba(0, 0, 0, 0.4);
@@ -108,6 +108,7 @@ export const BaseModal = ({
 									text={leftButtonText}
 									styles="margin: 3%"
 									onClick={closeModal}
+									type="secondary"
 								/>
 								<Button
 									text={rightButtonText}
