@@ -28,7 +28,7 @@ interface IProps {
 }
 
 export const MenuBanner = (props: IProps) => {
-	const isUploading = true;
+	const isUploading = false;
 
 	const getTabWidth = (tab: string) => {
 		switch (tab) {
@@ -45,7 +45,7 @@ export const MenuBanner = (props: IProps) => {
 
 	return (
 		<Container>
-			{true && (
+			{false && (
 				<BackButtonContainer
 					onClick={props.onBackButtonClick}
 					style={{

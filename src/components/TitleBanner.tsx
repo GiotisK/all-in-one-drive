@@ -5,7 +5,7 @@ import { SvgNames, createSvg } from "../Shared/utils/svg-utils";
 
 const BannerContainer = styled.div`
 	display: flex;
-	position: relative;
+	position: fixed;
 	flex-direction: row;
 	justify-content: space-between;
 	align-items: baseline;

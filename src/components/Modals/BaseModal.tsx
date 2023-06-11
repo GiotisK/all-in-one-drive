@@ -10,8 +10,9 @@ const Container = styled.div`
 	justify-content: center;
 	align-items: center;
 	z-index: 2;
-	height: 100vh;
+	height: 100%;
 	width: 100%;
+	margin-top: -50px; /*To cover the title banner*/
 	background-color: rgb(0, 0, 0);
 	background-color: rgba(0, 0, 0, 0.4);
 `;

@@ -22,13 +22,13 @@ export const DrivePage = (): JSX.Element => {
 	const [sideMenuVisible, setSideMenuVisible] = useState(false);
 	return (
 		<div
-			style={{ display: "flex", flexDirection: "column", height: "100%" }}
+			style={{
+				display: "flex",
+				flexDirection: "column",
+				height: "100%",
+				marginTop: "50px",
+			}}
 		>
-			<TitleBanner
-				onBurgerMenuClick={() => {
-					setSideMenuVisible((prevVisible) => !prevVisible);
-				}}
-			/>
 			<div
 				style={{
 					display: "flex",
@@ -43,118 +43,42 @@ export const DrivePage = (): JSX.Element => {
 						}}
 					/>
 				)}
-				<div style={{ flex: 1 }}>
+				<div style={{ flex: 1, overflow: "auto" }}>
 					<DropZone>
 						<MenuBanner
 							onBackButtonClick={() => {
 								console.log("back pressed");
 							}}
 						/>
-						<FileRow
-							file={{
-								id: "1",
-								date: "212312",
-								drive: DriveType.Dropbox,
-								extension: ".jsx",
-								fileEmail: "palaris@moris.com",
-								isShared: false,
-								name: "palaris",
-								ownerEmail: "moloris@molia.com",
-								permissions: "",
-								size: 123,
-								type: FileType.File,
-							}}
-							onFileClick={function (): void {
-								throw new Error("Function not implemented.");
-							}}
-							onCopyShareLinkClick={function (): void {
-								throw new Error("Function not implemented.");
-							}}
-						/>
-						<FileRow
-							file={{
-								id: "1",
-								date: "212312",
-								drive: DriveType.Dropbox,
-								extension: ".jsx",
-								fileEmail: "palaris@moris.com",
-								isShared: false,
-								name: "palaris",
-								ownerEmail: "moloris@molia.com",
-								permissions: "",
-								size: 123,
-								type: FileType.File,
-							}}
-							onFileClick={function (): void {
-								throw new Error("Function not implemented.");
-							}}
-							onCopyShareLinkClick={function (): void {
-								throw new Error("Function not implemented.");
-							}}
-						/>
-						<FileRow
-							file={{
-								id: "1",
-								date: "212312",
-								drive: DriveType.Dropbox,
-								extension: ".jsx",
-								fileEmail: "palaris@moris.com",
-								isShared: false,
-								name: "palaris",
-								ownerEmail: "moloris@molia.com",
-								permissions: "",
-								size: 123,
-								type: FileType.File,
-							}}
-							onFileClick={function (): void {
-								throw new Error("Function not implemented.");
-							}}
-							onCopyShareLinkClick={function (): void {
-								throw new Error("Function not implemented.");
-							}}
-						/>
-						<FileRow
-							file={{
-								id: "1",
-								date: "212312",
-								drive: DriveType.Dropbox,
-								extension: ".jsx",
-								fileEmail: "palaris@moris.com",
-								isShared: false,
-								name: "palaris",
-								ownerEmail: "moloris@molia.com",
-								permissions: "",
-								size: 123,
-								type: FileType.File,
-							}}
-							onFileClick={function (): void {
-								throw new Error("Function not implemented.");
-							}}
-							onCopyShareLinkClick={function (): void {
-								throw new Error("Function not implemented.");
-							}}
-						/>
-						<FileRow
-							file={{
-								id: "1",
-								date: "212312",
-								drive: DriveType.Dropbox,
-								extension: ".jsx",
-								fileEmail: "palaris@moris.com",
-								isShared: false,
-								name: "palaris",
-								ownerEmail: "moloris@molia.com",
-								permissions: "",
-								size: 123,
-								type: FileType.File,
-							}}
-							onFileClick={function (): void {
-								throw new Error("Function not implemented.");
-							}}
-							onCopyShareLinkClick={function (): void {
-								throw new Error("Function not implemented.");
-							}}
-						/>
+						{[
+							1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16,
+						].map((i) => (
+							<FileRow
+								file={{
+									id: "1",
+									date: "212312",
+									drive: DriveType.Dropbox,
+									extension: ".jsx",
+									fileEmail: "palaris@moris.com",
+									isShared: false,
+									name: "palaris",
+									ownerEmail: "moloris@molia.com",
+									permissions: "",
+									size: 123,
+									type: FileType.File,
+								}}
+								onFileClick={function (): void {
+									throw new Error(
+										"Function not implemented."
+									);
+								}}
+								onCopyShareLinkClick={function (): void {
+									throw new Error(
+										"Function not implemented."
+									);
+								}}
+							/>
+						))}
 					</DropZone>
 				</div>
 			</div>
@@ -164,6 +88,11 @@ export const DrivePage = (): JSX.Element => {
 				}}
 				fileType={FileType.Folder}
 				visible={uploadModalVisible}
+			/>
+			<TitleBanner
+				onBurgerMenuClick={() => {
+					setSideMenuVisible((prevVisible) => !prevVisible);
+				}}
 			/>
 			{/* <ExportFormatModal
 				visible={exportFormatModalVisible}
