@@ -98,8 +98,9 @@ const SettingsText = styled.p`
 export const UserMenu = (): JSX.Element => {
 	const [menuVisible, setMenuVisible] = useState(false);
 	const menuRef = useRef(null);
+	const menuTriggerRef = useRef(null);
 
-	useModalOutsideCloser(menuRef, () => setMenuVisible(false));
+	useModalOutsideCloser(menuRef, menuTriggerRef, () => setMenuVisible(false));
 
 	const virtualDriveEnabled = true;
 	const email = "kostas@giotis.com";
@@ -149,6 +150,7 @@ export const UserMenu = (): JSX.Element => {
 	return (
 		<PopupMenuContainer>
 			<CircleButtonContainer
+				ref={menuTriggerRef}
 				onClick={() => {
 					setMenuVisible(!menuVisible);
 				}}

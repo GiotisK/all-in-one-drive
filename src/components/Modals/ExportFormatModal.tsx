@@ -11,8 +11,8 @@ const FormatButtonsContainer = styled.div`
 	justify-content: center;
 	align-items: center;
 	gap: 30px;
-	height: 70%;
-	width: 90%;
+	height: 150px;
+	width: 450px;
 `;
 
 const FormatButton = styled.button`

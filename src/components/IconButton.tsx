@@ -1,9 +1,8 @@
 import { styled } from "styled-components";
 import { SvgNames, createSvg } from "../Shared/utils/svg-utils";
-import { PropsWithChildren } from "react";
+import { CSSProperties, PropsWithChildren, RefObject } from "react";
 
-const Container = styled.div<{ styles: string }>`
-	${({ styles }) => styles};
+const Container = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -24,22 +23,24 @@ const Container = styled.div<{ styles: string }>`
 
 interface IProps {
 	icon: SvgNames;
+	triggerRef?: RefObject<HTMLDivElement>;
 	size?: number;
 	color?: string;
-	styles?: string;
+	style?: CSSProperties;
 	onClick?: () => void;
 }
 
 export const IconButton = ({
+	triggerRef,
 	icon,
 	size = 16,
 	color,
-	styles = "",
+	style = {},
 	onClick,
 	children,
 }: PropsWithChildren<IProps>): JSX.Element => {
 	return (
-		<Container styles={styles} onClick={onClick}>
+		<Container ref={triggerRef} style={style} onClick={onClick}>
 			{createSvg(icon, size, color)}
 			{children}
 		</Container>

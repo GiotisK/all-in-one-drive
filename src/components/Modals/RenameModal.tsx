@@ -5,15 +5,8 @@ import { BaseModal, BaseModalProps } from "./BaseModal";
 const Content = styled.div`
 	display: flex;
 	flex-direction: column;
-	height: 100%;
-	width: 90%;
-`;
-
-const InputContainer = styled.div`
-	flex: 2;
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
+	height: 100px;
+	width: 500px;
 `;
 
 export const RenameModal = ({
@@ -30,9 +23,7 @@ export const RenameModal = ({
 			rightButtonText="Rename"
 		>
 			<Content>
-				<InputContainer>
-					<Input title="Rename file" />
-				</InputContainer>
+				<Input title="Rename file" />
 			</Content>
 		</BaseModal>
 	);

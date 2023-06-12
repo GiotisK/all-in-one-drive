@@ -10,13 +10,14 @@ import { FileRow } from "../components/FileRow";
 import { SideMenu } from "../components/SideMenu";
 import { TitleBanner } from "../components/TitleBanner";
 import { UploadModal } from "../components/Modals/UploadModal";
+import { MultimediaModal } from "../components/Modals/MultimediaModal";
 
 export const DrivePage = (): JSX.Element => {
-	/* const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+	const [deleteModalVisible, setDeleteModalVisible] = useState(true);
 	const [addDriveModalVisible, setAddDriveModalVisible] = useState(false);
 	const [renameModalVisible, setRenameModalVisible] = useState(false);
 	const [exportFormatModalVisible, setExportFormatModalVisible] =
-		useState(false); */
+		useState(false);
 
 	const [uploadModalVisible, setUploadModalVisible] = useState(true);
 	const [sideMenuVisible, setSideMenuVisible] = useState(false);
@@ -38,6 +39,10 @@ export const DrivePage = (): JSX.Element => {
 			>
 				{sideMenuVisible && (
 					<SideMenu
+						checkboxChecked={true}
+						onCheckboxClick={() => {
+							console.log("checkbox clicked");
+						}}
 						onCloseSideMenuClick={() => {
 							setSideMenuVisible(false);
 						}}
@@ -82,38 +87,38 @@ export const DrivePage = (): JSX.Element => {
 					</DropZone>
 				</div>
 			</div>
-			<UploadModal
+			{/* <MultimediaModal
 				closeModal={() => {
 					setUploadModalVisible(false);
 				}}
-				fileType={FileType.Folder}
+				multimediaType="audio"
 				visible={uploadModalVisible}
-			/>
+			/> */}
 			<TitleBanner
 				onBurgerMenuClick={() => {
 					setSideMenuVisible((prevVisible) => !prevVisible);
 				}}
 			/>
 			{/* <ExportFormatModal
-				visible={exportFormatModalVisible}
+				visible={uploadModalVisible}
 				closeModal={() => {
 					setExportFormatModalVisible(false);
 				}}
 				exportFormats={["pdf", "docx", "txt", "json"]}
-			/>
+			/> */}
 			<RenameModal
-				visible={renameModalVisible}
+				visible={uploadModalVisible}
 				closeModal={() => {
 					setRenameModalVisible(false);
 				}}
 			/>
-			<AddDriveModal
-				visible={addDriveModalVisible}
+			{/* <AddDriveModal
+				visible={uploadModalVisible}
 				closeModal={() => {
 					setAddDriveModalVisible(false);
 				}}
-			/>
-			<DeleteModal
+			/> */}
+			{/* <DeleteModal
 				visible={deleteModalVisible}
 				closeModal={() => {
 					setDeleteModalVisible(false);
@@ -135,7 +140,7 @@ export const DrivePage = (): JSX.Element => {
 					type: DriveType.Dropbox,
 					email: "palaris@kkek.com",
 				}}
-			/>
+			/> */}
 			<button
 				onClick={() => {
 					setDeleteModalVisible(true);
@@ -164,7 +169,7 @@ export const DrivePage = (): JSX.Element => {
 				}}
 			>
 				click4
-			</button> */}
+			</button>
 		</div>
 	);
 };

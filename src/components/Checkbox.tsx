@@ -1,7 +1,7 @@
+import { CSSProperties } from "react";
 import styled from "styled-components";
 
-const CheckboxContainer = styled.p<{ styles: string }>`
-	${({ styles }) => styles};
+const CheckboxContainer = styled.p`
 	position: relative;
 
 	label:hover:before {
@@ -60,17 +60,17 @@ const CheckboxInput = styled.input`
 
 interface IProps {
 	checked: boolean;
-	styles?: string;
+	style?: CSSProperties;
 	onChange: () => void;
 }
 
 export const Checkbox = ({
 	checked,
-	styles = "",
+	style = {},
 	onChange,
 }: IProps): JSX.Element => {
 	return (
-		<CheckboxContainer styles={styles}>
+		<CheckboxContainer style={style}>
 			<CheckboxInput
 				type="checkbox"
 				id="checkbox-input"

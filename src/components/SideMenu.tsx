@@ -48,9 +48,9 @@ const NoDrivesTextClickable = styled(NoDrivesText)`
 
 interface IProps {
 	isInRoot?: boolean;
-	checkboxChecked?: boolean;
+	checkboxChecked: boolean;
 	onDivClick?: () => void;
-	onCheckboxClick?: () => void;
+	onCheckboxClick: () => void;
 	onCloseSideMenuClick: () => void;
 }
 
@@ -67,14 +67,14 @@ export const SideMenu = (props: IProps): JSX.Element => {
 				<Checkbox
 					onChange={props.onCheckboxClick}
 					checked={props.checkboxChecked}
-					styles="margin-left: 5%;"
+					style={{ marginLeft: "5%" }}
 				/>
 
 				<IconButton
 					icon={SvgNames.Close}
 					size={20}
 					onClick={props.onCloseSideMenuClick}
-					styles="margin-left: auto; margin-right: 5%;"
+					style={{ marginLeft: "auto", marginRight: "5%" }}
 					color="gray"
 				/>
 			</Header>

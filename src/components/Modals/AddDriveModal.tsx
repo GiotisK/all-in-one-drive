@@ -8,8 +8,8 @@ const ButtonsContainer = styled.div`
 	flex-direction: row;
 	justify-content: space-evenly;
 	align-items: center;
-	height: 70%;
-	width: 90%;
+	height: 200px;
+	width: 500px;
 `;
 
 export const AddDriveModal = (props: BaseModalProps): JSX.Element => {

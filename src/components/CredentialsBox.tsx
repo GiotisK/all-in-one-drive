@@ -297,7 +297,7 @@ export const CredentialsBox = (): JSX.Element => {
 			{renderInputs()}
 			<ButtonContainer>
 				{renderErrorMessage()}
-				<Button styles="margin: 3% 10% 4% 0%" text={buttontext} />
+				<Button style={{ margin: "3% 10% 4% 0" }} text={buttontext} />
 			</ButtonContainer>
 		</FormContainer>
 	);

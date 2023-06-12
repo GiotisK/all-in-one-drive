@@ -29,12 +29,13 @@ const SvgContainer = styled.span`
 const Content = styled.div`
 	display: flex;
 	flex-direction: column;
-	height: 100%;
-	width: 90%;
+	height: 100px;
+	width: 500px;
 `;
 
 const ConfirmationText = styled.div`
-	flex: 2;
+	flex: 1;
+	margin: 0 5%;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;

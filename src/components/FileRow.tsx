@@ -101,8 +101,9 @@ export const FileRow = ({
 	const theme = useTheme();
 	const [menuToggle, setMenuToggle] = useState(false);
 	const menuRef = useRef(null);
+	const menuTriggerRef = useRef(null);
 
-	useModalOutsideCloser(menuRef, () => setMenuToggle(false));
+	useModalOutsideCloser(menuRef, menuTriggerRef, () => setMenuToggle(false));
 
 	const fileMenuRows: FileMenuRow[] = [
 		{
@@ -131,17 +132,16 @@ export const FileRow = ({
 		},
 	];
 
-	function toggleMenu() {
-		setMenuToggle((prevToggle) => !prevToggle);
-	}
-
 	const filemenu = (
 		<IconButton
+			triggerRef={menuTriggerRef}
 			icon={SvgNames.Dots}
 			size={22}
 			color="gray"
-			styles="position: relative"
-			onClick={toggleMenu}
+			style={{ position: "relative" }}
+			onClick={() => {
+				setMenuToggle(!menuToggle);
+			}}
 		>
 			{menuToggle && (
 				<PopupMenu ref={menuRef}>

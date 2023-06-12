@@ -34,8 +34,6 @@ const ModalContainer = styled.div`
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
-	width: 500px;
-	height: 250px;
 	border-radius: 5px;
 	background-color: white;
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
@@ -47,7 +45,7 @@ const Header = styled.div`
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: baseline;
-	width: 92%;
+	width: 90%;
 	margin: 3% 0% 1% 5%;
 	border-bottom: 1px solid lightgray;
 `;
@@ -73,6 +71,7 @@ export interface BaseModalProps {
 
 interface IProps extends BaseModalProps {
 	title?: string;
+	showHeader?: boolean;
 	showFooter?: boolean;
 	leftButtonText?: string;
 	rightButtonText?: string;
@@ -81,6 +80,7 @@ interface IProps extends BaseModalProps {
 export const BaseModal = ({
 	visible,
 	title = "",
+	showHeader = true,
 	showFooter = false,
 	leftButtonText = "",
 	rightButtonText = "",
@@ -94,26 +94,28 @@ export const BaseModal = ({
 					<Backdrop onClick={closeModal} />
 
 					<ModalContainer>
-						<Header>
-							<HeaderText>{title}</HeaderText>
-							<IconButton
-								styles="margin-left: auto"
-								icon={SvgNames.Close}
-								onClick={closeModal}
-							/>
-						</Header>
+						{showHeader && (
+							<Header>
+								<HeaderText>{title}</HeaderText>
+								<IconButton
+									style={{ marginLeft: "auto" }}
+									icon={SvgNames.Close}
+									onClick={closeModal}
+								/>
+							</Header>
+						)}
 						{children}
 						{showFooter && (
 							<Footer>
 								<Button
 									text={leftButtonText}
-									styles="margin: 3%"
+									style={{ margin: "3%" }}
 									onClick={closeModal}
 									type="secondary"
 								/>
 								<Button
 									text={rightButtonText}
-									styles="margin-top: 3%"
+									style={{ marginTop: "3%" }}
 								/>
 							</Footer>
 						)}

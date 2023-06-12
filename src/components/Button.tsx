@@ -1,12 +1,11 @@
+import { CSSProperties } from "react";
 import styled from "styled-components";
 
 interface ButtonWrapperProps {
-	styles: string;
 	$type: ButtonType;
 }
 
 const ButtonWrapper = styled.button<ButtonWrapperProps>`
-	${({ styles }) => styles};
 	width: 80px;
 	height: 50px;
 	background-color: ${({ $type, theme }) =>
@@ -49,19 +48,19 @@ interface IProps {
 	text: string;
 	type?: ButtonType;
 	onClick?: () => void;
-	styles?: string;
+	style?: CSSProperties;
 }
 
 type ButtonType = "primary" | "secondary";
 
 export const Button = ({
 	text,
-	styles = "",
+	style = {},
 	type = "primary",
 	onClick,
 }: IProps): JSX.Element => {
 	return (
-		<ButtonWrapper onClick={onClick} styles={styles} $type={type}>
+		<ButtonWrapper onClick={onClick} style={style} $type={type}>
 			<ButtonText>{text}</ButtonText>
 		</ButtonWrapper>
 	);

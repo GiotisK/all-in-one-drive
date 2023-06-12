@@ -2,11 +2,16 @@ import { useEffect, RefObject } from "react";
 
 export const useModalOutsideCloser = <T extends HTMLElement>(
 	ref: RefObject<T>,
+	triggerRef: RefObject<T>,
 	cb: () => void
 ): void => {
 	useEffect(() => {
 		function handleClickOutside(event: MouseEvent) {
-			if (ref.current && !ref.current.contains(event.target as Node)) {
+			if (
+				ref.current &&
+				!ref.current.contains(event.target as Node) &&
+				!triggerRef.current?.contains(event.target as Node)
+			) {
 				cb();
 			}
 		}
@@ -14,5 +19,5 @@ export const useModalOutsideCloser = <T extends HTMLElement>(
 		return () => {
 			document.removeEventListener("mousedown", handleClickOutside);
 		};
-	}, [ref, cb]);
+	}, [ref, cb, triggerRef]);
 };

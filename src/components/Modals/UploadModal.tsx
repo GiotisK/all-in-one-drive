@@ -2,7 +2,6 @@ import { styled } from "styled-components";
 import { DriveEntity, DriveType, FileType } from "../../Shared/types/types";
 import { CreateDriveSvg } from "../../Shared/utils/utils";
 import { BaseModal, BaseModalProps } from "./BaseModal";
-import "./UploadModal.css";
 
 const NoDrivesText = styled.p`
 	font-size: 20px;
