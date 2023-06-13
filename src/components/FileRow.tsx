@@ -5,14 +5,14 @@ import { CreateDriveSvg, formatBytes } from "../Shared/utils/utils";
 import { IconButton } from "./IconButton";
 import { styled, useTheme } from "styled-components";
 import { FileEntity } from "../Shared/types/types";
-import { useModalOutsideCloser } from "../hooks/useModalOutsideCloser";
+import { useOutsideClicker } from "../hooks/useOutsideClicker";
 
 const Container = styled.div`
 	display: flex;
 	flex-direction: row;
 	margin-left: 10px;
 	padding: 10px 0 10px 10px;
-	border-bottom: solid 0.5px #f0f0f0;
+	border-bottom: solid 0.5px ${({ theme }) => theme.colors.border};
 	border-radius: 4px;
 `;
 
@@ -49,6 +49,7 @@ const Text = styled.p`
 	text-overflow: ellipsis;
 	font-size: 16px;
 	margin-right: 5%;
+	color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const PopupMenu = styled.div`
@@ -60,14 +61,15 @@ const PopupMenu = styled.div`
 	width: 100px;
 	top: 30px;
 	right: 0px;
-	border: solid 1px #f0f0f0;
+	border: 1px solid ${({ theme }) => theme.colors.border};
 	border-radius: 5px;
-	background-color: white;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.25);
+	color: ${({ theme }) => theme.colors.textPrimary};
+	background-color: ${({ theme }) => theme.colors.background};
+	box-shadow: ${({ theme }) => theme.colors.boxShadow}};
 `;
 
 const MenuRow = styled.div`
-	border-bottom: solid 1px #f0f0f0;
+	border-bottom: solid 1px ${({ theme }) => theme.colors.border};
 `;
 
 const MenuRowText = styled.p`
@@ -77,7 +79,7 @@ const MenuRowText = styled.p`
 	border-radius: 4px;
 
 	&:hover {
-		background-color: #a8cef591;
+		background-color: ${({ theme }) => theme.colors.blueSecondary};
 		cursor: pointer;
 	}
 `;
@@ -103,7 +105,7 @@ export const FileRow = ({
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
-	useModalOutsideCloser(menuRef, menuTriggerRef, () => setMenuToggle(false));
+	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
 
 	const fileMenuRows: FileMenuRow[] = [
 		{
@@ -137,7 +139,7 @@ export const FileRow = ({
 			triggerRef={menuTriggerRef}
 			icon={SvgNames.Dots}
 			size={22}
-			color="gray"
+			color={theme?.colors.textSecondary}
 			style={{ position: "relative" }}
 			onClick={() => {
 				setMenuToggle(!menuToggle);

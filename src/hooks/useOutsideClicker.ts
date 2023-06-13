@@ -1,6 +1,6 @@
 import { useEffect, RefObject } from "react";
 
-export const useModalOutsideCloser = <T extends HTMLElement>(
+export const useOutsideClicker = <T extends HTMLElement>(
 	ref: RefObject<T>,
 	triggerRef: RefObject<T>,
 	cb: () => void

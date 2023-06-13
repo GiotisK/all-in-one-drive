@@ -12,13 +12,13 @@ const Container = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	border: 1px solid lightgray;
+	border: 1px solid ${(props) => props.theme.colors.border};
 	border-radius: 8px;
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 	cursor: pointer;
 	user-select: none;
 	transition: all 0.2s ease;
-	background-color: white;
+	background-color: ${(props) => props.theme.colors.background};
 	width: 130px;
 	height: 130px;
 
@@ -37,7 +37,7 @@ const Container = styled.div`
 
 const Text = styled.p`
 	font-weight: 600;
-	color: rgb(59, 59, 59);
+	color: ${(props) => props.theme.colors.textPrimary};
 	fontsize: "17px";
 `;
 

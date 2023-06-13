@@ -3,6 +3,14 @@ import { DriveEntity, DriveType, FileType } from "../../Shared/types/types";
 import { CreateDriveSvg } from "../../Shared/utils/utils";
 import { BaseModal, BaseModalProps } from "./BaseModal";
 
+const Content = styled.div`
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	height: 200px;
+	width: 500px;
+`;
+
 const NoDrivesText = styled.p`
 	font-size: 20px;
 	color: gray;
@@ -15,6 +23,7 @@ const DriveRowScrollView = styled.div`
 	display: flex;
 	flex: 1;
 	width: 90%;
+	height: 300px;
 	flex-direction: column;
 	overflow-y: auto;
 	margin-bottom: 20px;
@@ -29,14 +38,14 @@ const DriveRow = styled.div`
 	flex-direction: row;
 	align-items: center;
 	vertical-align: baseline;
-	border-bottom: 1px solid lightgray;
+	border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 	user-select: none;
 	cursor: pointer;
 	border-radius: 4px;
 	padding: 5px 0px;
 
 	&:hover {
-		background-color: #a8cef591;
+		background-color: ${({ theme }) => theme.colors.blueSecondary};
 	}
 `;
 
@@ -45,7 +54,7 @@ const DriveRowText = styled.p`
 	margin-left: 5px;
 	margin-bottom: -1%;
 	overflow: hidden;
-	color: #363636;
+	color: ${({ theme }) => theme.colors.textPrimary};
 	word-wrap: break-word;
 `;
 
@@ -84,29 +93,31 @@ export const UploadModal = ({
 			closeModal={closeModal}
 			showFooter={false}
 		>
-			{drives.length === 0 ? (
-				<NoDrivesText style={{}}>No drives found...</NoDrivesText>
-			) : (
-				<DriveRowScrollView>
-					{drives.map((drive, index) => {
-						return (
-							<DriveRow
-								key={index}
-								className="drive-row"
-								onClick={() => {
-									console.log("drivw row clicked");
-									/* props.onSpecificRowClick(drive); */
-								}}
-							>
-								{CreateDriveSvg(drive.type, 25)}
-								<DriveRowText className="drive-row-email-text">
-									{drive.email}
-								</DriveRowText>
-							</DriveRow>
-						);
-					})}
-				</DriveRowScrollView>
-			)}
+			<Content>
+				{drives.length === 0 ? (
+					<NoDrivesText style={{}}>No drives found...</NoDrivesText>
+				) : (
+					<DriveRowScrollView>
+						{drives.map((drive, index) => {
+							return (
+								<DriveRow
+									key={index}
+									className="drive-row"
+									onClick={() => {
+										console.log("drivw row clicked");
+										/* props.onSpecificRowClick(drive); */
+									}}
+								>
+									{CreateDriveSvg(drive.type, 25)}
+									<DriveRowText className="drive-row-email-text">
+										{drive.email}
+									</DriveRowText>
+								</DriveRow>
+							);
+						})}
+					</DriveRowScrollView>
+				)}
+			</Content>
 		</BaseModal>
 	);
 };

@@ -26,14 +26,14 @@ const slideOutToBottom = keyframes`
 const LoadingBarContainer = styled.div`
 	width: 400px;
 	height: 20px;
-	border: 1px solid lightgray;
+	border: 1px solid ${({ theme }) => theme.colors.border};
 	border-radius: 4px;
 	position: absolute;
 	right: 17px;
 	animation-delay: 0s;
 	bottom: 0px;
-	background-color: white;
-	color: black;
+	background-color: ${({ theme }) => theme.colors.background};
+	color: ${({ theme }) => theme.colors.textPrimary};
 
 	animation: ${slideInFromBottom} 0.5s ease-in-out forwards;
 
@@ -48,7 +48,8 @@ const RelativeContainer = styled.div`
 
 const ProgressBar = styled.div`
 	height: 20px;
-	background-color: lightgreen;
+	border-radius: 4px;
+	background-color: ${({ theme }) => theme.colors.green};
 	white-space: nowrap;
 `;
 
@@ -75,7 +76,7 @@ export const LoadingBar = (): JSX.Element => {
 		currentFileNumBeingUploaded,
 	} = uploadState;
 
-	const [isUploading, setIsUploading] = useState(false);
+	const [isUploading, setIsUploading] = useState(true);
 
 	return (
 		<LoadingBarContainer className={isUploading ? "" : "slide-out"}>

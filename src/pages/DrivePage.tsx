@@ -11,15 +11,18 @@ import { SideMenu } from "../components/SideMenu";
 import { TitleBanner } from "../components/TitleBanner";
 import { UploadModal } from "../components/Modals/UploadModal";
 import { MultimediaModal } from "../components/Modals/MultimediaModal";
+import { FloatingButtonsContainer } from "../components/FloatingButtons/FloatingButtonsContainer";
+import { Loader } from "../components/Loader";
+import { LoadingBar } from "../components/LoadingBar";
 
 export const DrivePage = (): JSX.Element => {
-	const [deleteModalVisible, setDeleteModalVisible] = useState(true);
+	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 	const [addDriveModalVisible, setAddDriveModalVisible] = useState(false);
 	const [renameModalVisible, setRenameModalVisible] = useState(false);
 	const [exportFormatModalVisible, setExportFormatModalVisible] =
 		useState(false);
 
-	const [uploadModalVisible, setUploadModalVisible] = useState(true);
+	const [uploadModalVisible, setUploadModalVisible] = useState(false);
 	const [sideMenuVisible, setSideMenuVisible] = useState(false);
 	return (
 		<div
@@ -48,17 +51,21 @@ export const DrivePage = (): JSX.Element => {
 						}}
 					/>
 				)}
-				<div style={{ flex: 1, overflow: "auto" }}>
+				<div
+					style={{ flex: 1, overflow: "auto", marginBottom: "50px" }}
+				>
 					<DropZone>
 						<MenuBanner
 							onBackButtonClick={() => {
 								console.log("back pressed");
 							}}
 						/>
+						<LoadingBar />
 						{[
 							1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16,
 						].map((i) => (
 							<FileRow
+								key={i}
 								file={{
 									id: "1",
 									date: "212312",
@@ -85,91 +92,20 @@ export const DrivePage = (): JSX.Element => {
 							/>
 						))}
 					</DropZone>
+					<FloatingButtonsContainer />
 				</div>
 			</div>
-			{/* <MultimediaModal
+			<RenameModal
 				closeModal={() => {
-					setUploadModalVisible(false);
+					console.log("close modal");
 				}}
-				multimediaType="audio"
-				visible={uploadModalVisible}
-			/> */}
+				visible={true}
+			/>
 			<TitleBanner
 				onBurgerMenuClick={() => {
 					setSideMenuVisible((prevVisible) => !prevVisible);
 				}}
 			/>
-			{/* <ExportFormatModal
-				visible={uploadModalVisible}
-				closeModal={() => {
-					setExportFormatModalVisible(false);
-				}}
-				exportFormats={["pdf", "docx", "txt", "json"]}
-			/> */}
-			<RenameModal
-				visible={uploadModalVisible}
-				closeModal={() => {
-					setRenameModalVisible(false);
-				}}
-			/>
-			{/* <AddDriveModal
-				visible={uploadModalVisible}
-				closeModal={() => {
-					setAddDriveModalVisible(false);
-				}}
-			/> */}
-			{/* <DeleteModal
-				visible={deleteModalVisible}
-				closeModal={() => {
-					setDeleteModalVisible(false);
-				}}
-				entity={{
-					id: "123",
-					permissions: "",
-					type: FileType.File,
-					drive: DriveType.GoogleDrive,
-					name: "palaris",
-					size: 12314,
-					fileEmail: "palaris@loris.com",
-					ownerEmail: "poloris@laris.com",
-					date: "12/3/12",
-					extension: "json",
-					isShared: true,
-				}}
-				entity={{
-					type: DriveType.Dropbox,
-					email: "palaris@kkek.com",
-				}}
-			/> */}
-			<button
-				onClick={() => {
-					setDeleteModalVisible(true);
-				}}
-			>
-				click
-			</button>
-			<button
-				onClick={() => {
-					setAddDriveModalVisible(true);
-				}}
-			>
-				click2
-			</button>
-
-			<button
-				onClick={() => {
-					setRenameModalVisible(true);
-				}}
-			>
-				click3
-			</button>
-			<button
-				onClick={() => {
-					setExportFormatModalVisible(true);
-				}}
-			>
-				click4
-			</button>
 		</div>
 	);
 };

@@ -13,11 +13,11 @@ const Container = styled.div`
 	user-select: none;
 
 	&:hover {
-		border: 1px solid #f0f0f0;
+		border: 1px solid ${({ theme }) => theme.colors.border};
 	}
 
 	&:active {
-		border: 1px solid #99c6f3;
+		border: 1px solid ${({ theme }) => theme.colors.blueSecondary};
 	}
 `;
 

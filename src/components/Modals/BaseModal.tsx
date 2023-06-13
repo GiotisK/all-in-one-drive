@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
 import { IconButton } from "../IconButton";
 import { SvgNames } from "../../Shared/utils/svg-utils";
-import { styled } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { Button } from "../Button";
 
 const Container = styled.div`
@@ -12,8 +12,6 @@ const Container = styled.div`
 	z-index: 2;
 	height: 100%;
 	width: 100%;
-	margin-top: -50px; /*To cover the title banner*/
-	background-color: rgb(0, 0, 0);
 	background-color: rgba(0, 0, 0, 0.4);
 `;
 
@@ -35,8 +33,8 @@ const ModalContainer = styled.div`
 	justify-content: flex-start;
 	align-items: center;
 	border-radius: 5px;
-	background-color: white;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+	background-color: ${(props) => props.theme.colors.background};
+	box-shadow: ${({ theme }) => theme.colors.boxShadow};
 `;
 
 const Header = styled.div`
@@ -47,21 +45,21 @@ const Header = styled.div`
 	align-items: baseline;
 	width: 90%;
 	margin: 3% 0% 1% 5%;
-	border-bottom: 1px solid lightgray;
+	border-bottom: 1px solid ${(props) => props.theme.colors.border};
 `;
 
 const HeaderText = styled.p`
 	margin: 0;
 	margin-bottom: 3px;
 	font-size: 25px;
-	color: #363636;
+	color: ${(props) => props.theme.colors.textPrimary};
 `;
 
 const Footer = styled.div`
 	display: flex;
 	width: 90%;
 	justify-content: flex-end;
-	border-top: 1px solid lightgray;
+	border-top: 1px solid ${(props) => props.theme.colors.border};
 `;
 
 export interface BaseModalProps {
@@ -87,12 +85,12 @@ export const BaseModal = ({
 	closeModal,
 	children,
 }: PropsWithChildren<IProps>): JSX.Element => {
+	const theme = useTheme();
 	return (
 		<>
 			{visible && (
 				<Container>
 					<Backdrop onClick={closeModal} />
-
 					<ModalContainer>
 						{showHeader && (
 							<Header>
@@ -101,6 +99,7 @@ export const BaseModal = ({
 									style={{ marginLeft: "auto" }}
 									icon={SvgNames.Close}
 									onClick={closeModal}
+									color={theme?.colors.textPrimary}
 								/>
 							</Header>
 						)}

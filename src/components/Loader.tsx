@@ -20,22 +20,22 @@ interface LoaderElementProps {
 	size: string;
 }
 const LoaderElement = styled.div<LoaderElementProps>`
-	border: 5px solid lightgray;
-	border-top: 5px solid #24a0ed;
+	border: 5px solid ${({ theme }) => theme.colors.border};
+	border-top: 5px solid ${({ theme }) => theme.colors.bluePrimary};
 	border-radius: 50%;
 	margin-bottom: 10px;
 	animation: ${spinAnimation} 1s linear infinite;
-	${({ size }) => `height: ${size}; width: ${size};`}
+	${({ size }) => `height: ${size}px; width: ${size}px;`}
 `;
 
 const LoadingText = styled.p`
-	color: gray;
+	color: ${({ theme }) => theme.colors.textPrimary};
 	font-size: 18px;
 	margin: 0;
 `;
 
 interface LoaderProps {
-	size: string;
+	size: number;
 	showLoadingText?: boolean;
 }
 

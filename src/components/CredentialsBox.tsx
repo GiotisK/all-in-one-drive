@@ -15,18 +15,18 @@ const FormContainer = styled.form`
 	${centerAbsoluteDivInPage}
 	display: flex;
 	flex-direction: column;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+	box-shadow: ${({ theme }) => theme.colors.boxShadow};
 	height: 380px;
 	width: 430px;
 	border-radius: 5px;
-	background-color: white;
+	background-color: ${({ theme }) => theme.colors.backgroundSecondary};
 `;
 
 const TabsContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 	justify-content: space-evenly;
-	border-bottom: 1px solid #ccc;
+	border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
 `;
@@ -43,11 +43,11 @@ const TabContainer = styled.div`
 	flex: 1;
 	flex-direction: column;
 	align-items: center;
-	border-right: 1px solid #ccc;
+	border-right: 1px solid ${({ theme }) => theme.colors.border};
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
-	background-color: white;
-	color: #ccc;
+	background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+	color: ${({ theme }) => theme.colors.textPrimary};
 	cursor: pointer;
 `;
 
@@ -73,7 +73,7 @@ const ActiveTabUnderline = styled(TabUnderline)`
 `;
 
 const InactiveTabUnderline = styled(TabUnderline)`
-	border-color: #ccc;
+	border-color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const InputsContainer = styled.div`

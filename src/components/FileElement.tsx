@@ -6,16 +6,16 @@ const ElementContainer = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.05);
+	box-shadow: ${({ theme }) => theme.colors.boxShadow};
 `;
 
 const FileElementContainer = styled(ElementContainer)`
 	height: 40px;
 	width: 32px;
 	min-width: 32px;
-	border: 1px solid lightgray;
+	border: 1px solid ${({ theme }) => theme.colors.border};
 	border-radius: 10%;
-	background-color: white;
+	background-color: ${({ theme }) => theme.colors.backgroundSecondary};
 `;
 
 const FolderElementContainer = styled(ElementContainer)`
@@ -44,6 +44,7 @@ const ExtensionText = styled.div`
 	font-size: 11px;
 	max-width: 30px;
 	overflow-wrap: break-word;
+	color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 interface IProps {

@@ -1,4 +1,4 @@
-import { styled } from "styled-components";
+import { styled, useTheme } from "styled-components";
 import { DriveType } from "../Shared/types/types";
 import { SvgNames } from "../Shared/utils/svg-utils";
 import { Checkbox } from "./Checkbox";
@@ -7,10 +7,9 @@ import { IconButton } from "./IconButton";
 import { Loader } from "./Loader";
 
 const Container = styled.div`
-	background-color: #f0f0f0;
 	padding: 0% 1% 0% 1%;
 	width: 300px;
-	background-color: #f0f0f0;
+	background-color: ${({ theme }) => theme.colors.panel};
 	padding: 0% 1% 0% 1%;
 	width: 300px;
 	display: flex;
@@ -22,12 +21,12 @@ const Header = styled.div`
 	flex-direction: row;
 	justify-content: flex-start;
 	align-items: center;
-	border-bottom: 1px solid lightgray;
+	border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 const HeaderText = styled.div`
 	font-size: 20px;
-	color: gray;
+	color: ${({ theme }) => theme.colors.textPrimary};
 	cursor: pointer;
 	user-select: none;
 `;
@@ -55,6 +54,7 @@ interface IProps {
 }
 
 export const SideMenu = (props: IProps): JSX.Element => {
+	const theme = useTheme();
 	const drivesLoading = false;
 	const driveObjs = [1, 2, 3];
 	return (
@@ -75,7 +75,7 @@ export const SideMenu = (props: IProps): JSX.Element => {
 					size={20}
 					onClick={props.onCloseSideMenuClick}
 					style={{ marginLeft: "auto", marginRight: "5%" }}
-					color="gray"
+					color={theme?.colors.textPrimary}
 				/>
 			</Header>
 

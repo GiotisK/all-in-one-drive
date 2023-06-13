@@ -12,9 +12,8 @@ const BannerContainer = styled.div`
 	top: 0;
 	width: 100%;
 	height: 50px;
-	border-radius: 0 0 7px 7px;
-	background-color: #24a0ed;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+	background-color: ${({ theme }) => theme.colors.bluePrimary};
+	box-shadow: ${({ theme }) => theme.colors.boxShadow};
 `;
 
 const LogoMenuContainer = styled.div`

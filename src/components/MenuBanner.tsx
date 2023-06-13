@@ -6,7 +6,7 @@ const Container = styled.div`
 	display: flex;
 	flex: 1;
 	align-items: flex-end;
-	border-bottom: 0.5px solid #f0f0f0;
+	border-bottom: 0.5px solid ${({ theme }) => theme.colors.border};
 `;
 
 const BackButtonContainer = styled.div`
@@ -16,7 +16,7 @@ const BackButtonContainer = styled.div`
 
 const TabTitle = styled.p`
 	margin: 0;
-	color: gray;
+	color: ${({ theme }) => theme.colors.textPrimary};
 	font-size: 20px;
 	user-select: none;
 `;

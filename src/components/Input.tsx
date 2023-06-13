@@ -10,12 +10,14 @@ const InputFieldDiv = styled.div`
 `;
 
 const InputFieldContainer = styled.input`
-	border: 1px solid #ccc;
+	border: 1px solid ${({ theme }) => theme.colors.border};
 	padding-left: 2%;
 	height: 40px;
 	font-size: 15px;
 	border-radius: 8px;
 	outline: none;
+	background-color: ${({ theme }) => theme.colors.background};
+	color: ${({ theme }) => theme.colors.textPrimary};
 
 	&:focus {
 		outline: 1px solid ${({ theme }) => theme.colors.blueSecondary};

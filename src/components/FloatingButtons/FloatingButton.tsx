@@ -15,7 +15,7 @@ const Container = styled.div<{
 	height: 72px;
 	width: 72px;
 	border-radius: 50%;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.25);
+	box-shadow: ${({ theme }) => theme.boxShadow};
 	cursor: pointer;
 	user-select: none;
 	box-sizing: border-box;

@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import styled from "styled-components";
-import { useModalOutsideCloser } from "../hooks/useModalOutsideCloser";
+import { useOutsideClicker } from "../hooks/useOutsideClicker";
 
 const PopupMenuContainer = styled.div`
 	position: absolute;
@@ -19,11 +19,11 @@ const CircleButtonContainer = styled.div`
 	width: 60px;
 	border-radius: 35px;
 	margin-right: 10px;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.25);
-	background-color: #c9c9c9;
+	box-shadow: ${({ theme }) => theme.colors.boxShadow};
+	background-color: ${({ theme }) => theme.colors.backgroundSecondary};
 	cursor: pointer;
 	border-width: 1.5px;
-	border-color: #99c6f3;
+	border-color: ${({ theme }) => theme.colors.border};
 	transition: all 0.2s ease;
 
 	&:hover {
@@ -46,15 +46,15 @@ const PopupMenu = styled.div`
 	width: 250px;
 	margin-top: 4%;
 	margin-right: 5%;
-	border: solid 1px #f0f0f0;
+	border: solid 1px ${({ theme }) => theme.colors.border};
 	border-radius: 5px;
-	background-color: white;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25), 0 3px 6px rgba(0, 0, 0, 0.25);
+	background-color: ${({ theme }) => theme.colors.background};
+	box-shadow: ${({ theme }) => theme.colors.boxShadow};
 `;
 
 const UsernameContainer = styled.div`
 	flex: 1;
-	border-bottom: solid 1px #f0f0f0;
+	border-bottom: solid 1px ${({ theme }) => theme.colors.border};
 	word-wrap: break-word;
 	padding-right: 4px;
 `;
@@ -63,21 +63,21 @@ const SettingsContainer = styled.div`
 	flex: 1;
 	display: flex;
 	align-items: center;
-	border-bottom: solid 1px #f0f0f0;
+	border-bottom: solid 1px ${({ theme }) => theme.colors.border};
 	padding: 5px;
 `;
 
 const UserText = styled.p`
 	margin: 3% 0 0 3%;
-	color: black;
-	border-bottom: solid 1px #f0f0f0;
+	color: ${({ theme }) => theme.colors.textPrimary};
+	border-bottom: solid 1px ${({ theme }) => theme.colors.border};
 	font-size: 20px;
 `;
 
 const UsernameText = styled.p`
 	margin: 2% 0 0 6%;
 	font-size: 15px;
-	color: gray;
+	color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const SettingsText = styled.p`
@@ -85,12 +85,12 @@ const SettingsText = styled.p`
 	margin: 0 3% 0 3%;
 	padding: 1% 0% 1% 3%;
 	border-radius: 4px;
-	color: black;
+	color: ${({ theme }) => theme.colors.textPrimary};
 	font-size: 17px;
 	user-select: none;
 
 	&:hover {
-		background-color: #a8cef591;
+		background-color: ${({ theme }) => theme.colors.blueSecondary};
 		cursor: pointer;
 	}
 `;
@@ -100,7 +100,7 @@ export const UserMenu = (): JSX.Element => {
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
-	useModalOutsideCloser(menuRef, menuTriggerRef, () => setMenuVisible(false));
+	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuVisible(false));
 
 	const virtualDriveEnabled = true;
 	const email = "kostas@giotis.com";

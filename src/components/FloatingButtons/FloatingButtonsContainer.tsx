@@ -46,7 +46,7 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 			{menuOpen && (
 				<>
 					<FloatingButton
-						color="orange"
+						color={theme?.colors.orange ?? "orange"}
 						icon={SvgNames.AddFile}
 						onClick={openFilePicker}
 						animation={slideUp70pxAnimation}
@@ -60,7 +60,7 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 					</FloatingButton>
 					<FloatingButton
 						icon={SvgNames.AddFolder}
-						color="red"
+						color={theme?.colors.red ?? "red"}
 						animation={slideUp40pxAnimation}
 					/>
 				</>

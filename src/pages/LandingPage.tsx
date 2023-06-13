@@ -7,6 +7,8 @@ const LandingPageContainer = styled.div`
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
+	background-color: ${(props) => props.theme.colors.background};
+	height: 100%;
 `;
 
 const LandingPageTitle = styled.p`

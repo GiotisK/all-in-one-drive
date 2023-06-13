@@ -6,6 +6,7 @@ const Container = styled.div`
 	display: flex;
 	flex: 1;
 	flex-direction: column;
+	background-color: ${({ theme }) => theme.colors.background};
 `;
 
 const DropIndicator = styled.div`
@@ -23,17 +24,17 @@ const SvgContainer = styled.div`
 
 const TextContainer = styled.div`
 	margin-top: 2px;
-	background-color: white;
-	border: 1px solid rgb(230, 229, 229);
+	background-color: ${({ theme }) => theme.colors.background}};
+	border: 1px solid ${({ theme }) => theme.colors.border};
 	border-radius: 5px;
-	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.05), 0 3px 6px rgba(0, 0, 0, 0.05);
+	box-shadow: ${({ theme }) => theme.colors.boxShadow};
 `;
 
 const Text = styled.p`
 	margin: 0;
 	padding: 1px;
 	font-size: 20px;
-	color: rgb(102, 101, 101);
+	color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const DropZoneBackdrop = styled.div`
@@ -42,7 +43,7 @@ const DropZoneBackdrop = styled.div`
 	z-index: 1;
 	height: 100%;
 	width: 100%;
-	background-color: rgba(0, 0, 0, 0.1);
+	background-color: rgba(0, 0, 0, 0.1); //TODO: adapt to theme
 	pointer-events: none;
 `;
 

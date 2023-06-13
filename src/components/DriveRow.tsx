@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { useTheme } from "styled-components";
 import { SvgNames, createSvg } from "../Shared/utils/svg-utils";
 import { DriveType } from "../Shared/types/types";
 import { CreateDriveSvg } from "../Shared/utils/utils";
@@ -8,14 +8,15 @@ const DriveElementContainer = styled.div`
 	flex-direction: row;
 	align-items: center;
 	height: 73px;
-	background-color: white;
+	background-color: ${({ theme }) => theme.colors.background};
 	margin: 2% 0% 0% 0%;
-	border: solid 1px lightgray;
+	border: solid 1px ${({ theme }) => theme.colors.border};
 	border-radius: 5px;
 	width: 300px;
 	cursor: pointer;
 	user-select: none;
 	position: relative;
+	color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const DriveElementEmail = styled.div`
@@ -87,6 +88,8 @@ interface IProps {
 }
 
 export const DriveRow = (props: IProps): JSX.Element => {
+	const theme = useTheme();
+
 	return (
 		<DriveElementContainer
 			style={{ opacity: props.enabled ? 1 : 0.8 }}
@@ -106,8 +109,8 @@ export const DriveRow = (props: IProps): JSX.Element => {
 				<ActiveIndicator
 					style={{
 						backgroundColor: props.enabled
-							? "lightgreen"
-							: "lightgray",
+							? theme?.colors.green
+							: theme?.colors.border,
 					}}
 				/>
 			</TrashCanAndIndicatorContainer>
