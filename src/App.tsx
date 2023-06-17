@@ -1,4 +1,3 @@
-import './App.css';
 import { useState } from 'react';
 import { LandingPage } from './pages/LandingPage';
 import { Theme } from './providers/Theme';

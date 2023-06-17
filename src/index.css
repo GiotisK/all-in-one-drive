@@ -12,7 +12,7 @@ body {
 
 	color-scheme: light dark;
 	color: black;
-	background-color: white;
+	height: max-content;
 
 	font-synthesis: none;
 	text-rendering: optimizeLegibility;

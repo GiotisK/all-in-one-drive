@@ -6,7 +6,7 @@ import { ThemeToggle } from './Toggle/ThemeToggle';
 
 const BannerContainer = styled.div`
 	display: flex;
-	position: fixed;
+	position: sticky;
 	flex-direction: row;
 	align-items: center;
 	top: 0;

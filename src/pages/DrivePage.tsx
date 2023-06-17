@@ -14,6 +14,13 @@ import { MultimediaModal } from '../components/Modals/MultimediaModal';
 import { FloatingButtonsContainer } from '../components/FloatingButtons/FloatingButtonsContainer';
 import { Loader } from '../components/Loader';
 import { LoadingBar } from '../components/LoadingBar';
+import { styled } from 'styled-components';
+
+const RowsScrollview = styled.div`
+	flex: 1;
+	overflow: auto;
+	background-color: ${({ theme }) => theme.colors.background};
+`;
 
 export const DrivePage = (): JSX.Element => {
 	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -29,9 +36,13 @@ export const DrivePage = (): JSX.Element => {
 				display: 'flex',
 				flexDirection: 'column',
 				height: '100%',
-				marginTop: '50px',
 			}}
 		>
+			<TitleBanner
+				onBurgerMenuClick={() => {
+					setSideMenuVisible(prevVisible => !prevVisible);
+				}}
+			/>
 			<div
 				style={{
 					display: 'flex',
@@ -50,7 +61,7 @@ export const DrivePage = (): JSX.Element => {
 						}}
 					/>
 				)}
-				<div style={{ flex: 1, overflow: 'auto', marginBottom: '50px' }}>
+				<RowsScrollview>
 					<DropZone>
 						<MenuBanner
 							onBackButtonClick={() => {
@@ -84,18 +95,13 @@ export const DrivePage = (): JSX.Element => {
 						))}
 					</DropZone>
 					<FloatingButtonsContainer />
-				</div>
+				</RowsScrollview>
 			</div>
 			<RenameModal
 				closeModal={() => {
 					console.log('close modal');
 				}}
 				visible={false}
-			/>
-			<TitleBanner
-				onBurgerMenuClick={() => {
-					setSideMenuVisible(prevVisible => !prevVisible);
-				}}
 			/>
 		</div>
 	);

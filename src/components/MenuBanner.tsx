@@ -4,7 +4,6 @@ import { IconButton } from './IconButton';
 
 const Container = styled.div`
 	display: flex;
-	flex: 1;
 	align-items: flex-end;
 	border-bottom: 0.5px solid ${({ theme }) => theme.colors.border};
 `;
