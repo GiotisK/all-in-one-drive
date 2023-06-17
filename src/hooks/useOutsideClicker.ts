@@ -1,4 +1,4 @@
-import { useEffect, RefObject } from "react";
+import { useEffect, RefObject } from 'react';
 
 export const useOutsideClicker = <T extends HTMLElement>(
 	ref: RefObject<T>,
@@ -15,9 +15,9 @@ export const useOutsideClicker = <T extends HTMLElement>(
 				cb();
 			}
 		}
-		document.addEventListener("mousedown", handleClickOutside);
+		document.addEventListener('mousedown', handleClickOutside);
 		return () => {
-			document.removeEventListener("mousedown", handleClickOutside);
+			document.removeEventListener('mousedown', handleClickOutside);
 		};
 	}, [ref, cb, triggerRef]);
 };

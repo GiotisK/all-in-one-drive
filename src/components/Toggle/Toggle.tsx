@@ -1,6 +1,6 @@
-import { styled } from "styled-components";
-import { SvgNames, createSvg } from "../../shared/utils/svg-utils";
-import { PropsWithChildren } from "react";
+import { styled } from 'styled-components';
+import { SvgNames, createSvg } from '../../shared/utils/svg-utils';
+import { PropsWithChildren } from 'react';
 
 const Switch = styled.label`
 	position: relative;
@@ -21,7 +21,7 @@ const Slider = styled.span`
 
 	&:before {
 		position: absolute;
-		content: "";
+		content: '';
 		height: 16px;
 		width: 16px;
 		left: 3px;
@@ -67,14 +67,10 @@ interface IProps {
 	onChange: () => void;
 }
 
-export const Toggle = ({
-	checked,
-	onChange,
-	children,
-}: PropsWithChildren<IProps>): JSX.Element => {
+export const Toggle = ({ checked, onChange, children }: PropsWithChildren<IProps>): JSX.Element => {
 	return (
 		<Switch>
-			<Input type="checkbox" checked={checked} onChange={onChange} />
+			<Input type='checkbox' checked={checked} onChange={onChange} />
 			<Slider>{children}</Slider>
 		</Switch>
 	);

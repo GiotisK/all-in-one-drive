@@ -1,16 +1,16 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { SettingsState } from "../types";
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { SettingsState } from '../types';
 
 const initialState: SettingsState = {
-	themeMode: "light",
+	themeMode: 'light',
 };
 
 const settingsSlice = createSlice({
-	name: "settings",
+	name: 'settings',
 	initialState,
 	reducers: {
 		toggleTheme: (state: SettingsState) => {
-			state.themeMode = state.themeMode === "light" ? "dark" : "light";
+			state.themeMode = state.themeMode === 'light' ? 'dark' : 'light';
 		},
 	},
 });

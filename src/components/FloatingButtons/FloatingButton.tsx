@@ -1,7 +1,7 @@
-import { PropsWithChildren } from "react";
-import { SvgNames, createSvg } from "../../shared/utils/svg-utils";
-import { styled, css } from "styled-components";
-import { Keyframes } from "styled-components/dist/types";
+import { PropsWithChildren } from 'react';
+import { SvgNames, createSvg } from '../../shared/utils/svg-utils';
+import { styled, css } from 'styled-components';
+import { Keyframes } from 'styled-components/dist/types';
 
 const Container = styled.div<{
 	$backgroundColor: string;
@@ -44,13 +44,9 @@ const FloatingAddButton = ({
 	children,
 }: PropsWithChildren<IProps>): JSX.Element => {
 	return (
-		<Container
-			$backgroundColor={color}
-			$animation={animation}
-			onClick={onClick}
-		>
+		<Container $backgroundColor={color} $animation={animation} onClick={onClick}>
 			{children}
-			{createSvg(icon, 35, "white")}
+			{createSvg(icon, 35, 'white')}
 		</Container>
 	);
 };

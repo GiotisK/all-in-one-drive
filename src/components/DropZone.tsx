@@ -1,6 +1,6 @@
-import { PropsWithChildren } from "react";
-import { styled } from "styled-components";
-import { SvgNames, createSvg } from "../shared/utils/svg-utils";
+import { PropsWithChildren } from 'react';
+import { styled } from 'styled-components';
+import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 
 const Container = styled.div`
 	display: flex;
@@ -74,9 +74,7 @@ export const DropZone = ({
 				<>
 					<DropZoneBackdrop />
 					<DropIndicator>
-						<SvgContainer>
-							{createSvg(SvgNames.HandDown, 50)}
-						</SvgContainer>
+						<SvgContainer>{createSvg(SvgNames.HandDown, 50)}</SvgContainer>
 						<TextContainer>
 							<Text>Drop file(s)</Text>
 						</TextContainer>

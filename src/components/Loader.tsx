@@ -1,4 +1,4 @@
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes } from 'styled-components';
 
 const spinAnimation = keyframes`
   0% { transform: rotate(0deg); }
@@ -13,11 +13,11 @@ const LoaderContainer = styled.div<LoaderContainerProps>`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	margin-top: ${(props) => (props.$showLoadingText ? "15px" : "0px")};
+	margin-top: ${props => (props.$showLoadingText ? '15px' : '0px')};
 `;
 
 interface LoaderElementProps {
-	size: string;
+	size: number;
 }
 const LoaderElement = styled.div<LoaderElementProps>`
 	border: 5px solid ${({ theme }) => theme.colors.border};
@@ -39,10 +39,7 @@ interface LoaderProps {
 	showLoadingText?: boolean;
 }
 
-export const Loader = ({
-	showLoadingText = false,
-	size,
-}: LoaderProps): JSX.Element => {
+export const Loader = ({ showLoadingText = false, size }: LoaderProps): JSX.Element => {
 	return (
 		<LoaderContainer $showLoadingText={showLoadingText}>
 			<LoaderElement size={size} />

@@ -1,5 +1,5 @@
-import { BaseModal, BaseModalProps } from "./BaseModal";
-import { styled } from "styled-components";
+import { BaseModal, BaseModalProps } from './BaseModal';
+import { styled } from 'styled-components';
 
 const SoundContent = styled.div`
 	display: flex;
@@ -24,21 +24,17 @@ const Image = styled.img`
 	max-height: 800px;
 `;
 
-type MultimediaType = "audio" | "video" | "image";
+type MultimediaType = 'audio' | 'video' | 'image';
 
 interface IProps extends BaseModalProps {
 	multimediaType: MultimediaType;
 }
 
-export const MultimediaModal = ({
-	multimediaType,
-	visible,
-	closeModal,
-}: IProps): JSX.Element => {
+export const MultimediaModal = ({ multimediaType, visible, closeModal }: IProps): JSX.Element => {
 	return (
 		<BaseModal closeModal={closeModal} visible={visible} showHeader={false}>
 			<>
-				{multimediaType === "audio" && (
+				{multimediaType === 'audio' && (
 					<SoundContent>
 						<audio
 							controls={true}
@@ -47,14 +43,14 @@ export const MultimediaModal = ({
 						/>
 					</SoundContent>
 				)}
-				{multimediaType === "video" && (
+				{multimediaType === 'video' && (
 					<Video
 						controls={true}
 						/* 	src={props.openFileLink.src}
 						type={mimeTypes[props.openFileLink.extension]} */
 					/>
 				)}
-				{multimediaType === "image" && (
+				{multimediaType === 'image' && (
 					<Image
 					/* src={props.openFileLink.src} */
 					/>

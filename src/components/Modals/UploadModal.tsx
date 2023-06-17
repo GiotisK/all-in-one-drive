@@ -1,7 +1,7 @@
-import { styled } from "styled-components";
-import { DriveEntity, DriveType, FileType } from "../../shared/types/types";
-import { CreateDriveSvg } from "../../shared/utils/utils";
-import { BaseModal, BaseModalProps } from "./BaseModal";
+import { styled } from 'styled-components';
+import { DriveEntity, DriveType, FileType } from '../../shared/types/types';
+import { CreateDriveSvg } from '../../shared/utils/utils';
+import { BaseModal, BaseModalProps } from './BaseModal';
 
 const Content = styled.div`
 	display: flex;
@@ -62,37 +62,28 @@ interface IProps extends BaseModalProps {
 	fileType: FileType;
 }
 
-export const UploadModal = ({
-	fileType,
-	visible,
-	closeModal,
-}: IProps): JSX.Element => {
+export const UploadModal = ({ fileType, visible, closeModal }: IProps): JSX.Element => {
 	const drives: DriveEntity[] = [
-		{ email: "malaris@polaris.kek", type: DriveType.GoogleDrive },
-		{ email: "malaris@polaris.kek", type: DriveType.GoogleDrive },
-		{ email: "malaris@polaris.kek", type: DriveType.GoogleDrive },
-		{ email: "malaris@polaris.kek", type: DriveType.GoogleDrive },
-		{ email: "malaris@polaris.kek", type: DriveType.GoogleDrive },
+		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
+		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
+		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
+		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
+		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
 	];
 
 	const getTitle = (): string => {
 		switch (fileType) {
 			case FileType.File:
-				return "Selected a drive to upload the file";
+				return 'Selected a drive to upload the file';
 			case FileType.Folder:
-				return "Selected a drive to create the folder";
+				return 'Selected a drive to create the folder';
 			default:
-				return "Upload format is not correct";
+				return 'Upload format is not correct';
 		}
 	};
 
 	return (
-		<BaseModal
-			title={getTitle()}
-			visible={visible}
-			closeModal={closeModal}
-			showFooter={false}
-		>
+		<BaseModal title={getTitle()} visible={visible} closeModal={closeModal} showFooter={false}>
 			<Content>
 				{drives.length === 0 ? (
 					<NoDrivesText style={{}}>No drives found...</NoDrivesText>
@@ -102,14 +93,14 @@ export const UploadModal = ({
 							return (
 								<DriveRow
 									key={index}
-									className="drive-row"
+									className='drive-row'
 									onClick={() => {
-										console.log("drivw row clicked");
+										console.log('drivw row clicked');
 										/* props.onSpecificRowClick(drive); */
 									}}
 								>
 									{CreateDriveSvg(drive.type, 25)}
-									<DriveRowText className="drive-row-email-text">
+									<DriveRowText className='drive-row-email-text'>
 										{drive.email}
 									</DriveRowText>
 								</DriveRow>

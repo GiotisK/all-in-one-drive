@@ -1,7 +1,7 @@
-import styled, { useTheme } from "styled-components";
-import { SvgNames, createSvg } from "../shared/utils/svg-utils";
-import { DriveType } from "../shared/types/types";
-import { CreateDriveSvg } from "../shared/utils/utils";
+import styled, { useTheme } from 'styled-components';
+import { SvgNames, createSvg } from '../shared/utils/svg-utils';
+import { DriveType } from '../shared/types/types';
+import { CreateDriveSvg } from '../shared/utils/utils';
 
 const DriveElementContainer = styled.div`
 	display: flex;
@@ -91,10 +91,7 @@ export const DriveRow = (props: IProps): JSX.Element => {
 	const theme = useTheme();
 
 	return (
-		<DriveElementContainer
-			style={{ opacity: props.enabled ? 1 : 0.8 }}
-			onClick={props.onClick}
-		>
+		<DriveElementContainer style={{ opacity: props.enabled ? 1 : 0.8 }} onClick={props.onClick}>
 			<DriveSvgContainer>{CreateDriveSvg(props.drive)}</DriveSvgContainer>
 
 			<EmailQuotaContainer>
@@ -104,13 +101,11 @@ export const DriveRow = (props: IProps): JSX.Element => {
 
 			<TrashCanAndIndicatorContainer>
 				<TrashcanDiv onClick={props.onDeleteDriveClick}>
-					{createSvg(SvgNames.Trashcan, 25, "gray")}
+					{createSvg(SvgNames.Trashcan, 25, 'gray')}
 				</TrashcanDiv>
 				<ActiveIndicator
 					style={{
-						backgroundColor: props.enabled
-							? theme?.colors.green
-							: theme?.colors.border,
+						backgroundColor: props.enabled ? theme?.colors.green : theme?.colors.border,
 					}}
 				/>
 			</TrashCanAndIndicatorContainer>

@@ -1,9 +1,8 @@
-import styled from "styled-components";
-import { Loader } from "./Loader";
-import { UserMenu } from "./UserMenu";
-import { SvgNames, createSvg } from "../shared/utils/svg-utils";
-import { Toggle } from "./Toggle/Toggle";
-import { ThemeToggle } from "./Toggle/ThemeToggle";
+import styled from 'styled-components';
+import { Loader } from './Loader';
+import { UserMenu } from './UserMenu';
+import { SvgNames, createSvg } from '../shared/utils/svg-utils';
+import { ThemeToggle } from './Toggle/ThemeToggle';
 
 const BannerContainer = styled.div`
 	display: flex;
@@ -25,7 +24,7 @@ const LogoMenuContainer = styled.div`
 `;
 
 const LogoTitle = styled.p`
-	font-family: "Arciform";
+	font-family: 'Arciform';
 	font-size: 50px;
 	color: white;
 	padding-left: 10px;
@@ -94,7 +93,7 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 
 	const isLoggedIn = true;
 	const virtualQuotaLoading = false;
-	const virtualQuotaStr = "5 / 5 GB";
+	const virtualQuotaStr = '5 / 5 GB';
 	const virtualDriveEnabled = true;
 
 	return (
@@ -102,7 +101,7 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 			<LogoMenuContainer>
 				{virtualDriveEnabled && (
 					<BurgerMenuButton onClick={props.onBurgerMenuClick}>
-						{createSvg(SvgNames.Burger, 30, "white")}
+						{createSvg(SvgNames.Burger, 30, 'white')}
 					</BurgerMenuButton>
 				)}
 
@@ -119,7 +118,7 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 					)}
 				</QuotaLoaderContainer>
 			)}
-			<div style={{ marginRight: "2%" }}>
+			<div style={{ marginRight: '2%' }}>
 				<ThemeToggle />
 			</div>
 			{isLoggedIn && <UserMenu />}

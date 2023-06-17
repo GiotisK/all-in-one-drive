@@ -1,5 +1,5 @@
-import { InputHTMLAttributes } from "react";
-import styled from "styled-components";
+import { InputHTMLAttributes } from 'react';
+import styled from 'styled-components';
 
 const InputFieldDiv = styled.div`
 	display: flex;

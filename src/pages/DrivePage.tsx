@@ -1,93 +1,84 @@
-import { useState } from "react";
-import { AddDriveModal } from "../components/Modals/AddDriveModal";
-import { DeleteModal } from "../components/Modals/DeleteModal";
-import { DriveType, FileType } from "../shared/types/types";
-import { RenameModal } from "../components/Modals/RenameModal";
-import { ExportFormatModal } from "../components/Modals/ExportFormatModal";
-import { MenuBanner } from "../components/MenuBanner";
-import { DropZone } from "../components/DropZone";
-import { FileRow } from "../components/FileRow";
-import { SideMenu } from "../components/SideMenu";
-import { TitleBanner } from "../components/TitleBanner";
-import { UploadModal } from "../components/Modals/UploadModal";
-import { MultimediaModal } from "../components/Modals/MultimediaModal";
-import { FloatingButtonsContainer } from "../components/FloatingButtons/FloatingButtonsContainer";
-import { Loader } from "../components/Loader";
-import { LoadingBar } from "../components/LoadingBar";
+import { useState } from 'react';
+import { AddDriveModal } from '../components/Modals/AddDriveModal';
+import { DeleteModal } from '../components/Modals/DeleteModal';
+import { DriveType, FileType } from '../shared/types/types';
+import { RenameModal } from '../components/Modals/RenameModal';
+import { ExportFormatModal } from '../components/Modals/ExportFormatModal';
+import { MenuBanner } from '../components/MenuBanner';
+import { DropZone } from '../components/DropZone';
+import { FileRow } from '../components/FileRow';
+import { SideMenu } from '../components/SideMenu';
+import { TitleBanner } from '../components/TitleBanner';
+import { UploadModal } from '../components/Modals/UploadModal';
+import { MultimediaModal } from '../components/Modals/MultimediaModal';
+import { FloatingButtonsContainer } from '../components/FloatingButtons/FloatingButtonsContainer';
+import { Loader } from '../components/Loader';
+import { LoadingBar } from '../components/LoadingBar';
 
 export const DrivePage = (): JSX.Element => {
 	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
 	const [addDriveModalVisible, setAddDriveModalVisible] = useState(false);
 	const [renameModalVisible, setRenameModalVisible] = useState(false);
-	const [exportFormatModalVisible, setExportFormatModalVisible] =
-		useState(false);
+	const [exportFormatModalVisible, setExportFormatModalVisible] = useState(false);
 
 	const [uploadModalVisible, setUploadModalVisible] = useState(false);
 	const [sideMenuVisible, setSideMenuVisible] = useState(false);
 	return (
 		<div
 			style={{
-				display: "flex",
-				flexDirection: "column",
-				height: "100%",
-				marginTop: "50px",
+				display: 'flex',
+				flexDirection: 'column',
+				height: '100%',
+				marginTop: '50px',
 			}}
 		>
 			<div
 				style={{
-					display: "flex",
-					flexDirection: "row",
-					height: "100%",
+					display: 'flex',
+					flexDirection: 'row',
+					height: '100%',
 				}}
 			>
 				{sideMenuVisible && (
 					<SideMenu
 						checkboxChecked={true}
 						onCheckboxClick={() => {
-							console.log("checkbox clicked");
+							console.log('checkbox clicked');
 						}}
 						onCloseSideMenuClick={() => {
 							setSideMenuVisible(false);
 						}}
 					/>
 				)}
-				<div
-					style={{ flex: 1, overflow: "auto", marginBottom: "50px" }}
-				>
+				<div style={{ flex: 1, overflow: 'auto', marginBottom: '50px' }}>
 					<DropZone>
 						<MenuBanner
 							onBackButtonClick={() => {
-								console.log("back pressed");
+								console.log('back pressed');
 							}}
 						/>
 						<LoadingBar />
-						{[
-							1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16,
-						].map((i) => (
+						{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16].map(i => (
 							<FileRow
 								key={i}
 								file={{
-									id: "1",
-									date: "212312",
+									id: '1',
+									date: '212312',
 									drive: DriveType.Dropbox,
-									extension: ".jsx",
-									fileEmail: "palaris@moris.com",
+									extension: '.jsx',
+									fileEmail: 'palaris@moris.com',
 									isShared: false,
-									name: "palaris",
-									ownerEmail: "moloris@molia.com",
-									permissions: "",
+									name: 'palaris',
+									ownerEmail: 'moloris@molia.com',
+									permissions: '',
 									size: 123,
 									type: FileType.File,
 								}}
 								onFileClick={function (): void {
-									throw new Error(
-										"Function not implemented."
-									);
+									throw new Error('Function not implemented.');
 								}}
 								onCopyShareLinkClick={function (): void {
-									throw new Error(
-										"Function not implemented."
-									);
+									throw new Error('Function not implemented.');
 								}}
 							/>
 						))}
@@ -97,13 +88,13 @@ export const DrivePage = (): JSX.Element => {
 			</div>
 			<RenameModal
 				closeModal={() => {
-					console.log("close modal");
+					console.log('close modal');
 				}}
 				visible={false}
 			/>
 			<TitleBanner
 				onBurgerMenuClick={() => {
-					setSideMenuVisible((prevVisible) => !prevVisible);
+					setSideMenuVisible(prevVisible => !prevVisible);
 				}}
 			/>
 		</div>

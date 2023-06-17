@@ -1,5 +1,5 @@
-import { CSSProperties } from "react";
-import styled from "styled-components";
+import { CSSProperties } from 'react';
+import styled from 'styled-components';
 
 interface ButtonWrapperProps {
 	$type: ButtonType;
@@ -9,19 +9,16 @@ const ButtonWrapper = styled.button<ButtonWrapperProps>`
 	width: 80px;
 	height: 50px;
 	background-color: ${({ $type, theme }) =>
-		$type === "primary" ? theme.colors.bluePrimary : "white"};
+		$type === 'primary' ? theme.colors.bluePrimary : 'white'};
 	border-style: solid;
 	border-width: 1px;
 	border-radius: 5px;
 	border-color: ${({ $type, theme }) =>
-		$type === "primary"
-			? theme.colors.bluePrimary
-			: theme.colors.textSecondary};
+		$type === 'primary' ? theme.colors.bluePrimary : theme.colors.textSecondary};
 	cursor: pointer;
 	transform: rotate(0deg);
 	transition: transform 0.15s linear;
-	color: ${({ $type, theme }) =>
-		$type === "primary" ? "white" : theme.colors.textPrimary};
+	color: ${({ $type, theme }) => ($type === 'primary' ? 'white' : theme.colors.textPrimary)};
 
 	&:hover {
 		opacity: 95%;
@@ -51,14 +48,9 @@ interface IProps {
 	style?: CSSProperties;
 }
 
-type ButtonType = "primary" | "secondary";
+type ButtonType = 'primary' | 'secondary';
 
-export const Button = ({
-	text,
-	style = {},
-	type = "primary",
-	onClick,
-}: IProps): JSX.Element => {
+export const Button = ({ text, style = {}, type = 'primary', onClick }: IProps): JSX.Element => {
 	return (
 		<ButtonWrapper onClick={onClick} style={style} $type={type}>
 			<ButtonText>{text}</ButtonText>

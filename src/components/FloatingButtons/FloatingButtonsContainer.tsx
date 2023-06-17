@@ -1,14 +1,14 @@
-import { useState, useRef } from "react";
-import styled, { useTheme } from "styled-components";
-import FloatingButton from "./FloatingButton";
-import { SvgNames } from "../../shared/utils/svg-utils";
-import { Keyframes } from "styled-components/dist/types";
+import { useState, useRef } from 'react';
+import styled, { useTheme } from 'styled-components';
+import FloatingButton from './FloatingButton';
+import { SvgNames } from '../../shared/utils/svg-utils';
+import { Keyframes } from 'styled-components/dist/types';
 import {
 	rotate45deg,
 	rotate45degBackwards,
 	slideUp40pxAnimation,
 	slideUp70pxAnimation,
-} from "./animation-keyframes";
+} from './animation-keyframes';
 
 const Container = styled.div`
 	position: absolute;
@@ -29,7 +29,7 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 
 	const openFloatingMenu = (): void => {
 		setPlusButtonAnimation(menuOpen ? rotate45degBackwards : rotate45deg);
-		setMenuOpen((prevMenuOpen) => !prevMenuOpen);
+		setMenuOpen(prevMenuOpen => !prevMenuOpen);
 	};
 
 	const openFilePicker = (): void => {
@@ -38,7 +38,7 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 
 	const uploadFile = (): void => {
 		//TODO: upload file here
-		console.log("upload file");
+		console.log('upload file');
 	};
 
 	return (
@@ -46,21 +46,21 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 			{menuOpen && (
 				<>
 					<FloatingButton
-						color={theme?.colors.orange ?? "orange"}
+						color={theme?.colors.orange ?? 'orange'}
 						icon={SvgNames.AddFile}
 						onClick={openFilePicker}
 						animation={slideUp70pxAnimation}
 					>
 						<FileOpenerInput
-							type="file"
-							id="file"
+							type='file'
+							id='file'
 							ref={uploaderRef}
 							onChange={uploadFile}
 						/>
 					</FloatingButton>
 					<FloatingButton
 						icon={SvgNames.AddFolder}
-						color={theme?.colors.red ?? "red"}
+						color={theme?.colors.red ?? 'red'}
 						animation={slideUp40pxAnimation}
 					/>
 				</>

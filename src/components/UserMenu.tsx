@@ -1,6 +1,6 @@
-import { useRef, useState } from "react";
-import styled from "styled-components";
-import { useOutsideClicker } from "../hooks/useOutsideClicker";
+import { useRef, useState } from 'react';
+import styled from 'styled-components';
+import { useOutsideClicker } from '../hooks/useOutsideClicker';
 
 const PopupMenuContainer = styled.div`
 	display: flex;
@@ -102,7 +102,7 @@ export const UserMenu = (): JSX.Element => {
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuVisible(false));
 
 	const virtualDriveEnabled = true;
-	const email = "kostas@giotis.com";
+	const email = 'kostas@giotis.com';
 
 	const getCapitalLetterFromUsername = () => {
 		return email.charAt(0).toUpperCase();
@@ -111,25 +111,25 @@ export const UserMenu = (): JSX.Element => {
 	const renderMenuOptions = () => {
 		const optionsMap = [
 			{
-				title: "Add a drive",
+				title: 'Add a drive',
 				onClick: () => {
 					return;
 				},
 			},
 			{
-				title: "Switch to all-in-one drive",
+				title: 'Switch to all-in-one drive',
 				onClick: () => {
 					return;
 				},
 			},
 			{
-				title: "Switch to virtual drive",
+				title: 'Switch to virtual drive',
 				onClick: () => {
 					return;
 				},
 			},
 			{
-				title: "Signout",
+				title: 'Signout',
 				onClick: () => {
 					return;
 				},
@@ -154,9 +154,7 @@ export const UserMenu = (): JSX.Element => {
 					setMenuVisible(!menuVisible);
 				}}
 			>
-				<CircleButtonLetter>
-					{getCapitalLetterFromUsername()}
-				</CircleButtonLetter>
+				<CircleButtonLetter>{getCapitalLetterFromUsername()}</CircleButtonLetter>
 			</CircleButtonContainer>
 			{menuVisible && (
 				<PopupMenu ref={menuRef}>

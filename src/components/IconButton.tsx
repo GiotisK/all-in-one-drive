@@ -1,6 +1,6 @@
-import { styled } from "styled-components";
-import { SvgNames, createSvg } from "../shared/utils/svg-utils";
-import { CSSProperties, PropsWithChildren, RefObject } from "react";
+import { styled } from 'styled-components';
+import { SvgNames, createSvg } from '../shared/utils/svg-utils';
+import { CSSProperties, PropsWithChildren, RefObject } from 'react';
 
 const Container = styled.div`
 	display: flex;

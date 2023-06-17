@@ -1,8 +1,8 @@
-import { PropsWithChildren } from "react";
-import { IconButton } from "../IconButton";
-import { SvgNames } from "../../shared/utils/svg-utils";
-import { styled, useTheme } from "styled-components";
-import { Button } from "../Button";
+import { PropsWithChildren } from 'react';
+import { IconButton } from '../IconButton';
+import { SvgNames } from '../../shared/utils/svg-utils';
+import { styled, useTheme } from 'styled-components';
+import { Button } from '../Button';
 
 const Container = styled.div`
 	position: fixed;
@@ -33,7 +33,7 @@ const ModalContainer = styled.div`
 	justify-content: flex-start;
 	align-items: center;
 	border-radius: 5px;
-	background-color: ${(props) => props.theme.colors.background};
+	background-color: ${props => props.theme.colors.background};
 	box-shadow: ${({ theme }) => theme.colors.boxShadow};
 `;
 
@@ -45,21 +45,21 @@ const Header = styled.div`
 	align-items: baseline;
 	width: 90%;
 	margin: 3% 0% 1% 5%;
-	border-bottom: 1px solid ${(props) => props.theme.colors.border};
+	border-bottom: 1px solid ${props => props.theme.colors.border};
 `;
 
 const HeaderText = styled.p`
 	margin: 0;
 	margin-bottom: 3px;
 	font-size: 25px;
-	color: ${(props) => props.theme.colors.textPrimary};
+	color: ${props => props.theme.colors.textPrimary};
 `;
 
 const Footer = styled.div`
 	display: flex;
 	width: 90%;
 	justify-content: flex-end;
-	border-top: 1px solid ${(props) => props.theme.colors.border};
+	border-top: 1px solid ${props => props.theme.colors.border};
 `;
 
 export interface BaseModalProps {
@@ -77,11 +77,11 @@ interface IProps extends BaseModalProps {
 
 export const BaseModal = ({
 	visible,
-	title = "",
+	title = '',
 	showHeader = true,
 	showFooter = false,
-	leftButtonText = "",
-	rightButtonText = "",
+	leftButtonText = '',
+	rightButtonText = '',
 	closeModal,
 	children,
 }: PropsWithChildren<IProps>): JSX.Element => {
@@ -96,7 +96,7 @@ export const BaseModal = ({
 							<Header>
 								<HeaderText>{title}</HeaderText>
 								<IconButton
-									style={{ marginLeft: "auto" }}
+									style={{ marginLeft: 'auto' }}
 									icon={SvgNames.Close}
 									onClick={closeModal}
 									color={theme?.colors.textPrimary}
@@ -108,14 +108,11 @@ export const BaseModal = ({
 							<Footer>
 								<Button
 									text={leftButtonText}
-									style={{ margin: "3%" }}
+									style={{ margin: '3%' }}
 									onClick={closeModal}
-									type="secondary"
+									type='secondary'
 								/>
-								<Button
-									text={rightButtonText}
-									style={{ marginTop: "3%" }}
-								/>
+								<Button text={rightButtonText} style={{ marginTop: '3%' }} />
 							</Footer>
 						)}
 					</ModalContainer>

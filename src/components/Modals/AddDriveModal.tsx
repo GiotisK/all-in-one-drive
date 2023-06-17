@@ -1,7 +1,7 @@
-import { BaseModal, BaseModalProps } from "./BaseModal";
-import { AddDriveButton } from "../AddDriveButton";
-import { DriveType } from "../../shared/types/types";
-import { styled } from "styled-components";
+import { BaseModal, BaseModalProps } from './BaseModal';
+import { AddDriveButton } from '../AddDriveButton';
+import { DriveType } from '../../shared/types/types';
+import { styled } from 'styled-components';
 
 const ButtonsContainer = styled.div`
 	display: flex;
@@ -15,7 +15,7 @@ const ButtonsContainer = styled.div`
 export const AddDriveModal = (props: BaseModalProps): JSX.Element => {
 	return (
 		<BaseModal
-			title="Add a drive"
+			title='Add a drive'
 			visible={props.visible}
 			closeModal={props.closeModal}
 			showFooter={false}

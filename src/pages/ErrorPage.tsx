@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { TitleBanner } from "../components/TitleBanner";
+import styled from 'styled-components';
+import { TitleBanner } from '../components/TitleBanner';
 
 const ErrorPageBody = styled.div`
 	display: flex;
@@ -42,25 +42,25 @@ interface ErrorPageProps {
 
 export const ErrorPage = (props: ErrorPageProps): JSX.Element => {
 	let errorObj: ErrorObject = {
-		greet: "",
-		errorCode: "",
-		msg: "",
-		buttonType: "",
+		greet: '',
+		errorCode: '',
+		msg: '',
+		buttonType: '',
 	};
 
-	if (props.errorType === "notFound") {
+	if (props.errorType === 'notFound') {
 		errorObj = {
-			greet: "Ooops!",
-			errorCode: "404",
+			greet: 'Ooops!',
+			errorCode: '404',
 			msg: "Seems that this page doesn't exist...",
-			buttonType: "back",
+			buttonType: 'back',
 		};
 	} else {
 		errorObj = {
-			greet: "Sorry!",
-			errorCode: "401",
-			msg: "You are not authorized to view this page.",
-			buttonType: "to login",
+			greet: 'Sorry!',
+			errorCode: '401',
+			msg: 'You are not authorized to view this page.',
+			buttonType: 'to login',
 		};
 	}
 
@@ -71,10 +71,8 @@ export const ErrorPage = (props: ErrorPageProps): JSX.Element => {
 			<ErrorElementsContainer>
 				<OopsText>{errorObj.greet}</OopsText>
 				<InfoText>{errorObj.msg}</InfoText>
-				<ErrorCodeText>
-					(Error Code: {errorObj.errorCode})
-				</ErrorCodeText>
-				<a href="http://localhost:3000">Go {errorObj.buttonType}</a>
+				<ErrorCodeText>(Error Code: {errorObj.errorCode})</ErrorCodeText>
+				<a href='http://localhost:3000'>Go {errorObj.buttonType}</a>
 				{/**TODO: refactor href to correct */}
 			</ErrorElementsContainer>
 		</ErrorPageBody>

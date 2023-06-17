@@ -1,5 +1,5 @@
-import { useState } from "react";
-import styled, { keyframes } from "styled-components";
+import { useState } from 'react';
+import styled, { keyframes } from 'styled-components';
 
 const slideInFromBottom = keyframes`
   0% {
@@ -68,18 +68,13 @@ export const LoadingBar = (): JSX.Element => {
 		currentFileNumBeingUploaded: 3,
 	};
 
-	const {
-		percentage,
-		loaded,
-		total,
-		totalFilesBeingUploaded,
-		currentFileNumBeingUploaded,
-	} = uploadState;
+	const { percentage, loaded, total, totalFilesBeingUploaded, currentFileNumBeingUploaded } =
+		uploadState;
 
 	const [isUploading, setIsUploading] = useState(true);
 
 	return (
-		<LoadingBarContainer className={isUploading ? "" : "slide-out"}>
+		<LoadingBarContainer className={isUploading ? '' : 'slide-out'}>
 			<RelativeContainer>
 				<ProgressBar style={{ width: (400 * percentage) / 100 }}>
 					<ProgressText>

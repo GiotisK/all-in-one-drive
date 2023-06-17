@@ -1,10 +1,10 @@
-import { styled, useTheme } from "styled-components";
-import { DriveType } from "../shared/types/types";
-import { SvgNames } from "../shared/utils/svg-utils";
-import { Checkbox } from "./Checkbox";
-import { DriveRow } from "./DriveRow";
-import { IconButton } from "./IconButton";
-import { Loader } from "./Loader";
+import { styled, useTheme } from 'styled-components';
+import { DriveType } from '../shared/types/types';
+import { SvgNames } from '../shared/utils/svg-utils';
+import { Checkbox } from './Checkbox';
+import { DriveRow } from './DriveRow';
+import { IconButton } from './IconButton';
+import { Loader } from './Loader';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
@@ -60,35 +60,31 @@ export const SideMenu = (props: IProps): JSX.Element => {
 	return (
 		<Container style={{}}>
 			<Header>
-				<HeaderText onClick={props.onDivClick}>
-					Connected Drives
-				</HeaderText>
+				<HeaderText onClick={props.onDivClick}>Connected Drives</HeaderText>
 
 				<Checkbox
 					onChange={props.onCheckboxClick}
 					checked={props.checkboxChecked}
-					style={{ marginLeft: "5%" }}
+					style={{ marginLeft: '5%' }}
 				/>
 
 				<IconButton
 					icon={SvgNames.Close}
 					size={20}
 					onClick={props.onCloseSideMenuClick}
-					style={{ marginLeft: "auto", marginRight: "5%" }}
+					style={{ marginLeft: 'auto', marginRight: '5%' }}
 					color={theme?.colors.textPrimary}
 				/>
 			</Header>
 
 			{drivesLoading ? (
-				<Loader size={"25px"} />
+				<Loader size={25} />
 			) : driveObjs.length === 0 ? (
 				<>
-					<NoDrivesText>
-						There are no connected drives...
-					</NoDrivesText>
+					<NoDrivesText>There are no connected drives...</NoDrivesText>
 					<NoDrivesTextClickable
 						onClick={() => {
-							console.log("add drive clicked");
+							console.log('add drive clicked');
 						}}
 					>
 						Add a drive
@@ -99,15 +95,15 @@ export const SideMenu = (props: IProps): JSX.Element => {
 					return (
 						<DriveRow
 							drive={DriveType.Dropbox}
-							email="palaris@molirs"
+							email='palaris@molirs'
 							enabled
 							onClick={() => {
-								console.log("cliked");
+								console.log('cliked');
 							}}
 							onDeleteDriveClick={() => {
-								console.log("delete clicked");
+								console.log('delete clicked');
 							}}
-							quota="2gb/5gb"
+							quota='2gb/5gb'
 							key={index}
 						/>
 					);

@@ -1,42 +1,38 @@
-import { ReactComponent as AddFile } from "../../assets/svgs/add-file.svg";
-import { ReactComponent as AddFolder } from "../../assets/svgs/add-folder.svg";
-import { ReactComponent as Burger } from "../../assets/svgs/burger.svg";
-import { ReactComponent as Close } from "../../assets/svgs/close.svg";
-import { ReactComponent as Plus } from "../../assets/svgs/plus.svg";
-import { ReactComponent as Trashcan } from "../../assets/svgs/trashcan.svg";
-import { ReactComponent as OneDrive } from "../../assets/svgs/onedrive.svg";
-import { ReactComponent as GoogleDrive } from "../../assets/svgs/googledrive.svg";
-import { ReactComponent as Dropbox } from "../../assets/svgs/dropbox.svg";
-import { ReactComponent as Link } from "../../assets/svgs/link.svg";
-import { ReactComponent as Dots } from "../../assets/svgs/dots.svg";
-import { ReactComponent as HandDown } from "../../assets/svgs/hand-down.svg";
-import { ReactComponent as Back } from "../../assets/svgs/back.svg";
-import { ReactComponent as Sun } from "../../assets/svgs/sun.svg";
-import { ReactComponent as Moon } from "../../assets/svgs/moon.svg";
+import { ReactComponent as AddFile } from '../../assets/svgs/add-file.svg';
+import { ReactComponent as AddFolder } from '../../assets/svgs/add-folder.svg';
+import { ReactComponent as Burger } from '../../assets/svgs/burger.svg';
+import { ReactComponent as Close } from '../../assets/svgs/close.svg';
+import { ReactComponent as Plus } from '../../assets/svgs/plus.svg';
+import { ReactComponent as Trashcan } from '../../assets/svgs/trashcan.svg';
+import { ReactComponent as OneDrive } from '../../assets/svgs/onedrive.svg';
+import { ReactComponent as GoogleDrive } from '../../assets/svgs/googledrive.svg';
+import { ReactComponent as Dropbox } from '../../assets/svgs/dropbox.svg';
+import { ReactComponent as Link } from '../../assets/svgs/link.svg';
+import { ReactComponent as Dots } from '../../assets/svgs/dots.svg';
+import { ReactComponent as HandDown } from '../../assets/svgs/hand-down.svg';
+import { ReactComponent as Back } from '../../assets/svgs/back.svg';
+import { ReactComponent as Sun } from '../../assets/svgs/sun.svg';
+import { ReactComponent as Moon } from '../../assets/svgs/moon.svg';
 
 export enum SvgNames {
-	AddFile = "add-file",
-	AddFolder = "add-folder",
-	Burger = "burger",
-	Close = "close",
-	Plus = "plus",
-	Trashcan = "trashcan",
-	OneDrive = "onedrive",
-	GoogleDrive = "googledrive",
-	Dropbox = "dropbox",
-	Link = "link",
-	Dots = "dots",
-	HandDown = "hand-down",
-	Back = "back",
-	Sun = "sun",
-	Moon = "moon",
+	AddFile = 'add-file',
+	AddFolder = 'add-folder',
+	Burger = 'burger',
+	Close = 'close',
+	Plus = 'plus',
+	Trashcan = 'trashcan',
+	OneDrive = 'onedrive',
+	GoogleDrive = 'googledrive',
+	Dropbox = 'dropbox',
+	Link = 'link',
+	Dots = 'dots',
+	HandDown = 'hand-down',
+	Back = 'back',
+	Sun = 'sun',
+	Moon = 'moon',
 }
 
-export const createSvg = (
-	name: SvgNames,
-	size = 24,
-	color = "black"
-): JSX.Element | null => {
+export const createSvg = (name: SvgNames, size = 24, color = 'black'): JSX.Element | null => {
 	switch (name) {
 		case SvgNames.AddFile:
 			return <AddFile color={color} width={size} height={size} />;

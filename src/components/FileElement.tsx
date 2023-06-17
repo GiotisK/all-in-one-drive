@@ -1,5 +1,5 @@
-import { styled } from "styled-components";
-import { FileType } from "../shared/types/types";
+import { styled } from 'styled-components';
+import { FileType } from '../shared/types/types';
 
 const ElementContainer = styled.div`
 	display: flex;
@@ -29,7 +29,7 @@ const FolderElementContainer = styled(ElementContainer)`
 
 	&:before {
 		position: absolute;
-		content: "";
+		content: '';
 		width: 20px;
 		min-width: 20px;
 		height: 5px;
@@ -52,14 +52,12 @@ interface IProps {
 	type: FileType;
 }
 
-export const FileElement = ({ extension = "", type }: IProps): JSX.Element => {
+export const FileElement = ({ extension = '', type }: IProps): JSX.Element => {
 	return type === FileType.Folder ? (
 		<FolderElementContainer />
 	) : (
 		<FileElementContainer>
-			<ExtensionText className="extension-text">
-				{extension}
-			</ExtensionText>
+			<ExtensionText className='extension-text'>{extension}</ExtensionText>
 		</FileElementContainer>
 	);
 };

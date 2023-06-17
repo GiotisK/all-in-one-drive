@@ -1,5 +1,5 @@
-import { keyframes } from "styled-components";
-import { Keyframes } from "styled-components/dist/types";
+import { keyframes } from 'styled-components';
+import { Keyframes } from 'styled-components/dist/types';
 
 export const slideUp40pxAnimation: Keyframes = keyframes`
 	from {

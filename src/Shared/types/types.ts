@@ -1,12 +1,12 @@
-export type ThemeMode = "light" | "dark";
+export type ThemeMode = 'light' | 'dark';
 export enum DriveType {
-	GoogleDrive = "googledrive",
-	Dropbox = "dropbox",
-	OneDrive = "onedrive",
+	GoogleDrive = 'googledrive',
+	Dropbox = 'dropbox',
+	OneDrive = 'onedrive',
 }
 export enum FileType {
-	Folder = "folder",
-	File = "file",
+	Folder = 'folder',
+	File = 'file',
 }
 
 export interface FileEntity {

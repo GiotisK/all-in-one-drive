@@ -1,6 +1,6 @@
-import { useTheme } from "styled-components";
-import { DriveType } from "../types/types";
-import { SvgNames, createSvg } from "./svg-utils";
+import { useTheme } from 'styled-components';
+import { DriveType } from '../types/types';
+import { SvgNames, createSvg } from './svg-utils';
 
 export const CreateDriveSvg = (drive: DriveType): JSX.Element | null => {
 	const theme = useTheme();

@@ -1,6 +1,6 @@
-import { styled } from "styled-components";
-import { DriveType } from "../Shared/types/types";
-import { CreateDriveSvg } from "../Shared/utils/utils";
+import { styled } from 'styled-components';
+import { DriveType } from '../shared/types/types';
+import { CreateDriveSvg } from '../shared/utils/utils';
 
 interface IProps {
 	type: DriveType;
@@ -12,13 +12,13 @@ const Container = styled.div`
 	flex-direction: column;
 	justify-content: center;
 	align-items: center;
-	border: 1px solid ${(props) => props.theme.colors.border};
+	border: 1px solid ${props => props.theme.colors.border};
 	border-radius: 8px;
 	box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
 	cursor: pointer;
 	user-select: none;
 	transition: all 0.2s ease;
-	background-color: ${(props) => props.theme.colors.background};
+	background-color: ${props => props.theme.colors.background};
 	width: 130px;
 	height: 130px;
 
@@ -37,21 +37,21 @@ const Container = styled.div`
 
 const Text = styled.p`
 	font-weight: 600;
-	color: ${(props) => props.theme.colors.textPrimary};
-	fontsize: "17px";
+	color: ${props => props.theme.colors.textPrimary};
+	fontsize: '17px';
 `;
 
 export const AddDriveButton = (props: IProps): JSX.Element => {
 	const getDriveName = (): string => {
 		switch (props.type) {
 			case DriveType.GoogleDrive:
-				return "Google Drive";
+				return 'Google Drive';
 			case DriveType.Dropbox:
-				return "Dropbox";
+				return 'Dropbox';
 			case DriveType.OneDrive:
-				return "OneDrive";
+				return 'OneDrive';
 			default:
-				return "Unknown Drive";
+				return 'Unknown Drive';
 		}
 	};
 	return (

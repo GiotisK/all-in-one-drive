@@ -1,5 +1,5 @@
-import { styled } from "styled-components";
-import { BaseModal, BaseModalProps } from "./BaseModal";
+import { styled } from 'styled-components';
+import { BaseModal, BaseModalProps } from './BaseModal';
 
 interface IProps extends BaseModalProps {
 	exportFormats: string[];
@@ -34,18 +34,9 @@ const FormatButton = styled.button`
 	}
 `;
 
-export const ExportFormatModal = ({
-	visible,
-	closeModal,
-	exportFormats,
-}: IProps) => {
+export const ExportFormatModal = ({ visible, closeModal, exportFormats }: IProps) => {
 	return (
-		<BaseModal
-			visible={visible}
-			showFooter={false}
-			title="Export as:"
-			closeModal={closeModal}
-		>
+		<BaseModal visible={visible} showFooter={false} title='Export as:' closeModal={closeModal}>
 			<FormatButtonsContainer>
 				{exportFormats.map((format, index) => {
 					return <FormatButton key={index}> {format} </FormatButton>;

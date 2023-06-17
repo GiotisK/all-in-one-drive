@@ -1,6 +1,6 @@
-import { styled } from "styled-components";
-import { SvgNames } from "../shared/utils/svg-utils";
-import { IconButton } from "./IconButton";
+import { styled } from 'styled-components';
+import { SvgNames } from '../shared/utils/svg-utils';
+import { IconButton } from './IconButton';
 
 const Container = styled.div`
 	display: flex;
@@ -21,7 +21,7 @@ const TabTitle = styled.p`
 	user-select: none;
 `;
 
-const tabs = ["Name", "Drive", "Size", "Date"];
+const tabs = ['Name', 'Drive', 'Size', 'Date'];
 
 interface IProps {
 	onBackButtonClick: () => void;
@@ -32,14 +32,14 @@ export const MenuBanner = (props: IProps) => {
 
 	const getTabWidth = (tab: string) => {
 		switch (tab) {
-			case "Name":
-				return "40%";
-			case "Size":
-				return "10%";
-			case "Drive":
-				return "20%";
-			case "Date":
-				return "20%";
+			case 'Name':
+				return '40%';
+			case 'Size':
+				return '10%';
+			case 'Drive':
+				return '20%';
+			case 'Date':
+				return '20%';
 		}
 	};
 
@@ -49,15 +49,11 @@ export const MenuBanner = (props: IProps) => {
 				<BackButtonContainer
 					onClick={props.onBackButtonClick}
 					style={{
-						pointerEvents: isUploading ? "none" : "all",
-						cursor: isUploading ? "default" : "pointer",
+						pointerEvents: isUploading ? 'none' : 'all',
+						cursor: isUploading ? 'default' : 'pointer',
 					}}
 				>
-					<IconButton
-						icon={SvgNames.Back}
-						size={23}
-						onClick={props.onBackButtonClick}
-					/>
+					<IconButton icon={SvgNames.Back} size={23} onClick={props.onBackButtonClick} />
 				</BackButtonContainer>
 			)}
 			{tabs.map((tab, index) => {

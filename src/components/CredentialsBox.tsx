@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Input } from "./Input";
-import { ResponseText } from "./ResponseText";
-import { Button } from "./Button";
-import { styled } from "styled-components";
+import React, { useState } from 'react';
+import { Input } from './Input';
+import { ResponseText } from './ResponseText';
+import { Button } from './Button';
+import { styled } from 'styled-components';
 
 const centerAbsoluteDivInPage = `
 	position: absolute;
@@ -98,15 +98,15 @@ export const CredentialsBox = (): JSX.Element => {
 	const [mode, setMode] = useState<Mode>(Mode.Login);
 
 	const [responseText, setResponseText] = useState<ResponseText>({
-		type: "",
-		text: "",
-		color: "",
+		type: '',
+		text: '',
+		color: '',
 	});
 
 	const [inputValues, setInputValues] = useState({
-		email: "",
-		password: "",
-		confirmPassword: "",
+		email: '',
+		password: '',
+		confirmPassword: '',
 	});
 
 	function onInputChange(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -188,23 +188,20 @@ export const CredentialsBox = (): JSX.Element => {
 				registerUser(inputValues);
 			} else {
 				setResponseText({
-					type: "password",
-					text: "Passwords must be the same",
-					color: "red",
+					type: 'password',
+					text: 'Passwords must be the same',
+					color: 'red',
 				});
 			}
 		}
 	};
 
 	const confirmPassword = (): boolean => {
-		return (
-			inputValues.password === inputValues.confirmPassword &&
-			inputValues.password !== ""
-		);
+		return inputValues.password === inputValues.confirmPassword && inputValues.password !== '';
 	};
 
 	const renderErrorMessage = (): JSX.Element | null => {
-		return responseText.type !== "" ? (
+		return responseText.type !== '' ? (
 			<ResponseText text={responseText.text} color={responseText.color} />
 		) : null;
 	};
@@ -212,37 +209,31 @@ export const CredentialsBox = (): JSX.Element => {
 	const renderTabs = (): JSX.Element[] => {
 		const tabMap = [
 			{
-				text: "Login",
+				text: 'Login',
 				onClick: () => {
 					setMode(Mode.Login);
 				},
-				class: mode === Mode.Login ? "tab-active" : "tab-inactive",
+				class: mode === Mode.Login ? 'tab-active' : 'tab-inactive',
 			},
 			{
-				text: "Register",
+				text: 'Register',
 				onClick: () => {
 					setMode(Mode.Register);
 				},
-				class: mode === Mode.Register ? "tab-active" : "tab-inactive",
+				class: mode === Mode.Register ? 'tab-active' : 'tab-inactive',
 			},
 		];
 
 		return tabMap.map((tab, index) => {
 			const TabContainerComponent =
-				tab.class === "tab-active" ? ActiveTabContainer : TabContainer;
+				tab.class === 'tab-active' ? ActiveTabContainer : TabContainer;
 			const TabUnderlineComponent =
-				tab.class === "tab-active"
-					? ActiveTabUnderline
-					: InactiveTabUnderline;
+				tab.class === 'tab-active' ? ActiveTabUnderline : InactiveTabUnderline;
 
 			return (
-				<TabContainerComponent
-					key={index}
-					className={tab.class}
-					onClick={tab.onClick}
-				>
+				<TabContainerComponent key={index} className={tab.class} onClick={tab.onClick}>
 					<TabText>{tab.text}</TabText>
-					<TabUnderlineComponent className="login-line" />
+					<TabUnderlineComponent className='login-line' />
 				</TabContainerComponent>
 			);
 		});
@@ -251,25 +242,25 @@ export const CredentialsBox = (): JSX.Element => {
 	const renderInputs = (): JSX.Element => {
 		const inputsMap = [
 			{
-				title: "Email",
-				type: "email",
+				title: 'Email',
+				type: 'email',
 				value: inputValues.email,
-				name: "email",
+				name: 'email',
 			},
 			{
-				title: "Password",
-				type: "password",
+				title: 'Password',
+				type: 'password',
 				value: inputValues.password,
-				name: "password",
+				name: 'password',
 			},
 		];
 
 		if (mode === Mode.Register) {
 			inputsMap.push({
-				title: "Confirm Password",
-				type: "password",
+				title: 'Confirm Password',
+				type: 'password',
 				value: inputValues.confirmPassword,
-				name: "confirmPassword",
+				name: 'confirmPassword',
 			});
 		}
 
@@ -289,7 +280,7 @@ export const CredentialsBox = (): JSX.Element => {
 		);
 	};
 
-	const buttontext = mode === Mode.Login ? "Login" : "Register";
+	const buttontext = mode === Mode.Login ? 'Login' : 'Register';
 
 	return (
 		<FormContainer onSubmit={onFormSubmitClick}>
@@ -297,7 +288,7 @@ export const CredentialsBox = (): JSX.Element => {
 			{renderInputs()}
 			<ButtonContainer>
 				{renderErrorMessage()}
-				<Button style={{ margin: "3% 10% 4% 0" }} text={buttontext} />
+				<Button style={{ margin: '3% 10% 4% 0' }} text={buttontext} />
 			</ButtonContainer>
 		</FormContainer>
 	);

@@ -1,5 +1,5 @@
-import { CSSProperties } from "react";
-import styled from "styled-components";
+import { CSSProperties } from 'react';
+import styled from 'styled-components';
 
 const CheckboxContainer = styled.p`
 	position: relative;
@@ -21,7 +21,7 @@ const CheckboxInput = styled.input`
 
 	/* the box element */
 	&:not(:checked) + ${Label}:before, &:checked + ${Label}:before {
-		content: "";
+		content: '';
 		position: relative;
 		display: block;
 		width: 1em;
@@ -34,7 +34,7 @@ const CheckboxInput = styled.input`
 
 	/* the tick element */
 	&:not(:checked) + ${Label}:after, &:checked + ${Label}:after {
-		content: "\\2713\\0020";
+		content: '\\2713\\0020';
 		top: 0.3em;
 		left: 0.2em;
 		position: absolute;
@@ -42,7 +42,7 @@ const CheckboxInput = styled.input`
 		line-height: 0.8;
 		color: #09ad7e;
 		transition: all 0.2s;
-		font-family: "Lucida Sans Unicode", "Arial Unicode MS", Arial;
+		font-family: 'Lucida Sans Unicode', 'Arial Unicode MS', Arial;
 	}
 
 	/* the tick element not-checked */
@@ -64,20 +64,16 @@ interface IProps {
 	onChange: () => void;
 }
 
-export const Checkbox = ({
-	checked,
-	style = {},
-	onChange,
-}: IProps): JSX.Element => {
+export const Checkbox = ({ checked, style = {}, onChange }: IProps): JSX.Element => {
 	return (
 		<CheckboxContainer style={style}>
 			<CheckboxInput
-				type="checkbox"
-				id="checkbox-input"
+				type='checkbox'
+				id='checkbox-input'
 				checked={checked}
 				onChange={onChange}
 			/>
-			<Label htmlFor="checkbox-input" />
+			<Label htmlFor='checkbox-input' />
 		</CheckboxContainer>
 	);
 };

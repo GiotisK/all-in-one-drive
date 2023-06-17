@@ -1,11 +1,11 @@
-import { useRef, useState } from "react";
-import { FileElement } from "./FileElement";
-import { SvgNames } from "../shared/utils/svg-utils";
-import { CreateDriveSvg, formatBytes } from "../shared/utils/utils";
-import { IconButton } from "./IconButton";
-import { styled, useTheme } from "styled-components";
-import { FileEntity } from "../shared/types/types";
-import { useOutsideClicker } from "../hooks/useOutsideClicker";
+import { useRef, useState } from 'react';
+import { FileElement } from './FileElement';
+import { SvgNames } from '../shared/utils/svg-utils';
+import { CreateDriveSvg, formatBytes } from '../shared/utils/utils';
+import { IconButton } from './IconButton';
+import { styled, useTheme } from 'styled-components';
+import { FileEntity } from '../shared/types/types';
+import { useOutsideClicker } from '../hooks/useOutsideClicker';
 
 const Container = styled.div`
 	display: flex;
@@ -95,11 +95,7 @@ type FileMenuRow = {
 	onClick: () => void;
 };
 
-export const FileRow = ({
-	file,
-	onFileClick,
-	onCopyShareLinkClick,
-}: IProps): JSX.Element => {
+export const FileRow = ({ file, onFileClick, onCopyShareLinkClick }: IProps): JSX.Element => {
 	const theme = useTheme();
 	const [menuToggle, setMenuToggle] = useState(false);
 	const menuRef = useRef(null);
@@ -109,27 +105,27 @@ export const FileRow = ({
 
 	const fileMenuRows: FileMenuRow[] = [
 		{
-			text: "Download",
+			text: 'Download',
 			onClick: () => {
-				console.log("download");
+				console.log('download');
 			},
 		},
 		{
-			text: "Rename",
+			text: 'Rename',
 			onClick: () => {
-				console.log("rename");
+				console.log('rename');
 			},
 		},
 		{
-			...(file.isShared ? { text: "Unshare" } : { text: "Share" }),
+			...(file.isShared ? { text: 'Unshare' } : { text: 'Share' }),
 			onClick: () => {
-				console.log("share");
+				console.log('share');
 			},
 		},
 		{
-			text: "Delete",
+			text: 'Delete',
 			onClick: () => {
-				console.log("delete");
+				console.log('delete');
 			},
 		},
 	];
@@ -140,7 +136,7 @@ export const FileRow = ({
 			icon={SvgNames.Dots}
 			size={22}
 			color={theme?.colors.textSecondary}
-			style={{ position: "relative" }}
+			style={{ position: 'relative' }}
 			onClick={() => {
 				setMenuToggle(!menuToggle);
 			}}
@@ -180,7 +176,7 @@ export const FileRow = ({
 						color={theme?.colors.green}
 						size={20}
 						onClick={() => {
-							console.log("share");
+							console.log('share');
 						}}
 					/>
 				)}

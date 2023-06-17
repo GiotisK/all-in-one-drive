@@ -1,13 +1,8 @@
-import { BaseModal, BaseModalProps } from "./BaseModal";
-import {
-	DriveEntity,
-	Entity,
-	FileEntity,
-	FileType,
-} from "../../shared/types/types";
-import { CreateDriveSvg } from "../../shared/utils/utils";
-import { DriveType } from "../../shared/types/types";
-import { styled } from "styled-components";
+import { BaseModal, BaseModalProps } from './BaseModal';
+import { DriveEntity, Entity, FileEntity, FileType } from '../../shared/types/types';
+import { CreateDriveSvg } from '../../shared/utils/utils';
+import { DriveType } from '../../shared/types/types';
+import { styled } from 'styled-components';
 
 interface DeleteFileProps {
 	file: FileEntity;
@@ -59,30 +54,22 @@ interface IProps extends BaseModalProps {
 	entity: Entity;
 }
 
-export const DeleteModal = ({
-	entity,
-	visible,
-	closeModal,
-}: IProps): JSX.Element => {
+export const DeleteModal = ({ entity, visible, closeModal }: IProps): JSX.Element => {
 	return (
 		<BaseModal
 			showFooter={true}
-			title="Delete"
+			title='Delete'
 			visible={visible}
 			closeModal={closeModal}
-			leftButtonText="Cancel"
-			rightButtonText="Delete"
+			leftButtonText='Cancel'
+			rightButtonText='Delete'
 		>
 			<Content>
 				<ConfirmationText>
 					<span>
 						<span>Are you sure you want to delete the </span>
-						{isFileEntity(entity) && (
-							<DeleteFileText file={entity} />
-						)}
-						{isDriveEntity(entity) && (
-							<DeleteDriveText drive={entity} />
-						)}
+						{isFileEntity(entity) && <DeleteFileText file={entity} />}
+						{isDriveEntity(entity) && <DeleteDriveText drive={entity} />}
 					</span>
 				</ConfirmationText>
 			</Content>
