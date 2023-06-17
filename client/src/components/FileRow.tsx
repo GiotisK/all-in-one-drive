@@ -13,7 +13,6 @@ const Container = styled.div`
 	margin-left: 10px;
 	padding: 10px 0 10px 10px;
 	border-bottom: solid 0.5px ${({ theme }) => theme.colors.border};
-	border-radius: 4px;
 `;
 
 const ColumnBase = styled.div`
