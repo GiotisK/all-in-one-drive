@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import { styled } from "styled-components";
-import { SvgNames, createSvg } from "../Shared/utils/svg-utils";
+import { SvgNames, createSvg } from "../shared/utils/svg-utils";
 
 const Container = styled.div`
 	display: flex;

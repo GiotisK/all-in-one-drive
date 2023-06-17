@@ -1,10 +1,10 @@
 import { useRef, useState } from "react";
 import { FileElement } from "./FileElement";
-import { SvgNames } from "../Shared/utils/svg-utils";
-import { CreateDriveSvg, formatBytes } from "../Shared/utils/utils";
+import { SvgNames } from "../shared/utils/svg-utils";
+import { CreateDriveSvg, formatBytes } from "../shared/utils/utils";
 import { IconButton } from "./IconButton";
 import { styled, useTheme } from "styled-components";
-import { FileEntity } from "../Shared/types/types";
+import { FileEntity } from "../shared/types/types";
 import { useOutsideClicker } from "../hooks/useOutsideClicker";
 
 const Container = styled.div`

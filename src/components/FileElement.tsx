@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { FileType } from "../Shared/types/types";
+import { FileType } from "../shared/types/types";
 
 const ElementContainer = styled.div`
 	display: flex;

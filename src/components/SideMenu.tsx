@@ -1,6 +1,6 @@
 import { styled, useTheme } from "styled-components";
-import { DriveType } from "../Shared/types/types";
-import { SvgNames } from "../Shared/utils/svg-utils";
+import { DriveType } from "../shared/types/types";
+import { SvgNames } from "../shared/utils/svg-utils";
 import { Checkbox } from "./Checkbox";
 import { DriveRow } from "./DriveRow";
 import { IconButton } from "./IconButton";

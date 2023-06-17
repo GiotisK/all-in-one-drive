@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AddDriveModal } from "../components/Modals/AddDriveModal";
 import { DeleteModal } from "../components/Modals/DeleteModal";
-import { DriveType, FileType } from "../Shared/types/types";
+import { DriveType, FileType } from "../shared/types/types";
 import { RenameModal } from "../components/Modals/RenameModal";
 import { ExportFormatModal } from "../components/Modals/ExportFormatModal";
 import { MenuBanner } from "../components/MenuBanner";

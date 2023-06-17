@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { SvgNames, createSvg } from "../../Shared/utils/svg-utils";
+import { SvgNames, createSvg } from "../../shared/utils/svg-utils";
 import { PropsWithChildren } from "react";
 
 const Switch = styled.label`

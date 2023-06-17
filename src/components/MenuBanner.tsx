@@ -1,5 +1,5 @@
 import { styled } from "styled-components";
-import { SvgNames } from "../Shared/utils/svg-utils";
+import { SvgNames } from "../shared/utils/svg-utils";
 import { IconButton } from "./IconButton";
 
 const Container = styled.div`

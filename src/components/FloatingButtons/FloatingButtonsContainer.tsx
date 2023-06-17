@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import styled, { useTheme } from "styled-components";
 import FloatingButton from "./FloatingButton";
-import { SvgNames } from "../../Shared/utils/svg-utils";
+import { SvgNames } from "../../shared/utils/svg-utils";
 import { Keyframes } from "styled-components/dist/types";
 import {
 	rotate45deg,

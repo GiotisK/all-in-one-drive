@@ -1,6 +1,6 @@
 import { styled } from "styled-components";
-import { DriveEntity, DriveType, FileType } from "../../Shared/types/types";
-import { CreateDriveSvg } from "../../Shared/utils/utils";
+import { DriveEntity, DriveType, FileType } from "../../shared/types/types";
+import { CreateDriveSvg } from "../../shared/utils/utils";
 import { BaseModal, BaseModalProps } from "./BaseModal";
 
 const Content = styled.div`

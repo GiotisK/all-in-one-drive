@@ -1,6 +1,6 @@
 import { BaseModal, BaseModalProps } from "./BaseModal";
 import { AddDriveButton } from "../AddDriveButton";
-import { DriveType } from "../../Shared/types/types";
+import { DriveType } from "../../shared/types/types";
 import { styled } from "styled-components";
 
 const ButtonsContainer = styled.div`

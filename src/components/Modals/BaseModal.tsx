@@ -1,6 +1,6 @@
 import { PropsWithChildren } from "react";
 import { IconButton } from "../IconButton";
-import { SvgNames } from "../../Shared/utils/svg-utils";
+import { SvgNames } from "../../shared/utils/svg-utils";
 import { styled, useTheme } from "styled-components";
 import { Button } from "../Button";
 

@@ -1,5 +1,5 @@
 import { PropsWithChildren } from "react";
-import { SvgNames, createSvg } from "../../Shared/utils/svg-utils";
+import { SvgNames, createSvg } from "../../shared/utils/svg-utils";
 import { styled, css } from "styled-components";
 import { Keyframes } from "styled-components/dist/types";
 

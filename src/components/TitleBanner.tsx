@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Loader } from "./Loader";
 import { UserMenu } from "./UserMenu";
-import { SvgNames, createSvg } from "../Shared/utils/svg-utils";
+import { SvgNames, createSvg } from "../shared/utils/svg-utils";
 import { Toggle } from "./Toggle/Toggle";
 import { ThemeToggle } from "./Toggle/ThemeToggle";
 
