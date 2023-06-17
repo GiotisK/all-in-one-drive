@@ -11,6 +11,8 @@ import { ReactComponent as Link } from "../../assets/svgs/link.svg";
 import { ReactComponent as Dots } from "../../assets/svgs/dots.svg";
 import { ReactComponent as HandDown } from "../../assets/svgs/hand-down.svg";
 import { ReactComponent as Back } from "../../assets/svgs/back.svg";
+import { ReactComponent as Sun } from "../../assets/svgs/sun.svg";
+import { ReactComponent as Moon } from "../../assets/svgs/moon.svg";
 
 export enum SvgNames {
 	AddFile = "add-file",
@@ -26,6 +28,8 @@ export enum SvgNames {
 	Dots = "dots",
 	HandDown = "hand-down",
 	Back = "back",
+	Sun = "sun",
+	Moon = "moon",
 }
 
 export const createSvg = (
@@ -60,6 +64,10 @@ export const createSvg = (
 			return <HandDown color={color} width={size} height={size} />;
 		case SvgNames.Back:
 			return <Back color={color} width={size} height={size} />;
+		case SvgNames.Sun:
+			return <Sun color={color} width={size} height={size} />;
+		case SvgNames.Moon:
+			return <Moon color={color} width={size} height={size} />;
 		default:
 			return null;
 	}

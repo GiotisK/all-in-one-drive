@@ -6,14 +6,16 @@ import { ThemeMode } from "./Shared/types/types";
 import { ErrorPage } from "./pages/ErrorPage";
 import { TitleBanner } from "./components/TitleBanner";
 import { DrivePage } from "./pages/DrivePage";
+import { Provider } from "react-redux";
+import store from "./Redux/store/store";
 
 function App() {
-	const [themeMode] = useState<ThemeMode>("light"); //TODO: this should be move in redux store (?)
-
 	return (
-		<Theme mode={themeMode}>
-			<DrivePage />
-		</Theme>
+		<Provider store={store}>
+			<Theme>
+				<DrivePage />
+			</Theme>
+		</Provider>
 	);
 }
 

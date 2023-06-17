@@ -99,7 +99,7 @@ export const DrivePage = (): JSX.Element => {
 				closeModal={() => {
 					console.log("close modal");
 				}}
-				visible={true}
+				visible={false}
 			/>
 			<TitleBanner
 				onBurgerMenuClick={() => {

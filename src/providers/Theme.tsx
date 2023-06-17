@@ -1,10 +1,7 @@
 import { PropsWithChildren } from "react";
 import { DefaultTheme, ThemeProvider } from "styled-components";
-import { ThemeMode } from "../Shared/types/types";
-
-interface ThemeProps {
-	mode: ThemeMode;
-}
+import { useSelector } from "react-redux";
+import { RootState } from "../Redux/types";
 
 const lightTheme: DefaultTheme = {
 	colors: {
@@ -41,11 +38,11 @@ const darkTheme: DefaultTheme = {
 	},
 };
 
-export const Theme = ({
-	children,
-	mode,
-}: PropsWithChildren<ThemeProps>): JSX.Element => {
-	const theme = mode === "light" ? lightTheme : darkTheme;
+export const Theme = ({ children }: PropsWithChildren): JSX.Element => {
+	const themeMode = useSelector(
+		(state: RootState) => state.settings.themeMode
+	);
+	const theme = themeMode === "light" ? lightTheme : darkTheme;
 
 	return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 };

@@ -3,7 +3,6 @@ import styled from "styled-components";
 import { useOutsideClicker } from "../hooks/useOutsideClicker";
 
 const PopupMenuContainer = styled.div`
-	position: absolute;
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
@@ -20,7 +19,7 @@ const CircleButtonContainer = styled.div`
 	border-radius: 35px;
 	margin-right: 10px;
 	box-shadow: ${({ theme }) => theme.colors.boxShadow};
-	background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+	background-color: lightgray;
 	cursor: pointer;
 	border-width: 1.5px;
 	border-color: ${({ theme }) => theme.colors.border};

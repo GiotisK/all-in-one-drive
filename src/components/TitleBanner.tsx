@@ -2,13 +2,14 @@ import styled from "styled-components";
 import { Loader } from "./Loader";
 import { UserMenu } from "./UserMenu";
 import { SvgNames, createSvg } from "../Shared/utils/svg-utils";
+import { Toggle } from "./Toggle/Toggle";
+import { ThemeToggle } from "./Toggle/ThemeToggle";
 
 const BannerContainer = styled.div`
 	display: flex;
 	position: fixed;
 	flex-direction: row;
-	justify-content: space-between;
-	align-items: baseline;
+	align-items: center;
 	top: 0;
 	width: 100%;
 	height: 50px;
@@ -47,6 +48,7 @@ const BurgerMenuButton = styled.div`
 `;
 
 const QuotaLoaderContainer = styled.div`
+	margin-left: auto;
 	margin-right: 150px;
 	display: flex;
 	flex-direction: row;
@@ -111,13 +113,15 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 				<QuotaLoaderContainer>
 					<QuotaStringLoader>Virtual Quota:</QuotaStringLoader>
 					{virtualQuotaLoading ? (
-						<Loader size={"10px"} />
+						<Loader size={10} />
 					) : (
 						<QuotaGigabytes>{virtualQuotaStr}</QuotaGigabytes>
 					)}
 				</QuotaLoaderContainer>
 			)}
-
+			<div style={{ marginRight: "2%" }}>
+				<ThemeToggle />
+			</div>
 			{isLoggedIn && <UserMenu />}
 		</BannerContainer>
 	);
