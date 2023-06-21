@@ -1,7 +1,11 @@
 import axios from 'axios';
 
+const MIN_PASSWORD_LENGTH = 8;
+
+type Status = 'success' | 'error';
+
 export type FormResponse = {
-	status: string;
+	status: Status;
 	message: string;
 };
 
@@ -10,8 +14,9 @@ export const registerUser = async (
 	password: string,
 	confirmedPassword: string
 ): Promise<FormResponse> => {
-	if (validateRegistrationValues(email, password, confirmedPassword).status === 'error') {
-		return validateRegistrationValues(email, password, confirmedPassword);
+	const formResponse = validateRegistrationValues(email, password, confirmedPassword);
+	if (formResponse.status === 'error') {
+		return formResponse;
 	} else {
 		//do api call.....
 		return { status: 'success', message: 'Success!!!' };
@@ -23,7 +28,7 @@ export const loginUser = async (email: string, password: string): Promise<FormRe
 	return { status: 'success', message: 'Success!!!' };
 };
 
-export const validateRegistrationValues = (
+const validateRegistrationValues = (
 	email: string,
 	password: string,
 	confirmedPassword: string
@@ -32,7 +37,7 @@ export const validateRegistrationValues = (
 		return { status: 'error', message: 'Please enter a valid email address' };
 	}
 
-	if (!checkPasswordLength(password)) {
+	if (!isAcceptablePasswordLength(password)) {
 		return { status: 'error', message: 'Password must be at least 8 characters' };
 	}
 
@@ -48,10 +53,10 @@ const isEmailFormat = (email: string) => {
 	return re.test(email);
 };
 
-const checkPasswordLength = (password: string) => {
-	return password.length >= 8;
+const isAcceptablePasswordLength = (password: string) => {
+	return password.length >= MIN_PASSWORD_LENGTH;
 };
 
 const confirmPassword = (password: string, confirmedPassword: string) => {
-	return password == confirmedPassword;
+	return password === confirmedPassword;
 };
