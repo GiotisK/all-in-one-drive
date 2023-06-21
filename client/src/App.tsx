@@ -12,7 +12,7 @@ function App() {
 	return (
 		<Provider store={store}>
 			<Theme>
-				<DrivePage />
+				<LandingPage />
 			</Theme>
 		</Provider>
 	);

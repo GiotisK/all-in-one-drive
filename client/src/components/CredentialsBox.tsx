@@ -3,6 +3,7 @@ import { Input } from './Input';
 import { ResponseText } from './ResponseText';
 import { Button } from './Button';
 import { styled } from 'styled-components';
+import { FormResponse, loginUser, registerUser } from '../services/user.service';
 
 const centerAbsoluteDivInPage = `
 	position: absolute;
@@ -88,25 +89,15 @@ enum Mode {
 	Register,
 }
 
-type ResponseText = {
-	type: string; //TODO: be more specific
-	text: string;
-	color: string;
-};
-
 export const CredentialsBox = (): JSX.Element => {
 	const [mode, setMode] = useState<Mode>(Mode.Login);
 
-	const [responseText, setResponseText] = useState<ResponseText>({
-		type: '',
-		text: '',
-		color: '',
-	});
+	const [formResponse, setFormResponse] = useState<FormResponse | null>(null);
 
 	const [inputValues, setInputValues] = useState({
 		email: '',
 		password: '',
-		confirmPassword: '',
+		confirmedPassword: '',
 	});
 
 	function onInputChange(event: React.ChangeEvent<HTMLInputElement>): void {
@@ -118,92 +109,28 @@ export const CredentialsBox = (): JSX.Element => {
 		});
 	}
 
-	const registerUser = async (userData: any): Promise<void> => {
-		/* const body = JSON.stringify(userData);
-		const res = await myFetch("register", "POST", body).catch((err) => {
-			console.log(err);
-		});
-		handleResponse(res); */
-	};
-
-	const loginUser = async (userData: any): Promise<void> => {
-		/* const body = JSON.stringify(userData);
-		const res = await myFetch("login", "POST", body).catch((err) => {
-			console.log(err);
-		});
-
-		handleResponse(res); */
-	};
-
-	function handleResponse(res: any) {
-		/* res = JSON.parse(res);
-		if (res.resType === "duplicate_email") {
-			setErrorObj({
-				errorType: res.resType,
-				errorText: "This email is already in use.",
-				errorColor: "red",
-			});
-		} else if (res.resType === "register_success") {
-			setErrorObj({
-				errorType: res.resType,
-				errorText: "Sign up successful! You can now log in.",
-				errorColor: "green",
-			});
-		} else if (res.resType === "login_success") {
-			setErrorObj({
-				errorType: res.resType,
-				errorText: "Log in successful",
-				errorColor: "green",
-			});
-			setRedirect(true);
-		} else if (
-			res.resType === "search_failed" ||
-			res.resType === "compare_passwords_failed"
-		) {
-			setErrorObj({
-				errorType: res.resType,
-				errorText: "Internal Error...Please try again later.",
-				errorColor: "red",
-			});
-		} else if (res.resType === "user_not_exists") {
-			setErrorObj({
-				errorType: res.resType,
-				errorText: "Username/Password combination is not correct",
-				errorColor: "red",
-			});
-		} else {
-			//dunno what else is left
-		}
-		return false; */
-	}
-
-	const onFormSubmitClick = (e: React.FormEvent): void => {
+	const onFormSubmitClick = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
+		let response: FormResponse;
 
 		if (mode === Mode.Login) {
-			loginUser(inputValues);
+			response = await loginUser(inputValues.email, inputValues.password);
 		} else {
-			if (confirmPassword()) {
-				//actually sign up
-				registerUser(inputValues);
-			} else {
-				setResponseText({
-					type: 'password',
-					text: 'Passwords must be the same',
-					color: 'red',
-				});
-			}
+			response = await registerUser(
+				inputValues.email,
+				inputValues.password,
+				inputValues.confirmedPassword
+			);
 		}
+
+		setFormResponse(response);
 	};
 
-	const confirmPassword = (): boolean => {
-		return inputValues.password === inputValues.confirmPassword && inputValues.password !== '';
-	};
+	const renderResponseMessage = (): JSX.Element | null => {
+		const color = formResponse?.status === 'error' ? 'red' : 'green';
+		const text = formResponse?.message ?? '';
 
-	const renderErrorMessage = (): JSX.Element | null => {
-		return responseText.type !== '' ? (
-			<ResponseText text={responseText.text} color={responseText.color} />
-		) : null;
+		return <ResponseText text={text} color={color} />;
 	};
 
 	const renderTabs = (): JSX.Element[] => {
@@ -212,6 +139,7 @@ export const CredentialsBox = (): JSX.Element => {
 				text: 'Login',
 				onClick: () => {
 					setMode(Mode.Login);
+					setFormResponse(null);
 				},
 				class: mode === Mode.Login ? 'tab-active' : 'tab-inactive',
 			},
@@ -219,6 +147,7 @@ export const CredentialsBox = (): JSX.Element => {
 				text: 'Register',
 				onClick: () => {
 					setMode(Mode.Register);
+					setFormResponse(null);
 				},
 				class: mode === Mode.Register ? 'tab-active' : 'tab-inactive',
 			},
@@ -259,8 +188,8 @@ export const CredentialsBox = (): JSX.Element => {
 			inputsMap.push({
 				title: 'Confirm Password',
 				type: 'password',
-				value: inputValues.confirmPassword,
-				name: 'confirmPassword',
+				value: inputValues.confirmedPassword,
+				name: 'confirmedPassword',
 			});
 		}
 
@@ -274,6 +203,7 @@ export const CredentialsBox = (): JSX.Element => {
 						type={input.type}
 						value={input.value}
 						onChange={onInputChange}
+						required
 					/>
 				))}
 			</InputsContainer>
@@ -287,7 +217,7 @@ export const CredentialsBox = (): JSX.Element => {
 			<TabsContainer>{renderTabs()}</TabsContainer>
 			{renderInputs()}
 			<ButtonContainer>
-				{renderErrorMessage()}
+				{formResponse && renderResponseMessage()}
 				<Button style={{ margin: '3% 10% 4% 0' }} text={buttontext} />
 			</ButtonContainer>
 		</FormContainer>
