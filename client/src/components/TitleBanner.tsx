@@ -67,6 +67,10 @@ const QuotaGigabytes = styled.span`
 	color: white;
 `;
 
+const ThemeToggleWrapper = styled.div`
+	margin-right: 2%;
+`;
+
 interface TitleBannerProps {
 	virtualDriveEnabled?: boolean;
 	popupMenu?: boolean;
@@ -107,7 +111,6 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 
 				<LogoTitle>aio drive</LogoTitle>
 			</LogoMenuContainer>
-
 			{virtualDriveEnabled && (
 				<QuotaLoaderContainer>
 					<QuotaStringLoader>Virtual Quota:</QuotaStringLoader>
@@ -118,9 +121,9 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 					)}
 				</QuotaLoaderContainer>
 			)}
-			<div style={{ marginRight: '2%' }}>
+			<ThemeToggleWrapper>
 				<ThemeToggle />
-			</div>
+			</ThemeToggleWrapper>
 			{isLoggedIn && <UserMenu />}
 		</BannerContainer>
 	);

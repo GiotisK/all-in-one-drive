@@ -1,6 +1,7 @@
 import styled from 'styled-components';
-import { CredentialsBox } from '../components/CredentialsBox';
+import { CredentialsBox } from '../components/CredentialsBox/CredentialsBox';
 import { ReactComponent as Banner } from '../assets/svgs/landing_page_banner.svg';
+import { ThemeToggle } from '../components/Toggle/ThemeToggle';
 
 const LandingPageContainer = styled.div`
 	display: flex;
@@ -23,10 +24,20 @@ const LandingPageTitle = styled.p`
 	user-select: none;
 `;
 
+const ThemeToggleWrapper = styled.div`
+	position: absolute;
+	right: 2%;
+	top: 2%;
+`;
+
 export const LandingPage = (): JSX.Element => {
 	return (
 		<LandingPageContainer>
 			<LandingPageTitle>aio drive</LandingPageTitle>
+
+			<ThemeToggleWrapper>
+				<ThemeToggle />
+			</ThemeToggleWrapper>
 			<Banner />
 			<CredentialsBox />
 		</LandingPageContainer>
