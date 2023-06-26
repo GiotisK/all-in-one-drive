@@ -115,15 +115,15 @@ export const CredentialsBox = (): JSX.Element => {
 
 		if (mode === Mode.Login) {
 			response = await loginUser(inputValues.email, inputValues.password);
-		} else {
+			setFormResponse(response);
+		} else if (mode === Mode.Register) {
 			response = await registerUser(
 				inputValues.email,
 				inputValues.password,
 				inputValues.confirmedPassword
 			);
+			setFormResponse(response);
 		}
-
-		setFormResponse(response);
 	};
 
 	const renderResponseMessage = (): JSX.Element | null => {

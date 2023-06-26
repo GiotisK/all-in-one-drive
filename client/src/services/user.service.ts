@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getRequest, postRequest } from './request.service';
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -19,12 +20,14 @@ export const registerUser = async (
 		return formResponse;
 	} else {
 		//do api call.....
+		postRequest('/users/register', {});
 		return { status: 'success', message: 'Success!!!' };
 	}
 };
 
 export const loginUser = async (email: string, password: string): Promise<FormResponse> => {
 	//do api call....
+	getRequest('/users', {});
 	return { status: 'success', message: 'Success!!!' };
 };
 
@@ -41,7 +44,7 @@ const validateRegistrationValues = (
 		return { status: 'error', message: 'Password must be at least 8 characters' };
 	}
 
-	if (!confirmPassword(password, confirmedPassword)) {
+	if (!doPasswordsMatch(password, confirmedPassword)) {
 		return { status: 'error', message: 'Passwords do not match' };
 	}
 
@@ -57,6 +60,6 @@ const isAcceptablePasswordLength = (password: string) => {
 	return password.length >= MIN_PASSWORD_LENGTH;
 };
 
-const confirmPassword = (password: string, confirmedPassword: string) => {
+const doPasswordsMatch = (password: string, confirmedPassword: string) => {
 	return password === confirmedPassword;
 };
