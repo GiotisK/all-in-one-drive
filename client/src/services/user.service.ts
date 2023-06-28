@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { getRequest, postRequest } from './request.service';
 
 const MIN_PASSWORD_LENGTH = 8;
@@ -20,7 +19,7 @@ export const registerUser = async (
 		return formResponse;
 	} else {
 		//do api call.....
-		postRequest('/users/register', {});
+		postRequest('/users/register', { email, password });
 		return { status: 'success', message: 'Success!!!' };
 	}
 };

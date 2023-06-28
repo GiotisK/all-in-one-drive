@@ -2,6 +2,7 @@ import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import { userRouter } from './src/api/v1/';
+import { connectDB } from './src/configs/database/database.config';
 
 dotenv.config();
 
@@ -25,5 +26,7 @@ app.post('/users/register', (req: Request, res: Response) => {
 app.listen(port, () => {
 	console.log(`[server]: Server is running at http://localhost:${port}`);
 });
+
+connectDB();
 
 module.exports = app;

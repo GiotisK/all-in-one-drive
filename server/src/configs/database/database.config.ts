@@ -1,14 +1,12 @@
-import mongoose, { ConnectOptions } from "mongoose";
-const { MONGO_URI } = process.env;
+import mongoose, { ConnectOptions } from 'mongoose';
 
 export const connectDB = async () => {
 	try {
-		await mongoose.connect(MONGO_URI!, {
+		await mongoose.connect(process.env.MONGO_URI!, {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
-			useCreateIndex: true,
 		} as ConnectOptions);
-		console.log("MongoDB connected");
+		console.log('[database]: MongoDB is now connected');
 	} catch (error: any) {
 		console.log(error.message);
 		process.exit(1);
