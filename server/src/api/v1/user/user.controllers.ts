@@ -1,14 +1,18 @@
-import { CustomRequest } from '@types';
+import { CustomRequest } from '../../../types/types';
 import { registerUser } from './user.service';
 import { Response } from 'express';
-import { RegisterUserRequestBody } from '@globaltypes';
+import { RegisterUserRequestBody, Status } from '../../../types/global.types';
 
 export const registerUserController = async (
 	req: CustomRequest<RegisterUserRequestBody>,
 	res: Response
-) => {
+): Promise<void> => {
 	try {
 		const { email, password } = req.body;
 		await registerUser(email, password);
-	} catch (err) {}
+		res.status(Status.OK).send();
+	} catch (err) {
+		console.log('ERROR::user.controllers::', err);
+		res.status(Status.INTERNAL_SERVER_ERROR).send();
+	}
 };
