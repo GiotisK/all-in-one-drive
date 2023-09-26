@@ -26,7 +26,7 @@ export const registerUser = async (
 
 export const loginUser = async (email: string, password: string): Promise<FormResponse> => {
 	//do api call....
-	getRequest('/users', {});
+	postRequest('/users/login', { email, password });
 	return { status: 'success', message: 'Success!!!' };
 };
 
