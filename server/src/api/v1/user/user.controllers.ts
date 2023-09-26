@@ -9,8 +9,10 @@ export const registerUserController = async (
 ): Promise<void> => {
 	try {
 		const { email, password } = req.body;
-		await registerUser(email, password);
-		res.status(Status.OK).send();
+		const isRegisterSuccessfull = await registerUser(email, password);
+		const status = isRegisterSuccessfull ? Status.OK : Status.BAD_REQUEST;
+
+		res.status(status).send();
 	} catch (err) {
 		console.log('ERROR:user.controllers:registerUserController:', err);
 		res.status(Status.INTERNAL_SERVER_ERROR).send();
@@ -23,12 +25,12 @@ export const loginUserController = async (
 ): Promise<void> => {
 	try {
 		const { email, password } = req.body;
-		const isLoginSuccessfull = await loginUser(email, password);
+		const { success, token } = await loginUser(email, password);
 
-		if (isLoginSuccessfull) {
-			res.status(Status.OK).send();
+		if (success) {
+			res.cookie('token', token, { httpOnly: true }).status(Status.OK).send();
 		} else {
-			res.status(Status.UNAUTHORIZED).send();
+			res.status(Status.BAD_REQUEST).send();
 		}
 	} catch (err) {
 		console.log('ERROR:user.controllers:loginUserController:', err);
@@ -42,6 +44,7 @@ export const logoutUserController = async (
 ): Promise<void> => {
 	try {
 		const { email, password } = req.body;
+
 		await registerUser(email, password);
 		res.status(Status.OK).send();
 	} catch (err) {

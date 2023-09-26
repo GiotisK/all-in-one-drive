@@ -1,64 +1,29 @@
-import { getRequest, postRequest } from './request.service';
+import {
+	LoginUserRequestBody,
+	RegisterUserRequestBody,
+	Status,
+} from '../shared/types/global.types';
+import { postRequest } from './request.service';
 
-const MIN_PASSWORD_LENGTH = 8;
+export const registerUser = async (email: string, password: string): Promise<boolean> => {
+	try {
+		const res = await postRequest<RegisterUserRequestBody>('/users/register', {
+			email,
+			password,
+		});
 
-type Status = 'success' | 'error';
-
-export type FormResponse = {
-	status: Status;
-	message: string;
-};
-
-export const registerUser = async (
-	email: string,
-	password: string,
-	confirmedPassword: string
-): Promise<FormResponse> => {
-	const formResponse = validateRegistrationValues(email, password, confirmedPassword);
-	if (formResponse.status === 'error') {
-		return formResponse;
-	} else {
-		//do api call.....
-		postRequest('/users/register', { email, password });
-		return { status: 'success', message: 'Success!!!' };
+		return res.status === Status.OK;
+	} catch {
+		return false;
 	}
 };
 
-export const loginUser = async (email: string, password: string): Promise<FormResponse> => {
-	//do api call....
-	postRequest('/users/login', { email, password });
-	return { status: 'success', message: 'Success!!!' };
-};
+export const loginUser = async (email: string, password: string): Promise<boolean> => {
+	try {
+		const res = await postRequest<LoginUserRequestBody>('/users/login', { email, password });
 
-const validateRegistrationValues = (
-	email: string,
-	password: string,
-	confirmedPassword: string
-): FormResponse => {
-	if (!isEmailFormat(email)) {
-		return { status: 'error', message: 'Please enter a valid email address' };
+		return res.status === Status.OK;
+	} catch {
+		return false;
 	}
-
-	if (!isAcceptablePasswordLength(password)) {
-		return { status: 'error', message: 'Password must be at least 8 characters' };
-	}
-
-	if (!doPasswordsMatch(password, confirmedPassword)) {
-		return { status: 'error', message: 'Passwords do not match' };
-	}
-
-	return { status: 'success', message: 'Success!' };
-};
-
-const isEmailFormat = (email: string) => {
-	const re = /\S+@\S+\.\S+/;
-	return re.test(email);
-};
-
-const isAcceptablePasswordLength = (password: string) => {
-	return password.length >= MIN_PASSWORD_LENGTH;
-};
-
-const doPasswordsMatch = (password: string, confirmedPassword: string) => {
-	return password === confirmedPassword;
 };

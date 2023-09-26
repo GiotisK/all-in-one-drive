@@ -3,7 +3,7 @@ import { Input } from './Input';
 import { ResponseText } from './ResponseText';
 import { Button } from './Button';
 import { styled } from 'styled-components';
-import { FormResponse, loginUser, registerUser } from '../services/user.service';
+import { loginUser, registerUser } from '../services/user.service';
 
 const centerAbsoluteDivInPage = `
 	position: absolute;
@@ -92,7 +92,7 @@ enum Mode {
 export const CredentialsBox = (): JSX.Element => {
 	const [mode, setMode] = useState<Mode>(Mode.Login);
 
-	const [formResponse, setFormResponse] = useState<FormResponse | null>(null);
+	const [isFormRequestSuccessful, setIsFormRequestSuccessful] = useState<boolean>();
 
 	const [inputValues, setInputValues] = useState({
 		email: '',
@@ -111,24 +111,22 @@ export const CredentialsBox = (): JSX.Element => {
 
 	const onFormSubmitClick = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
-		let response: FormResponse;
+		let isRequestSuccessful: boolean;
 
 		if (mode === Mode.Login) {
-			response = await loginUser(inputValues.email, inputValues.password);
-			setFormResponse(response);
-		} else if (mode === Mode.Register) {
-			response = await registerUser(
-				inputValues.email,
-				inputValues.password,
-				inputValues.confirmedPassword
-			);
-			setFormResponse(response);
+			isRequestSuccessful = await loginUser(inputValues.email, inputValues.password);
+		} /* if (mode === Mode.Register) */ else {
+			isRequestSuccessful = await registerUser(inputValues.email, inputValues.password);
 		}
+
+		setIsFormRequestSuccessful(isRequestSuccessful);
 	};
 
 	const renderResponseMessage = (): JSX.Element | null => {
-		const color = formResponse?.status === 'error' ? 'red' : 'green';
-		const text = formResponse?.message ?? '';
+		if (isFormRequestSuccessful === undefined) return null;
+
+		const color = isFormRequestSuccessful ? 'green' : 'red';
+		const text = isFormRequestSuccessful ? 'OK' : 'Something went wrong';
 
 		return <ResponseText text={text} color={color} />;
 	};
@@ -139,7 +137,7 @@ export const CredentialsBox = (): JSX.Element => {
 				text: 'Login',
 				onClick: () => {
 					setMode(Mode.Login);
-					setFormResponse(null);
+					setIsFormRequestSuccessful(undefined);
 				},
 				class: mode === Mode.Login ? 'tab-active' : 'tab-inactive',
 			},
@@ -147,7 +145,7 @@ export const CredentialsBox = (): JSX.Element => {
 				text: 'Register',
 				onClick: () => {
 					setMode(Mode.Register);
-					setFormResponse(null);
+					setIsFormRequestSuccessful(undefined);
 				},
 				class: mode === Mode.Register ? 'tab-active' : 'tab-inactive',
 			},
@@ -217,7 +215,7 @@ export const CredentialsBox = (): JSX.Element => {
 			<TabsContainer>{renderTabs()}</TabsContainer>
 			{renderInputs()}
 			<ButtonContainer>
-				{formResponse && renderResponseMessage()}
+				{renderResponseMessage()}
 				<Button style={{ margin: '3% 10% 4% 0' }} text={buttontext} />
 			</ButtonContainer>
 		</FormContainer>
