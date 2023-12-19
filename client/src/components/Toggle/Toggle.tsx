@@ -1,5 +1,4 @@
 import { styled } from 'styled-components';
-import { SvgNames, createSvg } from '../../shared/utils/svg-utils';
 import { PropsWithChildren } from 'react';
 
 const Switch = styled.label`
@@ -22,8 +21,8 @@ const Slider = styled.span`
 	&:before {
 		position: absolute;
 		content: '';
-		height: 16px;
-		width: 16px;
+		height: 15px;
+		width: 15px;
 		left: 3px;
 		bottom: 2.5px;
 		background-color: red;
@@ -52,9 +51,8 @@ const Input = styled.input`
 
 	&:checked + ${Slider}:before {
 		background-color: white;
-		-webkit-transform: translateX(26px);
-		-ms-transform: translateX(26px);
-		transform: translateX(17px);
+		-webkit-transform: translateX(17px);
+		-ms-transform: translateX(17px);
 	}
 
 	&:not(:checked) + ${Slider}:before {

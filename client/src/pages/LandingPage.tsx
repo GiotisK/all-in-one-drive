@@ -34,7 +34,6 @@ export const LandingPage = (): JSX.Element => {
 	return (
 		<LandingPageContainer>
 			<LandingPageTitle>aio drive</LandingPageTitle>
-
 			<ThemeToggleWrapper>
 				<ThemeToggle />
 			</ThemeToggleWrapper>

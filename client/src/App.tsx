@@ -7,12 +7,18 @@ import { TitleBanner } from './components/TitleBanner';
 import { DrivePage } from './pages/DrivePage';
 import { Provider } from 'react-redux';
 import store from './redux/store/store';
+import { Route, BrowserRouter, Routes } from 'react-router-dom';
 
 function App() {
 	return (
 		<Provider store={store}>
 			<Theme>
-				<LandingPage />
+				<BrowserRouter>
+					<Routes>
+						<Route path='/login' element={<LandingPage />} />
+						<Route path='/drive' element={<DrivePage />} />
+					</Routes>
+				</BrowserRouter>
 			</Theme>
 		</Provider>
 	);

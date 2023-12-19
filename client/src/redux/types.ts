@@ -5,4 +5,8 @@ export interface SettingsState {
 	themeMode: ThemeMode;
 }
 
+export interface UserState {
+	isAuthenticated: boolean;
+}
+
 export type RootState = ReturnType<typeof store.getState>;

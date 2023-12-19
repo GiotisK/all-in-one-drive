@@ -111,11 +111,11 @@ export const CredentialsBox = (): JSX.Element => {
 
 	const onFormSubmitClick = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
-		let isRequestSuccessful: boolean;
+		let isRequestSuccessful = false;
 
 		if (mode === Mode.Login) {
 			isRequestSuccessful = await loginUser(inputValues.email, inputValues.password);
-		} /* if (mode === Mode.Register) */ else {
+		} else if (mode === Mode.Register) {
 			isRequestSuccessful = await registerUser(inputValues.email, inputValues.password);
 		}
 
