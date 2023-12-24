@@ -17,13 +17,18 @@ export const ThemeToggle = () => {
 	const dispatch = useDispatch();
 	const themeMode = useSelector((state: RootState) => state.settings.themeMode);
 
+	const handleThemeChange = () => {
+		saveThemeToLocalStorage();
+		dispatch(toggleTheme());
+	};
+
+	const saveThemeToLocalStorage = () => {
+		const nextThemeMode = themeMode === 'dark' ? 'light' : 'dark';
+		localStorage.setItem('theme', nextThemeMode);
+	};
+
 	return (
-		<Toggle
-			checked={themeMode === 'dark'}
-			onChange={() => {
-				dispatch(toggleTheme());
-			}}
-		>
+		<Toggle checked={themeMode === 'dark'} onChange={handleThemeChange}>
 			<SvgContainer>
 				{createSvg(SvgNames.Moon, 12, 'white')}
 				{createSvg(SvgNames.Sun, 13, 'black')}

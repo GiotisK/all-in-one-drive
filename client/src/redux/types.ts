@@ -7,6 +7,7 @@ export interface SettingsState {
 
 export interface UserState {
 	isAuthenticated: boolean;
+	email: string;
 }
 
 export type RootState = ReturnType<typeof store.getState>;

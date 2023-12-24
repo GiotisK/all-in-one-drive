@@ -1,5 +1,6 @@
 import styled from 'styled-components';
-import { TitleBanner } from '../components/TitleBanner';
+import { routes } from '../shared/constants/routes';
+import { useNavigate } from 'react-router-dom';
 
 const ErrorPageBody = styled.div`
 	display: flex;
@@ -29,51 +30,59 @@ const ErrorCodeText = styled.h3`
 	color: gray;
 `;
 
-interface ErrorObject {
+const GoBackText = styled.div`
+	text-decoration: underline;
+	color: blue;
+	cursor: pointer;
+`;
+
+interface ErrorProperties {
 	greet: string;
 	errorCode: string;
 	msg: string;
 	buttonType: string;
 }
 
-interface ErrorPageProps {
-	errorType: string;
+export enum ErrorType {
+	NotFound = 'notFound',
+	Unauthorized = 'unauthorized',
 }
 
-export const ErrorPage = (props: ErrorPageProps): JSX.Element => {
-	let errorObj: ErrorObject = {
-		greet: '',
-		errorCode: '',
-		msg: '',
-		buttonType: '',
-	};
+interface ErrorPageProps {
+	errorType: ErrorType;
+}
 
-	if (props.errorType === 'notFound') {
-		errorObj = {
-			greet: 'Ooops!',
-			errorCode: '404',
-			msg: "Seems that this page doesn't exist...",
-			buttonType: 'back',
-		};
-	} else {
-		errorObj = {
-			greet: 'Sorry!',
-			errorCode: '401',
-			msg: 'You are not authorized to view this page.',
-			buttonType: 'to login',
-		};
-	}
+const errorProperties: Record<ErrorType, ErrorProperties> = {
+	[ErrorType.NotFound]: {
+		greet: 'Ooops!',
+		errorCode: '404',
+		msg: "Seems that this page doesn't exist...",
+		buttonType: 'back',
+	},
+	[ErrorType.Unauthorized]: {
+		greet: 'Sorry!',
+		errorCode: '401',
+		msg: 'You are not authorized to view this page.',
+		buttonType: 'to login',
+	},
+};
+
+export const ErrorPage = (props: ErrorPageProps): JSX.Element => {
+	const navigate = useNavigate();
+
+	const { greet, msg, errorCode, buttonType } = errorProperties[props.errorType];
+
+	const redirectToHome = () => {
+		navigate(routes.home);
+	};
 
 	return (
 		<ErrorPageBody>
-			<TitleBanner virtualDriveEnabled={false} popupMenu={false} />
-			{/*TODO: refactor the props */}
 			<ErrorElementsContainer>
-				<OopsText>{errorObj.greet}</OopsText>
-				<InfoText>{errorObj.msg}</InfoText>
-				<ErrorCodeText>(Error Code: {errorObj.errorCode})</ErrorCodeText>
-				<a href='http://localhost:3000'>Go {errorObj.buttonType}</a>
-				{/**TODO: refactor href to correct */}
+				<OopsText>{greet}</OopsText>
+				<InfoText>{msg}</InfoText>
+				<ErrorCodeText>(Error Code: {errorCode})</ErrorCodeText>
+				<GoBackText onClick={redirectToHome}>Go {buttonType}</GoBackText>
 			</ErrorElementsContainer>
 		</ErrorPageBody>
 	);

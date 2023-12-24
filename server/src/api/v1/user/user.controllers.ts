@@ -1,7 +1,7 @@
-import { CustomRequest } from '../../../types/types';
+import { AuthLocals, CustomRequest } from '../../../types/types';
 import { registerUser, loginUser } from './user.service';
-import { Response } from 'express';
-import { RegisterUserRequestBody, Status } from '../../../types/global.types';
+import { Response, Request } from 'express';
+import { AuthUserResponse, RegisterUserRequestBody, Status } from '../../../types/global.types';
 
 export const registerUserController = async (
 	req: CustomRequest<RegisterUserRequestBody>,
@@ -42,7 +42,8 @@ export const logoutUserController = async (
 	req: CustomRequest<RegisterUserRequestBody>,
 	res: Response
 ): Promise<void> => {
-	try {
+	//TODO: handle logout
+	/* try {
 		const { email, password } = req.body;
 
 		await registerUser(email, password);
@@ -50,5 +51,13 @@ export const logoutUserController = async (
 	} catch (err) {
 		console.log('ERROR::user.controllers::', err);
 		res.status(Status.INTERNAL_SERVER_ERROR).send();
-	}
+	} */
+};
+
+export const authUserController = async (_req: Request, res: Response): Promise<void> => {
+	const { isVerified, email } = res.locals as AuthLocals;
+	const statusId = isVerified ? Status.OK : Status.UNAUTHORIZED;
+	const responseData: AuthUserResponse = { email };
+
+	res.status(statusId).send(responseData);
 };

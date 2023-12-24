@@ -1,7 +1,10 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { axiosInstance } from '../configs/axios.configs';
 
-export const getRequest = async <T>(path: string, data: AxiosRequestConfig<T>) => {
+export const getRequest = async <T, U>(
+	path: string,
+	data: AxiosRequestConfig<T> = {}
+): Promise<AxiosResponse<U>> => {
 	return axiosInstance.get(path, data);
 };
 

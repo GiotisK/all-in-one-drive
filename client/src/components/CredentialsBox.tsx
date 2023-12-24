@@ -4,6 +4,10 @@ import { ResponseText } from './ResponseText';
 import { Button } from './Button';
 import { styled } from 'styled-components';
 import { loginUser, registerUser } from '../services/user.service';
+import { useDispatch } from 'react-redux';
+import { setIsAuthenticated } from '../redux/slices/userSlice';
+import { useNavigate, redirect } from 'react-router-dom';
+import { routes } from '../shared/constants/routes';
 
 const centerAbsoluteDivInPage = `
 	position: absolute;
@@ -90,6 +94,9 @@ enum Mode {
 }
 
 export const CredentialsBox = (): JSX.Element => {
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
 	const [mode, setMode] = useState<Mode>(Mode.Login);
 
 	const [isFormRequestSuccessful, setIsFormRequestSuccessful] = useState<boolean>();
@@ -115,6 +122,8 @@ export const CredentialsBox = (): JSX.Element => {
 
 		if (mode === Mode.Login) {
 			isRequestSuccessful = await loginUser(inputValues.email, inputValues.password);
+			dispatch(setIsAuthenticated(true));
+			navigate(routes.drive);
 		} else if (mode === Mode.Register) {
 			isRequestSuccessful = await registerUser(inputValues.email, inputValues.password);
 		}

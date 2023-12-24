@@ -8,6 +8,10 @@ export interface LoginUserRequestBody {
 	password: string;
 }
 
+export interface AuthUserResponse {
+	email: string;
+}
+
 export enum Status {
 	OK = 200,
 	BAD_REQUEST = 400,

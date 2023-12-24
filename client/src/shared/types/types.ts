@@ -29,3 +29,5 @@ export interface DriveEntity {
 }
 
 export type Entity = DriveEntity | FileEntity;
+
+export type EmptyBody = Record<string, never>;

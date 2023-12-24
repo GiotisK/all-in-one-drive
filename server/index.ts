@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import cookieparser from 'cookie-parser';
 import { userRouter } from './src/api/v1/';
 import { connectDB } from './src/configs/database/database.config';
 
@@ -15,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 //TODO: check if cors needed later on
 app.use(cors({ origin: frontendURL, credentials: true }));
-
+app.use(cookieparser());
 app.use('/users', userRouter);
 
 app.post('/users/register', (req: Request, res: Response) => {

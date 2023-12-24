@@ -15,6 +15,10 @@ import { FloatingButtonsContainer } from '../components/FloatingButtons/Floating
 import { Loader } from '../components/Loader';
 import { LoadingBar } from '../components/LoadingBar';
 import { styled } from 'styled-components';
+import { useSelector } from 'react-redux';
+import { RootState } from '../redux/types';
+import { Navigate } from 'react-router-dom';
+import { routes } from '../shared/constants/routes';
 
 const RowsScrollview = styled.div`
 	flex: 1;
@@ -30,7 +34,9 @@ export const DrivePage = (): JSX.Element => {
 
 	const [uploadModalVisible, setUploadModalVisible] = useState(false);
 	const [sideMenuVisible, setSideMenuVisible] = useState(false);
-	return (
+	const isUserAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+
+	return isUserAuthenticated ? (
 		<div
 			style={{
 				display: 'flex',
@@ -104,5 +110,7 @@ export const DrivePage = (): JSX.Element => {
 				visible={false}
 			/>
 		</div>
+	) : (
+		<Navigate replace to={routes.home} />
 	);
 };
