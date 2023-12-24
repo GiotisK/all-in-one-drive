@@ -10,7 +10,7 @@ import authorize from '../../../middleware/authorize';
 const router: Router = express.Router();
 router.post('/register', registerUserController);
 router.post('/login', loginUserController);
-router.post('/logout', logoutUserController);
+router.get('/logout', authorize, logoutUserController);
 router.get('/auth', authorize, authUserController);
 
 export default router;

@@ -6,7 +6,10 @@ export default function (req: Request, res: Response, next: () => any) {
 	const secret = process.env.JWT_SECRET!;
 	const token = req.cookies.token;
 
-	if (!token) return false;
+	if (!token) {
+		(res.locals as AuthLocals).isVerified = false;
+		next();
+	}
 
 	try {
 		const decoded = jwt.verify(token, secret) as jwt.JwtPayload;

@@ -61,7 +61,7 @@ export const LandingPage = (): JSX.Element => {
 				<ThemeToggle />
 			</ThemeToggleWrapper>
 			<Banner />
-			{!isAuthRequestPending && <CredentialsBox />}
+			<CredentialsBox />
 		</LandingPageContainer>
 	);
 };

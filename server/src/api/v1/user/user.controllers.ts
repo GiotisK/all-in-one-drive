@@ -38,20 +38,14 @@ export const loginUserController = async (
 	}
 };
 
-export const logoutUserController = async (
-	req: CustomRequest<RegisterUserRequestBody>,
-	res: Response
-): Promise<void> => {
-	//TODO: handle logout
-	/* try {
-		const { email, password } = req.body;
+export const logoutUserController = async (_req: Request, res: Response): Promise<void> => {
+	const { isVerified } = res.locals as AuthLocals;
 
-		await registerUser(email, password);
-		res.status(Status.OK).send();
-	} catch (err) {
-		console.log('ERROR::user.controllers::', err);
-		res.status(Status.INTERNAL_SERVER_ERROR).send();
-	} */
+	if (isVerified) {
+		res.clearCookie('token').status(Status.OK).send();
+	} else {
+		res.status(Status.UNAUTHORIZED).send();
+	}
 };
 
 export const authUserController = async (_req: Request, res: Response): Promise<void> => {

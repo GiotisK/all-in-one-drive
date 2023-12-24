@@ -1,13 +1,15 @@
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useOutsideClicker } from '../hooks/useOutsideClicker';
+import { logoutUser } from '../services/user.service';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '../shared/constants/routes';
 
 const PopupMenuContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: flex-end;
 	right: 1%;
-	z-index: 2;
 `;
 
 const CircleButtonContainer = styled.div`
@@ -38,6 +40,8 @@ const CircleButtonLetter = styled.p`
 `;
 
 const PopupMenu = styled.div`
+	z-index: 1;
+	position: absolute;
 	display: flex;
 	flex-direction: column;
 	justify-content: space-between;
@@ -99,6 +103,7 @@ export const UserMenu = (): JSX.Element => {
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
+	const navigate = useNavigate();
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuVisible(false));
 
 	const virtualDriveEnabled = true;
@@ -130,8 +135,9 @@ export const UserMenu = (): JSX.Element => {
 			},
 			{
 				title: 'Signout',
-				onClick: () => {
-					return;
+				onClick: async () => {
+					const success = await logoutUser();
+					success && navigate(routes.login);
 				},
 			},
 		];

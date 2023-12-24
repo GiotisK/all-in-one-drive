@@ -30,6 +30,16 @@ export const loginUser = async (email: string, password: string): Promise<boolea
 	}
 };
 
+export const logoutUser = async (): Promise<boolean> => {
+	try {
+		const res = await getRequest('/users/logout');
+
+		return res.status === Status.OK;
+	} catch {
+		return false;
+	}
+};
+
 type AuthUserReturn = { fulfilled: boolean; email: string };
 export const authUser = async (): Promise<AuthUserReturn> => {
 	try {
