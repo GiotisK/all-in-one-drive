@@ -17,11 +17,20 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 	}
 
 	public getAuthLink(): string {
-		const authUrl = this.oAuth2Client.generateAuthUrl({
+		return this.oAuth2Client.generateAuthUrl({
 			access_type: 'offline',
 			scope: SCOPES,
 		});
+	}
 
-		return authUrl;
+	public async generateOAuth2token(authCode: string): Promise<boolean> {
+		try {
+			const authToken = await this.oAuth2Client.getToken(authCode);
+
+			console.log('token', authToken);
+			return true;
+		} catch (err) {
+			return false;
+		}
 	}
 }

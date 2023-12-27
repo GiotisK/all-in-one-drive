@@ -8,6 +8,10 @@ export interface LoginUserRequestBody {
 	password: string;
 }
 
+export interface ConnectDriveRequestBody {
+	authCode: string;
+}
+
 export interface AuthUserResponse {
 	email: string;
 }

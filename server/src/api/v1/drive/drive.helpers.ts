@@ -1,5 +1,5 @@
-import GoogleDriveStrategy from '../../drive-services/GoogleDriveStrategy';
-import { IDriveStrategy } from '../../drive-services/IDriveStrategy';
+import GoogleDriveStrategy from '../../../services/drive/GoogleDriveStrategy';
+import { IDriveStrategy } from '../../../services/drive/IDriveStrategy';
 
 export const getDriveStrategyFromString = (drive: string): IDriveStrategy | null => {
 	switch (drive) {

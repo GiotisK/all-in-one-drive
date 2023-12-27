@@ -14,4 +14,8 @@ export default class DriveContext {
 	public getAuthLink(): string {
 		return this.strategy.getAuthLink();
 	}
+
+	public async generateOAuth2token(authCode: string): Promise<boolean> {
+		return this.strategy.generateOAuth2token(authCode);
+	}
 }

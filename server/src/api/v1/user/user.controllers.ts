@@ -39,19 +39,12 @@ export const loginUserController = async (
 };
 
 export const logoutUserController = async (_req: Request, res: Response): Promise<void> => {
-	const { isVerified } = res.locals as AuthLocals;
-
-	if (isVerified) {
-		res.clearCookie('token').status(Status.OK).send();
-	} else {
-		res.status(Status.UNAUTHORIZED).send();
-	}
+	res.clearCookie('token').status(Status.OK).send();
 };
 
 export const authUserController = async (_req: Request, res: Response): Promise<void> => {
-	const { isVerified, email } = res.locals as AuthLocals;
-	const statusId = isVerified ? Status.OK : Status.UNAUTHORIZED;
+	const { email } = res.locals as AuthLocals;
 	const responseData: AuthUserResponse = { email };
 
-	res.status(statusId).send(responseData);
+	res.status(Status.OK).send(responseData);
 };

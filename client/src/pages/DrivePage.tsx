@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AddDriveModal } from '../components/Modals/AddDriveModal';
 import { DeleteModal } from '../components/Modals/DeleteModal';
 import { DriveType, FileType } from '../shared/types/types';
@@ -36,8 +36,12 @@ export const DrivePage = (): JSX.Element => {
 	const [sideMenuVisible, setSideMenuVisible] = useState(false);
 	const isUserAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
 
-	return isUserAuthenticated ? (
-		<div
+	useEffect(() => {
+		console.log('location search', location.search);
+	}, []);
+
+	return (
+		/* isUserAuthenticated ? */ <div
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
@@ -110,7 +114,7 @@ export const DrivePage = (): JSX.Element => {
 				visible={false}
 			/>
 		</div>
-	) : (
+	); /*: (
 		<Navigate replace to={routes.home} />
-	);
+	); */
 };
