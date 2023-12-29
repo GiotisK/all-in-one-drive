@@ -16,7 +16,6 @@ export const connectDriveController = async (
 ): Promise<void> => {
 	const drive = req.params.drive;
 	const { authCode } = req.body;
-
 	const success = await generateOAuth2Token(authCode, drive);
 	const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
 

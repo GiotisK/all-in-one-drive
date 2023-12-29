@@ -23,14 +23,30 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		});
 	}
 
-	public async generateOAuth2token(authCode: string): Promise<boolean> {
+	public async generateOAuth2token(authCode: string): Promise<string> {
 		try {
-			const authToken = await this.oAuth2Client.getToken(authCode);
+			const tokenData = (await this.oAuth2Client.getToken(authCode)).tokens;
 
-			console.log('token', authToken);
-			return true;
+			return JSON.stringify(tokenData);
 		} catch (err) {
-			return false;
+			return '';
 		}
+	}
+
+	public async getUserDriveEmail(tokenStr: string): Promise<string> {
+		try {
+			this.setToken(tokenStr);
+			const res = await this.drive.about.get({ fields: 'user' });
+			const email = res.data.user?.emailAddress;
+
+			return email ?? '';
+		} catch (err) {
+			return '';
+		}
+	}
+
+	private setToken(tokenStr: string) {
+		const token = JSON.parse(tokenStr);
+		this.oAuth2Client.setCredentials(token);
 	}
 }
