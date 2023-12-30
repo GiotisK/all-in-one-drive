@@ -1,10 +1,10 @@
 import { styled, useTheme } from 'styled-components';
-import { DriveType } from '../shared/types/types';
 import { SvgNames } from '../shared/utils/svg-utils';
 import { Checkbox } from './Checkbox';
 import { DriveRow } from './DriveRow';
 import { IconButton } from './IconButton';
 import { Loader } from './Loader';
+import { DriveType } from '../shared/types/global.types';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;

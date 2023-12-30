@@ -1,5 +1,5 @@
 import { useTheme } from 'styled-components';
-import { DriveType } from '../types/types';
+import { DriveType } from '../types/global.types';
 import { SvgNames, createSvg } from './svg-utils';
 
 export const CreateDriveSvg = (drive: DriveType): JSX.Element | null => {

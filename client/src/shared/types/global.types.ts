@@ -18,3 +18,9 @@ export enum Status {
 	UNAUTHORIZED = 401,
 	INTERNAL_SERVER_ERROR = 500,
 }
+
+export enum DriveType {
+	GoogleDrive = 'googledrive',
+	Dropbox = 'dropbox',
+	OneDrive = 'onedrive',
+}

@@ -1,8 +1,8 @@
 import { BaseModal, BaseModalProps } from './BaseModal';
 import { DriveEntity, Entity, FileEntity, FileType } from '../../shared/types/types';
 import { CreateDriveSvg } from '../../shared/utils/utils';
-import { DriveType } from '../../shared/types/types';
 import { styled } from 'styled-components';
+import { DriveType } from '../../shared/types/global.types';
 
 interface DeleteFileProps {
 	file: FileEntity;

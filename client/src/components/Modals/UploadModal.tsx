@@ -1,7 +1,8 @@
 import { styled } from 'styled-components';
-import { DriveEntity, DriveType, FileType } from '../../shared/types/types';
+import { DriveEntity, FileType } from '../../shared/types/types';
 import { CreateDriveSvg } from '../../shared/utils/utils';
 import { BaseModal, BaseModalProps } from './BaseModal';
+import { DriveType } from '../../shared/types/global.types';
 
 const Content = styled.div`
 	display: flex;

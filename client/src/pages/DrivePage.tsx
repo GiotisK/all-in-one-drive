@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { AddDriveModal } from '../components/Modals/AddDriveModal';
 import { DeleteModal } from '../components/Modals/DeleteModal';
-import { DriveType, FileType } from '../shared/types/types';
+import { FileType } from '../shared/types/types';
 import { RenameModal } from '../components/Modals/RenameModal';
 import { ExportFormatModal } from '../components/Modals/ExportFormatModal';
 import { MenuBanner } from '../components/MenuBanner';
@@ -19,6 +19,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../redux/types';
 import { Navigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
+import { DriveType } from '../shared/types/global.types';
 
 const RowsScrollview = styled.div`
 	flex: 1;

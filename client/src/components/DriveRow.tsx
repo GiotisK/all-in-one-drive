@@ -1,7 +1,7 @@
 import styled, { useTheme } from 'styled-components';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
-import { DriveType } from '../shared/types/types';
 import { CreateDriveSvg } from '../shared/utils/utils';
+import { DriveType } from '../shared/types/global.types';
 
 const DriveElementContainer = styled.div`
 	display: flex;

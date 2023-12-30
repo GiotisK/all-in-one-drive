@@ -1,9 +1,7 @@
+import { DriveType } from './global.types';
+
 export type ThemeMode = 'light' | 'dark';
-export enum DriveType {
-	GoogleDrive = 'googledrive',
-	Dropbox = 'dropbox',
-	OneDrive = 'onedrive',
-}
+
 export enum FileType {
 	Folder = 'folder',
 	File = 'file',

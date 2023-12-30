@@ -1,7 +1,7 @@
 import { BaseModal, BaseModalProps } from './BaseModal';
 import { AddDriveButton } from '../AddDriveButton';
-import { DriveType } from '../../shared/types/types';
 import { styled } from 'styled-components';
+import { DriveType } from '../../shared/types/global.types';
 
 const ButtonsContainer = styled.div`
 	display: flex;

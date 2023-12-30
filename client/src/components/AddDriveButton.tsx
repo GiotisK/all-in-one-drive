@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
-import { DriveType } from '../shared/types/types';
 import { CreateDriveSvg } from '../shared/utils/utils';
+import { DriveType } from '../shared/types/global.types';
 
 interface IProps {
 	type: DriveType;
