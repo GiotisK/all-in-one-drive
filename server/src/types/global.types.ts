@@ -12,6 +12,10 @@ export interface ConnectDriveRequestBody {
 	authCode: string;
 }
 
+export interface GetDriveQuotaRequestBody {
+	email: string;
+}
+
 export interface AuthUserResponse {
 	email: string;
 }

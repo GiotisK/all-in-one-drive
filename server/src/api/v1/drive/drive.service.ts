@@ -1,6 +1,10 @@
-import { saveDriveProperties } from '../../../services/database/mongodb.service';
+import {
+	getEncryptedTokenAsString,
+	saveDriveProperties,
+} from '../../../services/database/mongodb.service';
 import DriveContext from '../../../services/drive/DriveContext';
-import { encrypt } from '../../../services/encryption/encryption.service';
+import { DriveQuota } from '../../../services/drive/drive.types';
+import { EncryptedData, decrypt, encrypt } from '../../../services/encryption/encryption.service';
 import { DriveType } from '../../../types/global.types';
 import { getDriveStrategyFromString } from './drive.helpers';
 
@@ -28,15 +32,37 @@ export const generateAndSaveOAuth2Token = async (
 		if (tokenData) {
 			const encryptedTokenData = encrypt(tokenData);
 			const driveEmail = await ctx.getUserDriveEmail(tokenData);
-			const sucess = await saveDriveProperties(
+			const success = await saveDriveProperties(
 				encryptedTokenData,
 				driveEmail,
 				userEmail,
 				drive
 			);
 
-			return sucess;
+			return success;
 		}
 	}
 	return false;
+};
+
+export const getDriveQuota = async (
+	userEmail: string,
+	driveEmail: string,
+	drive: DriveType
+): Promise<DriveQuota | null> => {
+	const driveStrategy = getDriveStrategyFromString(drive);
+
+	if (driveStrategy) {
+		const ctx = new DriveContext(driveStrategy);
+		const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
+
+		if (encryptedTokenStr) {
+			const encryptedToken = JSON.parse(encryptedTokenStr) as EncryptedData;
+			const token = decrypt(encryptedToken);
+			const quota = ctx.getDriveQuota(token);
+
+			return quota;
+		}
+	}
+	return null;
 };

@@ -1,6 +1,8 @@
 import { OAuth2Client } from 'googleapis-common';
 import { IDriveStrategy } from './IDriveStrategy';
 import { drive, auth, drive_v3 } from '@googleapis/drive';
+import { bytesToGigabytes } from '../../helpers/helpers';
+import { DriveQuota } from './drive.types';
 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
@@ -33,15 +35,37 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	public async getUserDriveEmail(tokenStr: string): Promise<string> {
+	public async getUserDriveEmail(token: string): Promise<string> {
 		try {
-			this.setToken(tokenStr);
+			this.setToken(token);
 			const res = await this.drive.about.get({ fields: 'user' });
 			const email = res.data.user?.emailAddress;
 
 			return email ?? '';
 		} catch (err) {
 			return '';
+		}
+	}
+
+	public async getDriveQuota(token: string): Promise<DriveQuota | null> {
+		try {
+			this.setToken(token);
+			const res = await this.drive.about.get({ fields: 'storageQuota' });
+			const quota = res.data.storageQuota;
+
+			if (quota?.limit && quota?.usage) {
+				const totalSpaceInGb: string = bytesToGigabytes(quota.limit);
+				const usedSpaceInGb: string = bytesToGigabytes(quota.usage);
+
+				return {
+					used: usedSpaceInGb,
+					total: totalSpaceInGb,
+				};
+			}
+
+			return null;
+		} catch {
+			return null;
 		}
 	}
 

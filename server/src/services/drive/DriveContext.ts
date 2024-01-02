@@ -1,4 +1,5 @@
 import { IDriveStrategy } from './IDriveStrategy';
+import { DriveQuota } from './drive.types';
 
 export default class DriveContext {
 	private strategy: IDriveStrategy;
@@ -21,5 +22,9 @@ export default class DriveContext {
 
 	public async getUserDriveEmail(token: string): Promise<string> {
 		return this.strategy.getUserDriveEmail(token);
+	}
+
+	public async getDriveQuota(token: string): Promise<DriveQuota | null> {
+		return this.strategy.getDriveQuota(token);
 	}
 }
