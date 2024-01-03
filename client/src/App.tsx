@@ -1,6 +1,6 @@
 import { LandingPage } from './pages/LandingPage';
 import { Theme } from './providers/Theme';
-import { ErrorPage, ErrorType } from './pages/ErrorPage';
+import { ErrorPage } from './pages/ErrorPage';
 import { DrivePage } from './pages/DrivePage';
 import { Provider } from 'react-redux';
 import store from './redux/store/store';
@@ -17,7 +17,7 @@ function App() {
 						<Route path={routes.home} element={<HomePage />} />
 						<Route path={routes.login} element={<LandingPage />} />
 						<Route path={routes.drive} element={<DrivePage />} />
-						<Route path='*' element={<ErrorPage errorType={ErrorType.NotFound} />} />
+						<Route path='*' element={<ErrorPage />} />
 					</Routes>
 				</Theme>
 			</Provider>

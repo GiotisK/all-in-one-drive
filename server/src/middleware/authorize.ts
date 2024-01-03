@@ -8,6 +8,7 @@ export default function (req: Request, res: Response, next: () => any) {
 	const token = req.cookies.token;
 
 	try {
+		//TODO: check if its enough. what happens if you send your own cookie ?
 		const decoded = jwt.verify(token, secret) as jwt.JwtPayload;
 		(res.locals as AuthLocals).email = decoded.email;
 		next();

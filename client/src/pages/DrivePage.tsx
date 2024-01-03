@@ -20,6 +20,7 @@ import { RootState } from '../redux/types';
 import { Navigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
 import { DriveType } from '../shared/types/global.types';
+import { useCheckAuthAndRedirect } from '../hooks/useCheckAuth';
 
 const RowsScrollview = styled.div`
 	flex: 1;
@@ -37,12 +38,10 @@ export const DrivePage = (): JSX.Element => {
 	const [sideMenuVisible, setSideMenuVisible] = useState(false);
 	const isUserAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
 
-	useEffect(() => {
-		console.log('location search', location.search);
-	}, []);
+	useCheckAuthAndRedirect();
 
-	return (
-		/* isUserAuthenticated ? */ <div
+	return isUserAuthenticated ? (
+		<div
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
@@ -115,7 +114,7 @@ export const DrivePage = (): JSX.Element => {
 				visible={false}
 			/>
 		</div>
-	); /*: (
-		<Navigate replace to={routes.home} />
-	); */
+	) : (
+		<></>
+	);
 };

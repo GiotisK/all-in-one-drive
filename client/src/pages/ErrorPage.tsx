@@ -36,41 +36,8 @@ const GoBackText = styled.div`
 	cursor: pointer;
 `;
 
-interface ErrorProperties {
-	greet: string;
-	errorCode: string;
-	msg: string;
-	buttonType: string;
-}
-
-export enum ErrorType {
-	NotFound = 'notFound',
-	Unauthorized = 'unauthorized',
-}
-
-interface ErrorPageProps {
-	errorType: ErrorType;
-}
-
-const errorProperties: Record<ErrorType, ErrorProperties> = {
-	[ErrorType.NotFound]: {
-		greet: 'Ooops!',
-		errorCode: '404',
-		msg: "Seems that this page doesn't exist...",
-		buttonType: 'back',
-	},
-	[ErrorType.Unauthorized]: {
-		greet: 'Sorry!',
-		errorCode: '401',
-		msg: 'You are not authorized to view this page.',
-		buttonType: 'to login',
-	},
-};
-
-export const ErrorPage = (props: ErrorPageProps): JSX.Element => {
+export const ErrorPage = (): JSX.Element => {
 	const navigate = useNavigate();
-
-	const { greet, msg, errorCode, buttonType } = errorProperties[props.errorType];
 
 	const redirectToHome = () => {
 		navigate(routes.home);
@@ -79,10 +46,10 @@ export const ErrorPage = (props: ErrorPageProps): JSX.Element => {
 	return (
 		<ErrorPageBody>
 			<ErrorElementsContainer>
-				<OopsText>{greet}</OopsText>
-				<InfoText>{msg}</InfoText>
-				<ErrorCodeText>(Error Code: {errorCode})</ErrorCodeText>
-				<GoBackText onClick={redirectToHome}>Go {buttonType}</GoBackText>
+				<OopsText>Ooops!</OopsText>
+				<InfoText>Seems that this page doesn't exist...</InfoText>
+				<ErrorCodeText>(Error Code: 404)</ErrorCodeText>
+				<GoBackText onClick={redirectToHome}>Go back </GoBackText>
 			</ErrorElementsContainer>
 		</ErrorPageBody>
 	);

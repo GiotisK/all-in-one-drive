@@ -40,14 +40,14 @@ export const logoutUser = async (): Promise<boolean> => {
 	}
 };
 
-type AuthUserReturn = { fulfilled: boolean; email: string };
+type AuthUserReturn = { success: boolean; email: string };
 export const authUser = async (): Promise<AuthUserReturn> => {
 	try {
 		const res = await getRequest<EmptyBody, AuthUserResponse>('/users/auth');
 		const { email } = res.data;
 
-		return { fulfilled: res.status === Status.OK, email };
+		return { success: res.status === Status.OK, email };
 	} catch {
-		return { fulfilled: false, email: '' };
+		return { success: false, email: '' };
 	}
 };
