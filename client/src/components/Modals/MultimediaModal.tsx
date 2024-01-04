@@ -1,5 +1,7 @@
-import { BaseModal, BaseModalProps } from './BaseModal';
+import { useSelector } from 'react-redux';
+import { BaseModal } from './BaseModal';
 import { styled } from 'styled-components';
+import { RootState } from '../../redux/types';
 
 const SoundContent = styled.div`
 	display: flex;
@@ -24,15 +26,13 @@ const Image = styled.img`
 	max-height: 800px;
 `;
 
-type MultimediaType = 'audio' | 'video' | 'image';
+export const MultimediaModal = (): JSX.Element => {
+	const { visible, multimediaType } = useSelector(
+		(state: RootState) => state.modal.multimediaModal
+	);
 
-interface IProps extends BaseModalProps {
-	multimediaType: MultimediaType;
-}
-
-export const MultimediaModal = ({ multimediaType, visible, closeModal }: IProps): JSX.Element => {
 	return (
-		<BaseModal closeModal={closeModal} visible={visible} showHeader={false}>
+		<BaseModal visible={visible} showHeader={false}>
 			<>
 				{multimediaType === 'audio' && (
 					<SoundContent>

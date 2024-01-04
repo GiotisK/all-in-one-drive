@@ -1,8 +1,10 @@
 import { styled } from 'styled-components';
 import { DriveEntity, FileType } from '../../shared/types/types';
 import { CreateDriveSvg } from '../../shared/utils/utils';
-import { BaseModal, BaseModalProps } from './BaseModal';
+import { BaseModal } from './BaseModal';
 import { DriveType } from '../../shared/types/global.types';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/types';
 
 const Content = styled.div`
 	display: flex;
@@ -59,11 +61,9 @@ const DriveRowText = styled.p`
 	word-wrap: break-word;
 `;
 
-interface IProps extends BaseModalProps {
-	fileType: FileType;
-}
+export const UploadModal = (): JSX.Element => {
+	const { visible, fileType } = useSelector((state: RootState) => state.modal.uploadModal);
 
-export const UploadModal = ({ fileType, visible, closeModal }: IProps): JSX.Element => {
 	const drives: DriveEntity[] = [
 		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
 		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
@@ -84,7 +84,7 @@ export const UploadModal = ({ fileType, visible, closeModal }: IProps): JSX.Elem
 	};
 
 	return (
-		<BaseModal title={getTitle()} visible={visible} closeModal={closeModal} showFooter={false}>
+		<BaseModal title={getTitle()} visible={visible} showFooter={false}>
 			<Content>
 				{drives.length === 0 ? (
 					<NoDrivesText style={{}}>No drives found...</NoDrivesText>

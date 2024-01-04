@@ -1,7 +1,9 @@
-import { BaseModal, BaseModalProps } from './BaseModal';
+import { BaseModal } from './BaseModal';
 import { AddDriveButton } from '../AddDriveButton';
 import { styled } from 'styled-components';
 import { DriveType } from '../../shared/types/global.types';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/types';
 
 const ButtonsContainer = styled.div`
 	display: flex;
@@ -12,14 +14,11 @@ const ButtonsContainer = styled.div`
 	width: 500px;
 `;
 
-export const AddDriveModal = (props: BaseModalProps): JSX.Element => {
+export const AddDriveModal = (): JSX.Element => {
+	const { visible } = useSelector((state: RootState) => state.modal.addDriveModal);
+
 	return (
-		<BaseModal
-			title='Add a drive'
-			visible={props.visible}
-			closeModal={props.closeModal}
-			showFooter={false}
-		>
+		<BaseModal title='Add a drive' visible={visible} showFooter={false}>
 			<ButtonsContainer>
 				<AddDriveButton type={DriveType.GoogleDrive} />
 				<AddDriveButton type={DriveType.Dropbox} />

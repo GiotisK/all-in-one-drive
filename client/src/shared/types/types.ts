@@ -7,6 +7,8 @@ export enum FileType {
 	File = 'file',
 }
 
+export type MultimediaType = 'audio' | 'video' | 'image';
+
 export interface FileEntity {
 	id: string;
 	permissions: string;

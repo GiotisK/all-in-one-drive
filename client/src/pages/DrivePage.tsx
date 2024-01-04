@@ -1,26 +1,19 @@
-import { useEffect, useState } from 'react';
-import { AddDriveModal } from '../components/Modals/AddDriveModal';
-import { DeleteModal } from '../components/Modals/DeleteModal';
+import { useState } from 'react';
 import { FileType } from '../shared/types/types';
-import { RenameModal } from '../components/Modals/RenameModal';
-import { ExportFormatModal } from '../components/Modals/ExportFormatModal';
 import { MenuBanner } from '../components/MenuBanner';
 import { DropZone } from '../components/DropZone';
 import { FileRow } from '../components/FileRow';
 import { SideMenu } from '../components/SideMenu';
 import { TitleBanner } from '../components/TitleBanner';
-import { UploadModal } from '../components/Modals/UploadModal';
-import { MultimediaModal } from '../components/Modals/MultimediaModal';
 import { FloatingButtonsContainer } from '../components/FloatingButtons/FloatingButtonsContainer';
-import { Loader } from '../components/Loader';
 import { LoadingBar } from '../components/LoadingBar';
 import { styled } from 'styled-components';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/types';
-import { Navigate } from 'react-router-dom';
-import { routes } from '../shared/constants/routes';
+
 import { DriveType } from '../shared/types/global.types';
 import { useCheckAuthAndRedirect } from '../hooks/useCheckAuth';
+import { ModalContainer } from '../components/Modals/ModalContainer';
 
 const RowsScrollview = styled.div`
 	flex: 1;
@@ -29,12 +22,6 @@ const RowsScrollview = styled.div`
 `;
 
 export const DrivePage = (): JSX.Element => {
-	const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-	const [addDriveModalVisible, setAddDriveModalVisible] = useState(false);
-	const [renameModalVisible, setRenameModalVisible] = useState(false);
-	const [exportFormatModalVisible, setExportFormatModalVisible] = useState(false);
-
-	const [uploadModalVisible, setUploadModalVisible] = useState(false);
 	const [sideMenuVisible, setSideMenuVisible] = useState(false);
 	const isUserAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
 
@@ -60,17 +47,7 @@ export const DrivePage = (): JSX.Element => {
 					height: '100%',
 				}}
 			>
-				{sideMenuVisible && (
-					<SideMenu
-						checkboxChecked={true}
-						onCheckboxClick={() => {
-							console.log('checkbox clicked');
-						}}
-						onCloseSideMenuClick={() => {
-							setSideMenuVisible(false);
-						}}
-					/>
-				)}
+				{sideMenuVisible && <SideMenu />}
 				<RowsScrollview>
 					<DropZone>
 						<MenuBanner
@@ -107,12 +84,7 @@ export const DrivePage = (): JSX.Element => {
 					<FloatingButtonsContainer />
 				</RowsScrollview>
 			</div>
-			<RenameModal
-				closeModal={() => {
-					console.log('close modal');
-				}}
-				visible={false}
-			/>
+			<ModalContainer />
 		</div>
 	) : (
 		<></>

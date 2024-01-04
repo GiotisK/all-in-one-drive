@@ -3,6 +3,8 @@ import { IconButton } from '../IconButton';
 import { SvgNames } from '../../shared/utils/svg-utils';
 import { styled, useTheme } from 'styled-components';
 import { Button } from '../Button';
+import { useDispatch } from 'react-redux';
+import { closeModals } from '../../redux/slices/modalSlice';
 
 const Container = styled.div`
 	position: fixed;
@@ -64,7 +66,6 @@ const Footer = styled.div`
 
 export interface BaseModalProps {
 	visible: boolean;
-	closeModal: () => void;
 }
 
 interface IProps extends BaseModalProps {
@@ -82,10 +83,15 @@ export const BaseModal = ({
 	showFooter = false,
 	leftButtonText = '',
 	rightButtonText = '',
-	closeModal,
 	children,
 }: PropsWithChildren<IProps>): JSX.Element => {
+	const dispatch = useDispatch();
 	const theme = useTheme();
+
+	const closeModal = (): void => {
+		dispatch(closeModals());
+	};
+
 	return (
 		<>
 			{visible && (

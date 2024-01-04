@@ -1,10 +1,10 @@
-import { styled, useTheme } from 'styled-components';
-import { SvgNames } from '../shared/utils/svg-utils';
+import { styled } from 'styled-components';
 import { Checkbox } from './Checkbox';
 import { DriveRow } from './DriveRow';
-import { IconButton } from './IconButton';
 import { Loader } from './Loader';
 import { DriveType } from '../shared/types/global.types';
+import { useDispatch } from 'react-redux';
+import { showAddDriveModal } from '../redux/slices/modalSlice';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
@@ -45,53 +45,34 @@ const NoDrivesTextClickable = styled(NoDrivesText)`
 	text-decoration: underline;
 `;
 
-interface IProps {
-	isInRoot?: boolean;
-	checkboxChecked: boolean;
-	onDivClick?: () => void;
-	onCheckboxClick: () => void;
-	onCloseSideMenuClick: () => void;
-}
-
-export const SideMenu = (props: IProps): JSX.Element => {
-	const theme = useTheme();
+export const SideMenu = (): JSX.Element => {
+	const dispatch = useDispatch();
 	const drivesLoading = false;
-	const driveObjs = [1, 2, 3];
+	const drives = [];
+
+	const onAddDriveClick = (): void => {
+		dispatch(showAddDriveModal({ visible: true }));
+	};
+
 	return (
-		<Container style={{}}>
+		<Container>
 			<Header>
-				<HeaderText onClick={props.onDivClick}>Connected Drives</HeaderText>
+				<HeaderText onClick={() => null}>Connected Drives</HeaderText>
 
-				<Checkbox
-					onChange={props.onCheckboxClick}
-					checked={props.checkboxChecked}
-					style={{ marginLeft: '5%' }}
-				/>
-
-				<IconButton
-					icon={SvgNames.Close}
-					size={20}
-					onClick={props.onCloseSideMenuClick}
-					style={{ marginLeft: 'auto', marginRight: '5%' }}
-					color={theme?.colors.textPrimary}
-				/>
+				<Checkbox onChange={() => null} checked={true} style={{ marginLeft: '5%' }} />
 			</Header>
 
 			{drivesLoading ? (
 				<Loader size={25} />
-			) : driveObjs.length === 0 ? (
+			) : drives.length === 0 ? (
 				<>
 					<NoDrivesText>There are no connected drives...</NoDrivesText>
-					<NoDrivesTextClickable
-						onClick={() => {
-							console.log('add drive clicked');
-						}}
-					>
+					<NoDrivesTextClickable onClick={onAddDriveClick}>
 						Add a drive
 					</NoDrivesTextClickable>
 				</>
 			) : (
-				driveObjs.map((drive, index) => {
+				drives.map((drive, index) => {
 					return (
 						<DriveRow
 							drive={DriveType.Dropbox}
