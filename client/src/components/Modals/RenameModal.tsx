@@ -12,8 +12,8 @@ const Content = styled.div`
 export const RenameModal = (): JSX.Element => {
 	return (
 		<BaseModal
-			header={{ title: 'Rename' }}
-			footer={{
+			headerProps={{ title: 'Rename' }}
+			footerProps={{
 				leftButton: {
 					text: 'Cancel',
 				},

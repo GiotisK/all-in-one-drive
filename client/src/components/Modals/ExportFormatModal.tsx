@@ -39,7 +39,7 @@ export const ExportFormatModal = ({ state }: IProps) => {
 	const { exportFormats } = state;
 
 	return (
-		<BaseModal header={{ title: 'Export as:' }}>
+		<BaseModal headerProps={{ title: 'Export as:' }}>
 			<FormatButtonsContainer>
 				{exportFormats.map((format, index) => (
 					<FormatButton key={index}> {format} </FormatButton>

@@ -79,11 +79,15 @@ type FooterProps = {
 };
 
 interface IProps {
-	header?: HeaderProps;
-	footer?: FooterProps;
+	headerProps?: HeaderProps;
+	footerProps?: FooterProps;
 }
 
-export const BaseModal = ({ header, footer, children }: PropsWithChildren<IProps>): JSX.Element => {
+export const BaseModal = ({
+	headerProps,
+	footerProps,
+	children,
+}: PropsWithChildren<IProps>): JSX.Element => {
 	const dispatch = useDispatch();
 	const theme = useTheme();
 
@@ -95,9 +99,9 @@ export const BaseModal = ({ header, footer, children }: PropsWithChildren<IProps
 		<Container>
 			<Backdrop onClick={onCloseModals} />
 			<ModalContainer>
-				{header && (
+				{headerProps && (
 					<Header>
-						<HeaderText>{header.title}</HeaderText>
+						<HeaderText>{headerProps.title}</HeaderText>
 						<IconButton
 							style={{ marginLeft: 'auto' }}
 							icon={SvgNames.Close}
@@ -107,24 +111,24 @@ export const BaseModal = ({ header, footer, children }: PropsWithChildren<IProps
 					</Header>
 				)}
 				{children}
-				{footer && (
+				{footerProps && (
 					<Footer>
-						{footer.leftButton && (
+						{footerProps.leftButton && (
 							<Button
-								text={footer.leftButton.text}
+								text={footerProps.leftButton.text}
 								style={{ margin: '3%' }}
 								type='secondary'
 								onClick={() => {
-									footer.leftButton?.onClick?.();
+									footerProps.leftButton?.onClick?.();
 									onCloseModals();
 								}}
 							/>
 						)}
-						{footer.rightButton && (
+						{footerProps.rightButton && (
 							<Button
-								text={footer.rightButton.text}
+								text={footerProps.rightButton.text}
 								style={{ marginTop: '3%' }}
-								onClick={footer.rightButton.onClick}
+								onClick={footerProps.rightButton.onClick}
 							/>
 						)}
 					</Footer>

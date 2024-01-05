@@ -60,8 +60,8 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 
 	return (
 		<BaseModal
-			header={{ title: 'Delete' }}
-			footer={{
+			headerProps={{ title: 'Delete' }}
+			footerProps={{
 				leftButton: {
 					text: 'Cancel',
 				},

@@ -86,7 +86,7 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 	}
 
 	return (
-		<BaseModal header={{ title }}>
+		<BaseModal headerProps={{ title }}>
 			<Content>
 				{drives.length === 0 ? (
 					<NoDrivesText>No drives found...</NoDrivesText>
