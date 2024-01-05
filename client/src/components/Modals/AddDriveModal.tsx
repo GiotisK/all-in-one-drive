@@ -14,7 +14,7 @@ const ButtonsContainer = styled.div`
 
 export const AddDriveModal = (): JSX.Element => {
 	return (
-		<BaseModal title='Add a drive'>
+		<BaseModal header={{ title: 'Add a drive' }}>
 			<ButtonsContainer>
 				<AddDriveButton type={DriveType.GoogleDrive} />
 				<AddDriveButton type={DriveType.Dropbox} />

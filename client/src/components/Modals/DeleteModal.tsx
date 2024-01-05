@@ -59,7 +59,17 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 	const { entity } = state;
 
 	return (
-		<BaseModal showFooter title='Delete' leftButtonText='Cancel' rightButtonText='Delete'>
+		<BaseModal
+			header={{ title: 'Delete' }}
+			footer={{
+				leftButton: {
+					text: 'Cancel',
+				},
+				rightButton: {
+					text: 'Delete',
+				},
+			}}
+		>
 			<Content>
 				<ConfirmationText>
 					<span>
