@@ -4,7 +4,8 @@ import { DriveRow } from './DriveRow';
 import { Loader } from './Loader';
 import { DriveType } from '../shared/types/global.types';
 import { useDispatch } from 'react-redux';
-import { showAddDriveModal } from '../redux/slices/modalSlice';
+import { openModal } from '../redux/slices/modalSlice';
+import { ModalKind } from '../redux/types';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
@@ -48,10 +49,10 @@ const NoDrivesTextClickable = styled(NoDrivesText)`
 export const SideMenu = (): JSX.Element => {
 	const dispatch = useDispatch();
 	const drivesLoading = false;
-	const drives = [];
+	const drives: unknown[] = [];
 
 	const onAddDriveClick = (): void => {
-		dispatch(showAddDriveModal({ visible: true }));
+		dispatch(openModal({ kind: ModalKind.AddDrive }));
 	};
 
 	return (
@@ -72,7 +73,7 @@ export const SideMenu = (): JSX.Element => {
 					</NoDrivesTextClickable>
 				</>
 			) : (
-				drives.map((drive, index) => {
+				drives.map((_drive, index) => {
 					return (
 						<DriveRow
 							drive={DriveType.Dropbox}

@@ -64,11 +64,8 @@ const Footer = styled.div`
 	border-top: 1px solid ${props => props.theme.colors.border};
 `;
 
-export interface BaseModalProps {
-	visible: boolean;
-}
-
-interface IProps extends BaseModalProps {
+interface IProps {
+	visible?: boolean;
 	title?: string;
 	showHeader?: boolean;
 	showFooter?: boolean;
@@ -77,9 +74,9 @@ interface IProps extends BaseModalProps {
 }
 
 export const BaseModal = ({
-	visible,
+	visible = true,
 	title = '',
-	showHeader = true,
+	showHeader = false,
 	showFooter = false,
 	leftButtonText = '',
 	rightButtonText = '',
@@ -88,7 +85,7 @@ export const BaseModal = ({
 	const dispatch = useDispatch();
 	const theme = useTheme();
 
-	const closeModal = (): void => {
+	const closeAllModals = (): void => {
 		dispatch(closeModals());
 	};
 
@@ -96,7 +93,7 @@ export const BaseModal = ({
 		<>
 			{visible && (
 				<Container>
-					<Backdrop onClick={closeModal} />
+					<Backdrop onClick={closeAllModals} />
 					<ModalContainer>
 						{showHeader && (
 							<Header>
@@ -104,7 +101,7 @@ export const BaseModal = ({
 								<IconButton
 									style={{ marginLeft: 'auto' }}
 									icon={SvgNames.Close}
-									onClick={closeModal}
+									onClick={closeModals}
 									color={theme?.colors.textPrimary}
 								/>
 							</Header>
@@ -115,7 +112,7 @@ export const BaseModal = ({
 								<Button
 									text={leftButtonText}
 									style={{ margin: '3%' }}
-									onClick={closeModal}
+									onClick={closeModals}
 									type='secondary'
 								/>
 								<Button text={rightButtonText} style={{ marginTop: '3%' }} />

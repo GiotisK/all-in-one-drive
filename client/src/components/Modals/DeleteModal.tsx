@@ -3,8 +3,7 @@ import { DriveEntity, Entity, FileEntity, FileType } from '../../shared/types/ty
 import { CreateDriveSvg } from '../../shared/utils/utils';
 import { styled } from 'styled-components';
 import { DriveType } from '../../shared/types/global.types';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/types';
+import { DeleteModalState } from '../../redux/types';
 
 interface DeleteFileProps {
 	file: FileEntity;
@@ -52,17 +51,15 @@ const DeleteDriveText = ({ drive }: DeleteDriveProps): JSX.Element => {
 	);
 };
 
-export const DeleteModal = (): JSX.Element => {
-	const { visible, entity } = useSelector((state: RootState) => state.modal.deleteModal);
+interface IProps {
+	state: DeleteModalState;
+}
+
+export const DeleteModal = ({ state }: IProps): JSX.Element => {
+	const { entity } = state;
 
 	return (
-		<BaseModal
-			showFooter={true}
-			title='Delete'
-			visible={visible}
-			leftButtonText='Cancel'
-			rightButtonText='Delete'
-		>
+		<BaseModal showFooter title='Delete' leftButtonText='Cancel' rightButtonText='Delete'>
 			<Content>
 				<ConfirmationText>
 					<span>
@@ -75,8 +72,6 @@ export const DeleteModal = (): JSX.Element => {
 		</BaseModal>
 	);
 };
-
-// Helpers
 
 const isFileEntity = (entity: Entity): entity is FileEntity => {
 	return Object.values(FileType).includes(entity.type as FileType);
