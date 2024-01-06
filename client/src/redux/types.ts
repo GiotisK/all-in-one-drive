@@ -1,4 +1,5 @@
-import { Entity, FileType, MultimediaType, ThemeMode } from '../shared/types/types';
+import { Entity, FileType, MultiMediaType, ThemeMode } from '../shared/types/types';
+import { Nullable } from '../shared/types/utils.types';
 import store from './store/store';
 
 export interface SettingsState {
@@ -10,41 +11,41 @@ export interface UserState {
 	email: string;
 }
 
-export type AddDriveModalState = {
-	visible: boolean;
-};
-
 export type DeleteModalState = {
-	visible: boolean;
-	entity: Entity | null;
+	entity: Nullable<Entity>;
 };
 
 export type ExportFormatModalState = {
-	visible: boolean;
 	exportFormats: string[];
 };
 
 export type MultimediaModalState = {
-	visible: boolean;
-	multimediaType: MultimediaType | null;
-};
-
-export type RenameModalState = {
-	visible: boolean;
+	multiMediaType: Nullable<MultiMediaType>;
 };
 
 export type UploadModalState = {
-	visible: boolean;
-	fileType: FileType | null;
+	fileType: Nullable<FileType>;
 };
 
+export enum ModalKind {
+	AddDrive,
+	Delete,
+	ExportFormat,
+	MultiMedia,
+	Rename,
+	Upload,
+}
+
+export type Modal =
+	| { kind: ModalKind.AddDrive }
+	| { kind: ModalKind.Delete; state: DeleteModalState }
+	| { kind: ModalKind.ExportFormat; state: ExportFormatModalState }
+	| { kind: ModalKind.MultiMedia; state: MultimediaModalState }
+	| { kind: ModalKind.Rename }
+	| { kind: ModalKind.Upload; state: UploadModalState };
+
 export interface ModalState {
-	addDriveModal: AddDriveModalState;
-	deleteModal: DeleteModalState;
-	exportFormatModal: ExportFormatModalState;
-	multimediaModal: MultimediaModalState;
-	renameModal: RenameModalState;
-	uploadModal: UploadModalState;
+	modal: Nullable<Modal>;
 }
 
 export type RootState = ReturnType<typeof store.getState>;

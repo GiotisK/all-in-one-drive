@@ -1,7 +1,6 @@
 import { styled } from 'styled-components';
 import { BaseModal } from './BaseModal';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/types';
+import { ExportFormatModalState } from '../../redux/types';
 
 const FormatButtonsContainer = styled.div`
 	display: flex;
@@ -32,17 +31,19 @@ const FormatButton = styled.button`
 	}
 `;
 
-export const ExportFormatModal = () => {
-	const { visible, exportFormats } = useSelector(
-		(state: RootState) => state.modal.exportFormatModal
-	);
+interface IProps {
+	state: ExportFormatModalState;
+}
+
+export const ExportFormatModal = ({ state }: IProps) => {
+	const { exportFormats } = state;
 
 	return (
-		<BaseModal visible={visible} showFooter={false} title='Export as:'>
+		<BaseModal headerProps={{ title: 'Export as:' }}>
 			<FormatButtonsContainer>
-				{exportFormats.map((format, index) => {
-					return <FormatButton key={index}> {format} </FormatButton>;
-				})}
+				{exportFormats.map((format, index) => (
+					<FormatButton key={index}> {format} </FormatButton>
+				))}
 			</FormatButtonsContainer>
 		</BaseModal>
 	);

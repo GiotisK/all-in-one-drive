@@ -64,66 +64,76 @@ const Footer = styled.div`
 	border-top: 1px solid ${props => props.theme.colors.border};
 `;
 
-export interface BaseModalProps {
-	visible: boolean;
-}
+type ButtonProps = {
+	text: string;
+	onClick?: () => void;
+};
 
-interface IProps extends BaseModalProps {
-	title?: string;
-	showHeader?: boolean;
-	showFooter?: boolean;
-	leftButtonText?: string;
-	rightButtonText?: string;
+type HeaderProps = {
+	title: string;
+};
+
+type FooterProps = {
+	leftButton?: ButtonProps;
+	rightButton?: ButtonProps;
+};
+
+interface IProps {
+	headerProps?: HeaderProps;
+	footerProps?: FooterProps;
 }
 
 export const BaseModal = ({
-	visible,
-	title = '',
-	showHeader = true,
-	showFooter = false,
-	leftButtonText = '',
-	rightButtonText = '',
+	headerProps,
+	footerProps,
 	children,
 }: PropsWithChildren<IProps>): JSX.Element => {
 	const dispatch = useDispatch();
 	const theme = useTheme();
 
-	const closeModal = (): void => {
+	const onCloseModals = (): void => {
 		dispatch(closeModals());
 	};
 
 	return (
-		<>
-			{visible && (
-				<Container>
-					<Backdrop onClick={closeModal} />
-					<ModalContainer>
-						{showHeader && (
-							<Header>
-								<HeaderText>{title}</HeaderText>
-								<IconButton
-									style={{ marginLeft: 'auto' }}
-									icon={SvgNames.Close}
-									onClick={closeModal}
-									color={theme?.colors.textPrimary}
-								/>
-							</Header>
+		<Container>
+			<Backdrop onClick={onCloseModals} />
+			<ModalContainer>
+				{headerProps && (
+					<Header>
+						<HeaderText>{headerProps.title}</HeaderText>
+						<IconButton
+							style={{ marginLeft: 'auto' }}
+							icon={SvgNames.Close}
+							onClick={onCloseModals}
+							color={theme?.colors.textPrimary}
+						/>
+					</Header>
+				)}
+				{children}
+				{footerProps && (
+					<Footer>
+						{footerProps.leftButton && (
+							<Button
+								text={footerProps.leftButton.text}
+								style={{ margin: '3%' }}
+								type='secondary'
+								onClick={() => {
+									footerProps.leftButton?.onClick?.();
+									onCloseModals();
+								}}
+							/>
 						)}
-						{children}
-						{showFooter && (
-							<Footer>
-								<Button
-									text={leftButtonText}
-									style={{ margin: '3%' }}
-									onClick={closeModal}
-									type='secondary'
-								/>
-								<Button text={rightButtonText} style={{ marginTop: '3%' }} />
-							</Footer>
+						{footerProps.rightButton && (
+							<Button
+								text={footerProps.rightButton.text}
+								style={{ marginTop: '3%' }}
+								onClick={footerProps.rightButton.onClick}
+							/>
 						)}
-					</ModalContainer>
-				</Container>
-			)}
-		</>
+					</Footer>
+				)}
+			</ModalContainer>
+		</Container>
 	);
 };

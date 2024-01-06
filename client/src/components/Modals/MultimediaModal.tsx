@@ -1,7 +1,6 @@
-import { useSelector } from 'react-redux';
+import { MultimediaModalState } from '../../redux/types';
 import { BaseModal } from './BaseModal';
 import { styled } from 'styled-components';
-import { RootState } from '../../redux/types';
 
 const SoundContent = styled.div`
 	display: flex;
@@ -26,36 +25,36 @@ const Image = styled.img`
 	max-height: 800px;
 `;
 
-export const MultimediaModal = (): JSX.Element => {
-	const { visible, multimediaType } = useSelector(
-		(state: RootState) => state.modal.multimediaModal
-	);
+interface IProps {
+	state: MultimediaModalState;
+}
+
+export const MultimediaModal = ({ state }: IProps): JSX.Element => {
+	const { multiMediaType } = state;
 
 	return (
-		<BaseModal visible={visible} showHeader={false}>
-			<>
-				{multimediaType === 'audio' && (
-					<SoundContent>
-						<audio
-							controls={true}
-							/* src={props.openFileLink.src}
+		<BaseModal>
+			{multiMediaType === 'audio' && (
+				<SoundContent>
+					<audio
+						controls
+						/* src={props.openFileLink.src}
 							type={mimeTypes[props.openFileLink.extension]} */
-						/>
-					</SoundContent>
-				)}
-				{multimediaType === 'video' && (
-					<Video
-						controls={true}
-						/* 	src={props.openFileLink.src}
+					/>
+				</SoundContent>
+			)}
+			{multiMediaType === 'video' && (
+				<Video
+					controls
+					/* 	src={props.openFileLink.src}
 						type={mimeTypes[props.openFileLink.extension]} */
-					/>
-				)}
-				{multimediaType === 'image' && (
-					<Image
-					/* src={props.openFileLink.src} */
-					/>
-				)}
-			</>
+				/>
+			)}
+			{multiMediaType === 'image' && (
+				<Image
+				/* src={props.openFileLink.src} */
+				/>
+			)}
 		</BaseModal>
 	);
 };

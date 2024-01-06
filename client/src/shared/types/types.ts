@@ -7,12 +7,12 @@ export enum FileType {
 	File = 'file',
 }
 
-export type MultimediaType = 'audio' | 'video' | 'image';
+export type MultiMediaType = 'audio' | 'video' | 'image';
 
 export interface FileEntity {
+	type: FileType;
 	id: string;
 	permissions: string;
-	type: FileType;
 	drive: DriveType;
 	name: string;
 	size: number;

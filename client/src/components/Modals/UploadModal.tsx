@@ -3,8 +3,7 @@ import { DriveEntity, FileType } from '../../shared/types/types';
 import { CreateDriveSvg } from '../../shared/utils/utils';
 import { BaseModal } from './BaseModal';
 import { DriveType } from '../../shared/types/global.types';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/types';
+import { UploadModalState } from '../../redux/types';
 
 const Content = styled.div`
 	display: flex;
@@ -61,8 +60,12 @@ const DriveRowText = styled.p`
 	word-wrap: break-word;
 `;
 
-export const UploadModal = (): JSX.Element => {
-	const { visible, fileType } = useSelector((state: RootState) => state.modal.uploadModal);
+interface IProps {
+	state: UploadModalState;
+}
+
+export const UploadModal = ({ state }: IProps): JSX.Element => {
+	const { fileType } = state;
 
 	const drives: DriveEntity[] = [
 		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
@@ -72,41 +75,38 @@ export const UploadModal = (): JSX.Element => {
 		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
 	];
 
-	const getTitle = (): string => {
-		switch (fileType) {
-			case FileType.File:
-				return 'Selected a drive to upload the file';
-			case FileType.Folder:
-				return 'Selected a drive to create the folder';
-			default:
-				return 'Upload format is not correct';
-		}
-	};
+	let title = '';
+	switch (fileType) {
+		case FileType.File:
+			title = 'Selected a drive to upload the file';
+			break;
+		case FileType.Folder:
+			title = 'Selected a drive to create the folder';
+			break;
+	}
 
 	return (
-		<BaseModal title={getTitle()} visible={visible} showFooter={false}>
+		<BaseModal headerProps={{ title }}>
 			<Content>
 				{drives.length === 0 ? (
-					<NoDrivesText style={{}}>No drives found...</NoDrivesText>
+					<NoDrivesText>No drives found...</NoDrivesText>
 				) : (
 					<DriveRowScrollView>
-						{drives.map((drive, index) => {
-							return (
-								<DriveRow
-									key={index}
-									className='drive-row'
-									onClick={() => {
-										console.log('drivw row clicked');
-										/* props.onSpecificRowClick(drive); */
-									}}
-								>
-									{CreateDriveSvg(drive.type, 25)}
-									<DriveRowText className='drive-row-email-text'>
-										{drive.email}
-									</DriveRowText>
-								</DriveRow>
-							);
-						})}
+						{drives.map((drive, index) => (
+							<DriveRow
+								key={index}
+								className='drive-row'
+								onClick={() => {
+									console.log('drivw row clicked');
+									/* props.onSpecificRowClick(drive); */
+								}}
+							>
+								{CreateDriveSvg(drive.type, 25)}
+								<DriveRowText className='drive-row-email-text'>
+									{drive.email}
+								</DriveRowText>
+							</DriveRow>
+						))}
 					</DriveRowScrollView>
 				)}
 			</Content>
