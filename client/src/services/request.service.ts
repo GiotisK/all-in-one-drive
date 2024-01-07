@@ -8,7 +8,7 @@ export const getRequest = async <T, U>(
 	return axiosInstance.get(path, data);
 };
 
-export const postRequest = async <T>(path: string, data: T) => {
+export const postRequest = async <T, U>(path: string, data?: T): Promise<AxiosResponse<U>> => {
 	return axiosInstance.post(path, data);
 };
 

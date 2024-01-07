@@ -12,8 +12,9 @@ export const saveDriveProperties = async (
 		const updatedUser = await User.findOneAndUpdate(
 			{ email: userEmail },
 			{
-				$push: { [drive]: driveProperties },
-			}
+				$set: { [drive]: driveProperties },
+			},
+			{ upsert: true, new: true }
 		).exec();
 
 		return !!updatedUser;

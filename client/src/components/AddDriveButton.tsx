@@ -4,7 +4,7 @@ import { DriveType } from '../shared/types/global.types';
 
 interface IProps {
 	type: DriveType;
-	onClick?: () => void;
+	onClick: () => void;
 }
 
 const Container = styled.div`

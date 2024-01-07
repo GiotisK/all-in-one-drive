@@ -9,7 +9,7 @@ import { getRequest, postRequest } from './request.service';
 
 export const registerUser = async (email: string, password: string): Promise<boolean> => {
 	try {
-		const res = await postRequest<RegisterUserRequestBody>('/users/register', {
+		const res = await postRequest<RegisterUserRequestBody, void>('/users/register', {
 			email,
 			password,
 		});
@@ -22,7 +22,10 @@ export const registerUser = async (email: string, password: string): Promise<boo
 
 export const loginUser = async (email: string, password: string): Promise<boolean> => {
 	try {
-		const res = await postRequest<LoginUserRequestBody>('/users/login', { email, password });
+		const res = await postRequest<LoginUserRequestBody, void>('/users/login', {
+			email,
+			password,
+		});
 
 		return res.status === Status.OK;
 	} catch {

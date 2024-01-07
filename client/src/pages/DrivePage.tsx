@@ -14,6 +14,7 @@ import { RootState } from '../redux/types';
 import { DriveType } from '../shared/types/global.types';
 import { useCheckAuthAndRedirect } from '../hooks/useCheckAuth';
 import { ModalContainer } from '../components/Modals/ModalContainer';
+import { useHandleAuthCodeFromUrl } from '../hooks/useHandleAuthCodeFromUrl';
 
 const RowsScrollview = styled.div`
 	flex: 1;
@@ -26,6 +27,7 @@ export const DrivePage = (): JSX.Element => {
 	const isUserAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
 
 	useCheckAuthAndRedirect();
+	useHandleAuthCodeFromUrl();
 
 	return isUserAuthenticated ? (
 		<div
