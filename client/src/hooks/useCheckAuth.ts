@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { authUser } from '../services/user.service';
-import { setEmail, setIsAuthenticated } from '../redux/slices/userSlice';
+import { setEmail, setIsAuthenticated } from '../redux/slices/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { routes } from '../shared/constants/routes';

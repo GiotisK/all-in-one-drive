@@ -1,9 +1,9 @@
 import { BaseModal } from './BaseModal';
-import { DriveEntity, Entity, FileEntity, FileType } from '../../shared/types/types';
+import { Entity, FileEntity, FileType } from '../../shared/types/types';
 import { CreateDriveSvg } from '../../shared/utils/utils';
 import { styled } from 'styled-components';
-import { DriveType } from '../../shared/types/global.types';
-import { DeleteModalState } from '../../redux/types';
+import { DriveEntity, DriveType } from '../../shared/types/global.types';
+import { DeleteModalState } from '../../redux/slices/modal/types';
 
 interface DeleteFileProps {
 	file: FileEntity;

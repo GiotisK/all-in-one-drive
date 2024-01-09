@@ -4,8 +4,8 @@ import { DriveRow } from './DriveRow';
 import { Loader } from './Loader';
 import { DriveType } from '../shared/types/global.types';
 import { useDispatch } from 'react-redux';
-import { openModal } from '../redux/slices/modalSlice';
-import { ModalKind } from '../redux/types';
+import { openModal } from '../redux/slices/modal/modalSlice';
+import { ModalKind } from '../redux/slices/modal/types';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;

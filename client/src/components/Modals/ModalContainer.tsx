@@ -1,11 +1,12 @@
 import { useSelector } from 'react-redux';
-import { ModalKind, RootState } from '../../redux/types';
+import { RootState } from '../../redux/store/types';
 import { AddDriveModal } from './AddDriveModal';
 import { DeleteModal } from './DeleteModal';
 import { ExportFormatModal } from './ExportFormatModal';
 import { MultimediaModal } from './MultimediaModal';
 import { RenameModal } from './RenameModal';
 import { UploadModal } from './UploadModal';
+import { ModalKind } from '../../redux/slices/modal/types';
 
 export const ModalContainer = (): JSX.Element | null => {
 	const { modal } = useSelector((state: RootState) => state.modal);

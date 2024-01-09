@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
 import { BaseModal } from './BaseModal';
-import { ExportFormatModalState } from '../../redux/types';
+import { ExportFormatModalState } from '../../redux/slices/modal/types';
 
 const FormatButtonsContainer = styled.div`
 	display: flex;

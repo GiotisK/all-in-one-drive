@@ -1,15 +1,5 @@
-import { Entity, FileType, MultiMediaType, ThemeMode } from '../shared/types/types';
-import { Nullable } from '../shared/types/utils.types';
-import store from './store/store';
-
-export interface SettingsState {
-	themeMode: ThemeMode;
-}
-
-export interface UserState {
-	isAuthenticated: boolean;
-	email: string;
-}
+import { Entity, FileType, MultiMediaType } from '../../../shared/types/types';
+import { Nullable } from '../../../shared/types/utils.types';
 
 export type DeleteModalState = {
 	entity: Nullable<Entity>;
@@ -47,5 +37,3 @@ export type Modal =
 export interface ModalState {
 	modal: Nullable<Modal>;
 }
-
-export type RootState = ReturnType<typeof store.getState>;

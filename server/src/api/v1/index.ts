@@ -1,4 +1,4 @@
 import userRouter from './user/user.routes';
-import driveRouter from './drive/drive.routes';
+import drivesRouter from './drives/drives.routes';
 
-export { userRouter, driveRouter };
+export { userRouter, drivesRouter };

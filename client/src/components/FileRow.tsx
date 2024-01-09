@@ -5,7 +5,7 @@ import { CreateDriveSvg, formatBytes } from '../shared/utils/utils';
 import { IconButton } from './IconButton';
 import { styled, useTheme } from 'styled-components';
 import { FileEntity } from '../shared/types/types';
-import { useOutsideClicker } from '../hooks/useOutsideClicker';
+import { useOutsideClicker } from '../hooks';
 
 const Container = styled.div`
 	display: flex;

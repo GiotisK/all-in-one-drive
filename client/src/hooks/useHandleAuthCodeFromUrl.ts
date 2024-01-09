@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { DriveType } from '../shared/types/global.types';
-import { connectDrive } from '../services/drive/drive.service';
+import { connectDrive } from '../services/drives/drives.service';
 import { Nullable } from '../shared/types/utils.types';
 
 export const useHandleAuthCodeFromUrl = () => {

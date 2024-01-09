@@ -1,4 +1,4 @@
-import { MultimediaModalState } from '../../redux/types';
+import { MultimediaModalState } from '../../redux/slices/modal/types';
 import { BaseModal } from './BaseModal';
 import { styled } from 'styled-components';
 

@@ -1,4 +1,4 @@
-import { DriveType } from './global.types';
+import { DriveEntity, DriveType } from './global.types';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -21,11 +21,6 @@ export interface FileEntity {
 	date: string;
 	extension: string;
 	isShared: boolean;
-}
-
-export interface DriveEntity {
-	type: DriveType;
-	email: string;
 }
 
 export type Entity = DriveEntity | FileEntity;

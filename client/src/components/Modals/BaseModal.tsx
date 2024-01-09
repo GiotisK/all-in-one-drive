@@ -4,7 +4,7 @@ import { SvgNames } from '../../shared/utils/svg-utils';
 import { styled, useTheme } from 'styled-components';
 import { Button } from '../Button';
 import { useDispatch } from 'react-redux';
-import { closeModals } from '../../redux/slices/modalSlice';
+import { closeModals } from '../../redux/slices/modal/modalSlice';
 
 const Container = styled.div`
 	position: fixed;

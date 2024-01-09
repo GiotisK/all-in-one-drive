@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { CredentialsBox } from '../components/CredentialsBox';
 import { ReactComponent as Banner } from '../assets/svgs/landing_page_banner.svg';
 import { ThemeToggle } from '../components/Toggle/ThemeToggle';
-import { useCheckAuthAndRedirect } from '../hooks/useCheckAuth';
+import { useCheckAuthAndRedirect } from '../hooks';
 
 const LandingPageContainer = styled.div`
 	display: flex;

@@ -1,8 +1,8 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../redux/types';
+import { RootState } from '../../redux/store/types';
 import { SvgNames, createSvg } from '../../shared/utils/svg-utils';
 import { Toggle } from './Toggle';
-import { toggleTheme } from '../../redux/slices/settingsSlice';
+import { toggleTheme } from '../../redux/slices/settings/settingsSlice';
 import { styled } from 'styled-components';
 
 const SvgContainer = styled.div`

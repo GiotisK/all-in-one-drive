@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 import { DefaultTheme, ThemeProvider } from 'styled-components';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/types';
+import { RootState } from '../redux/store/types';
 
 const lightTheme: DefaultTheme = {
 	colors: {

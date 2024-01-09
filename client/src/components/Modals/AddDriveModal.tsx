@@ -2,7 +2,7 @@ import { BaseModal } from './BaseModal';
 import { AddDriveButton } from '../AddDriveButton';
 import { styled } from 'styled-components';
 import { DriveType } from '../../shared/types/global.types';
-import { getAuthLink } from '../../services/drive/drive.service';
+import { getAuthLink } from '../../services/drives/drives.service';
 
 const ButtonsContainer = styled.div`
 	display: flex;

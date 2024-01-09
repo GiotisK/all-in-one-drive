@@ -1,9 +1,9 @@
 import { styled } from 'styled-components';
-import { DriveEntity, FileType } from '../../shared/types/types';
+import { FileType } from '../../shared/types/types';
 import { CreateDriveSvg } from '../../shared/utils/utils';
 import { BaseModal } from './BaseModal';
-import { DriveType } from '../../shared/types/global.types';
-import { UploadModalState } from '../../redux/types';
+import { DriveEntity, DriveType } from '../../shared/types/global.types';
+import { UploadModalState } from '../../redux/slices/modal/types';
 
 const Content = styled.div`
 	display: flex;
@@ -68,11 +68,11 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 	const { fileType } = state;
 
 	const drives: DriveEntity[] = [
+		/* { email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
 		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
 		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
 		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
-		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
-		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
+		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive }, */
 	];
 
 	let title = '';

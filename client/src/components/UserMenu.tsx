@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
-import { useOutsideClicker } from '../hooks/useOutsideClicker';
+import { useOutsideClicker } from '../hooks';
 import { logoutUser } from '../services/user.service';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';

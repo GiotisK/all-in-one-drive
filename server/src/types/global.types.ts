@@ -32,3 +32,8 @@ export enum DriveType {
 	Dropbox = 'dropbox',
 	OneDrive = 'onedrive',
 }
+
+export type DriveQuota = {
+	used: string;
+	total: string;
+};

@@ -5,7 +5,7 @@ import { Button } from './Button';
 import { styled } from 'styled-components';
 import { loginUser, registerUser } from '../services/user.service';
 import { useDispatch } from 'react-redux';
-import { setIsAuthenticated } from '../redux/slices/userSlice';
+import { setIsAuthenticated } from '../redux/slices/user/userSlice';
 import { useNavigate, redirect } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
 
