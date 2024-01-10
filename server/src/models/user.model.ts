@@ -1,25 +1,30 @@
-import mongoose, { InferSchemaType } from 'mongoose';
+import mongoose from 'mongoose';
+import { DriveType } from '../types/global.types';
 
 export type DriveSchema = {
 	email: string;
-	virtualFolderId: string;
+	virtualFolderId?: string;
 	token: string;
+	driveType: DriveType;
 };
 
 export interface UserSchema {
 	email: string;
 	password: string;
-	googledrive: DriveSchema[];
-	dropbox: DriveSchema[];
-	onedrive: DriveSchema[];
+	drives: DriveSchema[];
 }
 
 const userSchema = new mongoose.Schema<UserSchema>({
-	email: { type: String, unique: true },
+	email: { type: String, required: true, unique: true },
 	password: { type: String },
-	googledrive: [{ email: String, virtualFolderId: { type: String, default: '' }, token: String }],
-	dropbox: [{ email: String, virtualFolderId: { type: String, default: '' }, token: String }],
-	onedrive: [{ email: String, virtualFolderId: { type: String, default: '' }, token: String }],
+	drives: [
+		{
+			email: String,
+			virtualFolderId: { type: String, default: '' },
+			token: String,
+			driveType: String,
+		},
+	],
 });
 
 export default mongoose.model<UserSchema>('User', userSchema);

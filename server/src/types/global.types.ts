@@ -37,3 +37,9 @@ export type DriveQuota = {
 	used: string;
 	total: string;
 };
+
+export interface DriveEntity {
+	type: DriveType;
+	email: string;
+	quota: DriveQuota;
+}

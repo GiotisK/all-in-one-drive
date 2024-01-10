@@ -1,5 +1,5 @@
+import { DriveQuota } from '../../types/global.types';
 import { IDriveStrategy } from './IDriveStrategy';
-import { DriveQuota } from './drive.types';
 
 export default class DriveContext {
 	private strategy: IDriveStrategy;

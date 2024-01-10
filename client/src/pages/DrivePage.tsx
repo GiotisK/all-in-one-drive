@@ -9,12 +9,11 @@ import { FloatingButtonsContainer } from '../components/FloatingButtons/Floating
 import { LoadingBar } from '../components/LoadingBar';
 import { styled } from 'styled-components';
 import { useSelector } from 'react-redux';
-import { RootState } from '../redux/types';
+import { RootState } from '../redux/store/types';
 
 import { DriveType } from '../shared/types/global.types';
-import { useCheckAuthAndRedirect } from '../hooks/useCheckAuth';
 import { ModalContainer } from '../components/Modals/ModalContainer';
-import { useHandleAuthCodeFromUrl } from '../hooks/useHandleAuthCodeFromUrl';
+import { useCheckAuthAndRedirect, useFetchDrives, useHandleAuthCodeFromUrl } from '../hooks';
 
 const RowsScrollview = styled.div`
 	flex: 1;
@@ -28,6 +27,7 @@ export const DrivePage = (): JSX.Element => {
 
 	useCheckAuthAndRedirect();
 	useHandleAuthCodeFromUrl();
+	useFetchDrives();
 
 	return isUserAuthenticated ? (
 		<div

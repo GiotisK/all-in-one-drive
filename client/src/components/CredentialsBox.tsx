@@ -6,8 +6,8 @@ import { styled } from 'styled-components';
 import { loginUser, registerUser } from '../services/user.service';
 import { useDispatch } from 'react-redux';
 import { setIsAuthenticated } from '../redux/slices/user/userSlice';
-import { useNavigate, redirect } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
+import { useNavigate } from 'react-router-dom';
 
 const centerAbsoluteDivInPage = `
 	position: absolute;
@@ -122,8 +122,10 @@ export const CredentialsBox = (): JSX.Element => {
 
 		if (mode === Mode.Login) {
 			isRequestSuccessful = await loginUser(inputValues.email, inputValues.password);
-			dispatch(setIsAuthenticated(true));
-			navigate(routes.drive);
+			if (isRequestSuccessful) {
+				dispatch(setIsAuthenticated(true));
+				navigate(routes.drive);
+			}
 		} else if (mode === Mode.Register) {
 			isRequestSuccessful = await registerUser(inputValues.email, inputValues.password);
 		}

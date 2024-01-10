@@ -1,4 +1,4 @@
-import { DriveQuota } from './drive.types';
+import { DriveQuota } from '../../types/global.types';
 
 export interface IDriveStrategy {
 	getAuthLink(): string;

@@ -2,7 +2,7 @@ import { OAuth2Client } from 'googleapis-common';
 import { IDriveStrategy } from './IDriveStrategy';
 import { drive, auth, drive_v3 } from '@googleapis/drive';
 import { bytesToGigabytes } from '../../helpers/helpers';
-import { DriveQuota } from './drive.types';
+import { DriveQuota } from '../../types/global.types';
 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
