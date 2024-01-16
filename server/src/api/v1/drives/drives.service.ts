@@ -70,9 +70,9 @@ export const getDriveQuota = async (
 
 export const getDriveEntities = async (userEmail: string): Promise<DriveEntity[] | null> => {
 	const driveProperties = await getDriveProperties(userEmail);
-
 	if (driveProperties) {
 		const driveEntities: DriveEntity[] = [];
+		let promiseArr: Promise<DriveQuota | null>[] = [];
 
 		try {
 			driveProperties.forEach(async properties => {
@@ -85,15 +85,21 @@ export const getDriveEntities = async (userEmail: string): Promise<DriveEntity[]
 					const token = decrypt(encryptedToken);
 
 					const ctx = new DriveContext(driveStrategy);
-					const quota = await ctx.getDriveQuota(token);
+					promiseArr.push(ctx.getDriveQuota(token));
+				}
+			});
 
-					if (quota) {
-						driveEntities.push({
-							email,
-							quota: quota,
-							type: driveType,
-						});
-					}
+			const quotas = await Promise.all(promiseArr);
+
+			quotas.forEach((quota, index) => {
+				const { email, driveType } = driveProperties[index];
+
+				if (quota) {
+					driveEntities.push({
+						email,
+						type: driveType,
+						quota,
+					});
 				}
 			});
 

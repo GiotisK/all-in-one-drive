@@ -1,20 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import { DriveType } from '../shared/types/global.types';
 import { connectDrive } from '../services/drives/drives.service';
 import { Nullable } from '../shared/types/utils.types';
 
 export const useHandleAuthCodeFromUrl = () => {
-	const isRequestSent = useRef<boolean>(false);
-
 	useEffect(() => {
 		const url = document.location.search;
 		const params = new URLSearchParams(url);
 		const authCode = params.get('code');
 		const drive = getDriveFromAuthCodeUri(url);
 
-		if (authCode && drive && !isRequestSent.current) {
+		if (authCode && drive) {
 			connectDrive(authCode, drive);
-			isRequestSent.current = true;
 		}
 	}, []);
 };

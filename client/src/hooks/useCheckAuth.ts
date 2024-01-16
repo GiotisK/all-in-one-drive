@@ -10,13 +10,21 @@ export const useCheckAuthAndRedirect = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
+		let ignore = false;
+
 		(async () => {
 			const res = await authUser();
 			const toRoute = res.success ? routes.drive : routes.login;
 
-			dispatch(setEmail(res.email));
-			dispatch(setIsAuthenticated(res.success));
-			navigate(toRoute);
+			if (!ignore) {
+				dispatch(setEmail(res.email));
+				dispatch(setIsAuthenticated(res.success));
+				navigate(toRoute);
+			}
 		})();
+
+		return () => {
+			ignore = true;
+		};
 	}, [navigate, dispatch]);
 };

@@ -7,10 +7,18 @@ export const useFetchDrives = () => {
 	const dispatch = useDispatch();
 
 	useEffect(() => {
+		let ignore = false;
+
 		(async () => {
 			const driveEntities = await getDriveEntities();
-			console.log('===driveEntities', driveEntities);
-			driveEntities && dispatch(setDrives(driveEntities));
+
+			if (driveEntities && !ignore) {
+				dispatch(setDrives(driveEntities));
+			}
 		})();
+
+		return () => {
+			ignore = true;
+		};
 	}, [dispatch]);
 };

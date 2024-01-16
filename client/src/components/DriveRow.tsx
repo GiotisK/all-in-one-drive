@@ -1,7 +1,7 @@
 import styled, { useTheme } from 'styled-components';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 import { CreateDriveSvg } from '../shared/utils/utils';
-import { DriveType } from '../shared/types/global.types';
+import { DriveQuota, DriveType } from '../shared/types/global.types';
 
 const DriveElementContainer = styled.div`
 	display: flex;
@@ -80,7 +80,7 @@ const DriveSvgContainer = styled.div`
 
 interface IProps {
 	email: string;
-	quota: string;
+	quota: DriveQuota;
 	onClick: () => void;
 	onDeleteDriveClick: () => void;
 	drive: DriveType;
@@ -90,13 +90,17 @@ interface IProps {
 export const DriveRow = (props: IProps): JSX.Element => {
 	const theme = useTheme();
 
+	const formatQuota = (quota: DriveQuota) => {
+		return quota.used + ' / ' + quota.total + 'GB';
+	};
+
 	return (
 		<DriveElementContainer style={{ opacity: props.enabled ? 1 : 0.8 }} onClick={props.onClick}>
 			<DriveSvgContainer>{CreateDriveSvg(props.drive)}</DriveSvgContainer>
 
 			<EmailQuotaContainer>
 				<DriveElementEmail>{props.email}</DriveElementEmail>
-				<DriveElementQuota>{props.quota} GB</DriveElementQuota>
+				<DriveElementQuota>{formatQuota(props.quota)}</DriveElementQuota>
 			</EmailQuotaContainer>
 
 			<TrashCanAndIndicatorContainer>

@@ -2,10 +2,10 @@ import { styled } from 'styled-components';
 import { Checkbox } from './Checkbox';
 import { DriveRow } from './DriveRow';
 import { Loader } from './Loader';
-import { DriveType } from '../shared/types/global.types';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
+import { RootState } from '../redux/store/types';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
@@ -48,8 +48,9 @@ const NoDrivesTextClickable = styled(NoDrivesText)`
 
 export const SideMenu = (): JSX.Element => {
 	const dispatch = useDispatch();
+	const { drives } = useSelector((state: RootState) => state.drives);
+
 	const drivesLoading = false;
-	const drives: unknown[] = [];
 
 	const onAddDriveClick = (): void => {
 		dispatch(openModal({ kind: ModalKind.AddDrive }));
@@ -65,7 +66,7 @@ export const SideMenu = (): JSX.Element => {
 
 			{drivesLoading ? (
 				<Loader size={25} />
-			) : drives.length === 0 ? (
+			) : !drives.length ? (
 				<>
 					<NoDrivesText>There are no connected drives...</NoDrivesText>
 					<NoDrivesTextClickable onClick={onAddDriveClick}>
@@ -73,11 +74,13 @@ export const SideMenu = (): JSX.Element => {
 					</NoDrivesTextClickable>
 				</>
 			) : (
-				drives.map((_drive, index) => {
+				drives.map((drive, index) => {
+					const { type, email, quota } = drive;
+
 					return (
 						<DriveRow
-							drive={DriveType.Dropbox}
-							email='palaris@molirs'
+							drive={type}
+							email={email}
 							enabled
 							onClick={() => {
 								console.log('cliked');
@@ -85,7 +88,7 @@ export const SideMenu = (): JSX.Element => {
 							onDeleteDriveClick={() => {
 								console.log('delete clicked');
 							}}
-							quota='2gb/5gb'
+							quota={quota}
 							key={index}
 						/>
 					);
