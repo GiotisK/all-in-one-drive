@@ -4,6 +4,9 @@ import { CreateDriveSvg } from '../../shared/utils/utils';
 import { styled } from 'styled-components';
 import { DriveEntity, DriveType } from '../../shared/types/global.types';
 import { DeleteModalState } from '../../redux/slices/modal/types';
+import { deleteDriveEntity } from '../../services/drives/drives.service';
+import { useDispatch } from 'react-redux';
+import { deleteDrive } from '../../redux/slices/drives/drivesSlice';
 
 interface DeleteFileProps {
 	file: FileEntity;
@@ -15,6 +18,7 @@ interface DeleteDriveProps {
 
 const BoldSpan = styled.span`
 	font-weight: bold;
+	color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const SvgContainer = styled.span`
@@ -35,6 +39,7 @@ const ConfirmationText = styled.div`
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
+	color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const DeleteFileText = ({ file }: DeleteFileProps): JSX.Element => {
@@ -56,7 +61,18 @@ interface IProps {
 }
 
 export const DeleteModal = ({ state }: IProps): JSX.Element => {
+	const dispatch = useDispatch();
 	const { entity } = state;
+
+	const sendDeleteDriveRequest = async () => {
+		if (entity && isDriveEntity(entity)) {
+			const { email, type } = entity;
+			const success = await deleteDriveEntity(email, type);
+			if (success) {
+				dispatch(deleteDrive(entity));
+			}
+		}
+	};
 
 	return (
 		<BaseModal
@@ -67,6 +83,7 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 				},
 				rightButton: {
 					text: 'Delete',
+					onClick: sendDeleteDriveRequest,
 				},
 			}}
 		>

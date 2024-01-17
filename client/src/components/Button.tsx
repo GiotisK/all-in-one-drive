@@ -9,7 +9,7 @@ const ButtonWrapper = styled.button<ButtonWrapperProps>`
 	width: 80px;
 	height: 50px;
 	background-color: ${({ $type, theme }) =>
-		$type === 'primary' ? theme.colors.bluePrimary : 'white'};
+		$type === 'primary' ? theme.colors.bluePrimary : theme.colors.background};
 	border-style: solid;
 	border-width: 1px;
 	border-radius: 5px;

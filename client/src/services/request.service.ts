@@ -1,11 +1,8 @@
-import { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { AxiosResponse } from 'axios';
 import { axiosInstance } from '../configs/axios.configs';
 
-export const getRequest = async <T, U>(
-	path: string,
-	data: AxiosRequestConfig<T> = {}
-): Promise<AxiosResponse<U>> => {
-	return axiosInstance.get(path, data);
+export const getRequest = async <T>(path: string): Promise<AxiosResponse<T>> => {
+	return axiosInstance.get(path);
 };
 
 export const postRequest = async <T, U>(path: string, data?: T): Promise<AxiosResponse<U>> => {
@@ -16,6 +13,6 @@ export const putRequest = async <T>(path: string, data: T) => {
 	return axiosInstance.put(path, data);
 };
 
-export const deleteRequest = async <T>(path: string, data: AxiosRequestConfig<T>) => {
-	return axiosInstance.delete(path, data);
+export const deleteRequest = async (path: string) => {
+	return axiosInstance.delete(path);
 };

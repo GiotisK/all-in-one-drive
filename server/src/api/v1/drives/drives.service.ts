@@ -1,4 +1,5 @@
 import {
+	deleteDriveProperties,
 	getDriveProperties,
 	getEncryptedTokenAsString,
 	saveDriveProperties,
@@ -110,4 +111,12 @@ export const getDriveEntities = async (userEmail: string): Promise<DriveEntity[]
 	}
 
 	return null;
+};
+
+export const deleteDriveEntity = (
+	userEmail: string,
+	driveEmail: string,
+	drive: DriveType
+): Promise<boolean | null> => {
+	return deleteDriveProperties(userEmail, driveEmail, drive);
 };

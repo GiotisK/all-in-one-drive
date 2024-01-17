@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
 import { RootState } from '../redux/store/types';
+import { DriveEntity } from '../shared/types/global.types';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
@@ -56,11 +57,14 @@ export const SideMenu = (): JSX.Element => {
 		dispatch(openModal({ kind: ModalKind.AddDrive }));
 	};
 
+	const onDeleteDriveClick = (drive: DriveEntity): void => {
+		dispatch(openModal({ kind: ModalKind.Delete, state: { entity: drive } }));
+	};
+
 	return (
 		<Container>
 			<Header>
 				<HeaderText onClick={() => null}>Connected Drives</HeaderText>
-
 				<Checkbox onChange={() => null} checked={true} style={{ marginLeft: '5%' }} />
 			</Header>
 
@@ -86,7 +90,7 @@ export const SideMenu = (): JSX.Element => {
 								console.log('cliked');
 							}}
 							onDeleteDriveClick={() => {
-								console.log('delete clicked');
+								onDeleteDriveClick(drive);
 							}}
 							quota={quota}
 							key={index}

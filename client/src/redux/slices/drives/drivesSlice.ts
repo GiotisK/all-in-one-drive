@@ -10,12 +10,18 @@ const drivesSlice = createSlice({
 	name: 'drives',
 	initialState,
 	reducers: {
-		setDrives: (state: DrivesState, { payload }: PayloadAction<DriveEntity[]>) => {
-			state.drives = payload;
+		setDrives: (state: DrivesState, { payload: drives }: PayloadAction<DriveEntity[]>) => {
+			state.drives = drives;
+		},
+		deleteDrive: (
+			state: DrivesState,
+			{ payload: driveForDelete }: PayloadAction<DriveEntity>
+		) => {
+			state.drives = state.drives.filter(drive => drive.email !== driveForDelete.email);
 		},
 	},
 });
 
-export const { setDrives } = drivesSlice.actions;
+export const { setDrives, deleteDrive } = drivesSlice.actions;
 
 export default drivesSlice.reducer;

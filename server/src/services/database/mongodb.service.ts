@@ -57,3 +57,21 @@ export const getDriveProperties = async (userEmail: string): Promise<DriveSchema
 		return null;
 	}
 };
+
+export const deleteDriveProperties = async (
+	userEmail: string,
+	driveEmail: string,
+	drive: DriveType
+) => {
+	try {
+		const updatedUser = await User.updateOne(
+			{ email: userEmail },
+			{ $pull: { [drive]: { email: driveEmail } } },
+			{ new: true }
+		).exec();
+
+		return !!updatedUser;
+	} catch {
+		return null;
+	}
+};

@@ -4,6 +4,7 @@ import {
 	generateAndSaveOAuth2Token,
 	getDriveQuota,
 	getDriveEntities,
+	deleteDriveEntity,
 } from './drives.service';
 import {
 	ConnectDriveRequestBody,
@@ -59,4 +60,13 @@ export const getDrivesController = async (req: Request, res: Response): Promise<
 	} else {
 		res.status(Status.INTERNAL_SERVER_ERROR).send();
 	}
+};
+
+export const deleteDriveController = async (req: Request, res: Response): Promise<void> => {
+	const { email } = res.locals as AuthLocals;
+	const { drive, email: driveEmail } = req.params;
+	const success = await deleteDriveEntity(email, driveEmail, drive as DriveType);
+	const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
+
+	res.status(statusId).send();
 };
