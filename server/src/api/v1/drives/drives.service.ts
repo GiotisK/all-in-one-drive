@@ -6,7 +6,7 @@ import {
 } from '../../../services/database/mongodb.service';
 import DriveContext from '../../../services/drive/DriveContext';
 import { EncryptedData, decrypt, encrypt } from '../../../services/encryption/encryption.service';
-import { DriveEntity, DriveQuota, DriveType } from '../../../types/global.types';
+import { DriveEntity, DriveQuota, DriveType, Nullable } from '../../../types/global.types';
 import { getDriveStrategyFromString } from './drive.helpers';
 
 export const getAuthLink = (drive: string): string | undefined => {
@@ -50,7 +50,7 @@ export const getDriveQuota = async (
 	userEmail: string,
 	driveEmail: string,
 	drive: DriveType
-): Promise<DriveQuota | null> => {
+): Promise<Nullable<DriveQuota>> => {
 	const driveStrategy = getDriveStrategyFromString(drive);
 
 	if (driveStrategy) {
@@ -69,11 +69,11 @@ export const getDriveQuota = async (
 	return null;
 };
 
-export const getDriveEntities = async (userEmail: string): Promise<DriveEntity[] | null> => {
+export const getDriveEntities = async (userEmail: string): Promise<Nullable<DriveEntity[]>> => {
 	const driveProperties = await getDriveProperties(userEmail);
 	if (driveProperties) {
 		const driveEntities: DriveEntity[] = [];
-		let promiseArr: Promise<DriveQuota | null>[] = [];
+		let promiseArr: Promise<Nullable<DriveQuota>>[] = [];
 
 		try {
 			driveProperties.forEach(async properties => {
@@ -117,6 +117,6 @@ export const deleteDriveEntity = (
 	userEmail: string,
 	driveEmail: string,
 	drive: DriveType
-): Promise<boolean | null> => {
+): Promise<Nullable<boolean>> => {
 	return deleteDriveProperties(userEmail, driveEmail, drive);
 };

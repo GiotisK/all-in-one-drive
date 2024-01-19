@@ -1,3 +1,5 @@
+export type Nullable<T> = T | null;
+
 export interface RegisterUserRequestBody {
 	email: string;
 	password: string;

@@ -2,9 +2,9 @@ import {
 	ConnectDriveRequestBody,
 	DriveEntity,
 	DriveType,
+	Nullable,
 	Status,
 } from '../../shared/types/global.types';
-import { Nullable } from '../../shared/types/utils.types';
 import { deleteRequest, getRequest, postRequest } from '../request.service';
 
 export const getAuthLink = async (drive: DriveType): Promise<string> => {

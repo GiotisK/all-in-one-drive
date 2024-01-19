@@ -13,6 +13,7 @@ import { ReactComponent as HandDown } from '../../assets/svgs/hand-down.svg';
 import { ReactComponent as Back } from '../../assets/svgs/back.svg';
 import { ReactComponent as Sun } from '../../assets/svgs/sun.svg';
 import { ReactComponent as Moon } from '../../assets/svgs/moon.svg';
+import { Nullable } from '../types/global.types';
 
 export enum SvgNames {
 	AddFile = 'add-file',
@@ -32,7 +33,7 @@ export enum SvgNames {
 	Moon = 'moon',
 }
 
-export const createSvg = (name: SvgNames, size = 24, color = 'black'): JSX.Element | null => {
+export const createSvg = (name: SvgNames, size = 24, color = 'black'): Nullable<JSX.Element> => {
 	switch (name) {
 		case SvgNames.AddFile:
 			return <AddFile color={color} width={size} height={size} />;

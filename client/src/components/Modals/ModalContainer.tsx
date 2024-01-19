@@ -7,8 +7,9 @@ import { MultimediaModal } from './MultimediaModal';
 import { RenameModal } from './RenameModal';
 import { UploadModal } from './UploadModal';
 import { ModalKind } from '../../redux/slices/modal/types';
+import { Nullable } from '../../shared/types/global.types';
 
-export const ModalContainer = (): JSX.Element | null => {
+export const ModalContainer = (): Nullable<JSX.Element> => {
 	const { modal } = useSelector((state: RootState) => state.modal);
 
 	return (

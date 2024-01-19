@@ -9,6 +9,7 @@ import {
 	slideUp40pxAnimation,
 	slideUp70pxAnimation,
 } from './animation-keyframes';
+import { Nullable } from '../../shared/types/global.types';
 
 const Container = styled.div`
 	position: absolute;
@@ -25,7 +26,7 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 	const [plusButtonAnimation, setPlusButtonAnimation] = useState<Keyframes>();
 	const theme = useTheme();
 
-	const uploaderRef = useRef<HTMLInputElement | null>(null);
+	const uploaderRef = useRef<Nullable<HTMLInputElement>>(null);
 
 	const openFloatingMenu = (): void => {
 		setPlusButtonAnimation(menuOpen ? rotate45degBackwards : rotate45deg);

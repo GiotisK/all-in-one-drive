@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { setIsAuthenticated } from '../redux/slices/user/userSlice';
 import { routes } from '../shared/constants/routes';
 import { useNavigate } from 'react-router-dom';
+import { Nullable } from '../shared/types/global.types';
 
 const centerAbsoluteDivInPage = `
 	position: absolute;
@@ -133,7 +134,7 @@ export const CredentialsBox = (): JSX.Element => {
 		setIsFormRequestSuccessful(isRequestSuccessful);
 	};
 
-	const renderResponseMessage = (): JSX.Element | null => {
+	const renderResponseMessage = (): Nullable<JSX.Element> => {
 		if (isFormRequestSuccessful === undefined) return null;
 
 		const color = isFormRequestSuccessful ? 'green' : 'red';

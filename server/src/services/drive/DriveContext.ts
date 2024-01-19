@@ -1,4 +1,4 @@
-import { DriveQuota } from '../../types/global.types';
+import { DriveQuota, Nullable } from '../../types/global.types';
 import { IDriveStrategy } from './IDriveStrategy';
 
 export default class DriveContext {
@@ -24,7 +24,7 @@ export default class DriveContext {
 		return this.strategy.getUserDriveEmail(token);
 	}
 
-	public async getDriveQuota(token: string): Promise<DriveQuota | null> {
+	public async getDriveQuota(token: string): Promise<Nullable<DriveQuota>> {
 		return this.strategy.getDriveQuota(token);
 	}
 }

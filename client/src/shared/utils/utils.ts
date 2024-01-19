@@ -1,8 +1,8 @@
 import { useTheme } from 'styled-components';
 import { SvgNames, createSvg } from './svg-utils';
-import { DriveType } from '../types/global.types';
+import { DriveType, Nullable } from '../types/global.types';
 
-export const CreateDriveSvg = (drive: DriveType, size = 35): JSX.Element | null => {
+export const CreateDriveSvg = (drive: DriveType, size = 35): Nullable<JSX.Element> => {
 	const theme = useTheme();
 	let svgName: SvgNames;
 

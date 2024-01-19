@@ -1,5 +1,5 @@
 import User, { DriveSchema } from '../../models/user.model';
-import { DriveType } from '../../types/global.types';
+import { DriveType, Nullable } from '../../types/global.types';
 
 export const saveDriveProperties = async (
 	encryptedTokenData: string,
@@ -32,7 +32,7 @@ export const getEncryptedTokenAsString = async (
 	userEmail: string,
 	driveEmail: string,
 	drive: DriveType
-): Promise<string | null> => {
+): Promise<Nullable<string>> => {
 	try {
 		const user = await User.findOne({ email: userEmail }).exec();
 		const driveProperties: DriveSchema[] | undefined = user?.drives;
@@ -49,7 +49,7 @@ export const getEncryptedTokenAsString = async (
 	}
 };
 
-export const getDriveProperties = async (userEmail: string): Promise<DriveSchema[] | null> => {
+export const getDriveProperties = async (userEmail: string): Promise<Nullable<DriveSchema[]>> => {
 	try {
 		const user = await User.findOne({ email: userEmail }).exec();
 		return user ? user.drives : null;

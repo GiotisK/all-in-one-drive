@@ -1,3 +1,5 @@
+export type Nullable<T> = T | null;
+
 export interface RegisterUserRequestBody {
 	email: string;
 	password: string;
@@ -10,6 +12,10 @@ export interface LoginUserRequestBody {
 
 export interface ConnectDriveRequestBody {
 	authCode: string;
+}
+
+export interface GetDriveQuotaRequestBody {
+	email: string;
 }
 
 export interface AuthUserResponse {

@@ -3,6 +3,7 @@ import { Loader } from './Loader';
 import { UserMenu } from './UserMenu';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 import { ThemeToggle } from './Toggle/ThemeToggle';
+import { Nullable } from '../shared/types/global.types';
 
 const BannerContainer = styled.div`
 	display: flex;
@@ -74,7 +75,7 @@ const ThemeToggleWrapper = styled.div`
 interface TitleBannerProps {
 	virtualDriveEnabled?: boolean;
 	popupMenu?: boolean;
-	virtualQuota?: string | null;
+	virtualQuota?: Nullable<string>;
 	email?: string;
 	onBurgerMenuClick?: () => void;
 	onAddDriveClick?: () => void;

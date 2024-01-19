@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
-import { DriveType } from '../shared/types/global.types';
+import { DriveType, Nullable } from '../shared/types/global.types';
 import { connectDrive } from '../services/drives/drives.service';
-import { Nullable } from '../shared/types/utils.types';
 
 export const useHandleAuthCodeFromUrl = () => {
 	useEffect(() => {
