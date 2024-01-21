@@ -77,7 +77,7 @@ export const getDriveEntities = async (userEmail: string): Promise<Nullable<Driv
 
 		try {
 			driveProperties.forEach(async properties => {
-				const { token: encryptedTokenStr, driveType, email } = properties;
+				const { token: encryptedTokenStr, driveType } = properties;
 				const driveStrategy = getDriveStrategyFromString(driveType);
 
 				if (driveStrategy) {

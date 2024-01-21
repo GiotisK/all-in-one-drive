@@ -7,6 +7,7 @@ import { DeleteModalState } from '../../redux/slices/modal/types';
 import { deleteDriveEntity } from '../../services/drives/drives.service';
 import { useDispatch } from 'react-redux';
 import { deleteDrive } from '../../redux/slices/drives/drivesSlice';
+import { closeModals } from '../../redux/slices/modal/modalSlice';
 
 interface DeleteFileProps {
 	file: FileEntity;
@@ -70,6 +71,7 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 			const success = await deleteDriveEntity(email, type);
 			if (success) {
 				dispatch(deleteDrive(entity));
+				dispatch(closeModals());
 			}
 		}
 	};

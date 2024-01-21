@@ -4,6 +4,10 @@ import { useOutsideClicker } from '../hooks';
 import { logoutUser } from '../services/user.service';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
+import { RootState } from '../redux/store/types';
+import { useDispatch, useSelector } from 'react-redux';
+import { ModalKind } from '../redux/slices/modal/types';
+import { openModal } from '../redux/slices/modal/modalSlice';
 
 const PopupMenuContainer = styled.div`
 	display: flex;
@@ -99,6 +103,9 @@ const SettingsText = styled.p`
 `;
 
 export const UserMenu = (): JSX.Element => {
+	const { email } = useSelector((state: RootState) => state.user);
+	const dispatch = useDispatch();
+
 	const [menuVisible, setMenuVisible] = useState(false);
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
@@ -107,7 +114,6 @@ export const UserMenu = (): JSX.Element => {
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuVisible(false));
 
 	const virtualDriveEnabled = true;
-	const email = 'kostas@giotis.com';
 
 	const getCapitalLetterFromUsername = () => {
 		return email.charAt(0).toUpperCase();
@@ -118,7 +124,7 @@ export const UserMenu = (): JSX.Element => {
 			{
 				title: 'Add a drive',
 				onClick: () => {
-					return;
+					dispatch(openModal({ kind: ModalKind.AddDrive }));
 				},
 			},
 			{

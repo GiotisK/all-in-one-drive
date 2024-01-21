@@ -66,7 +66,7 @@ export const deleteDriveProperties = async (
 	try {
 		const updatedUser = await User.updateOne(
 			{ email: userEmail },
-			{ $pull: { [drive]: { email: driveEmail } } },
+			{ $pull: { drives: { email: driveEmail, driveType: drive } } },
 			{ new: true }
 		).exec();
 

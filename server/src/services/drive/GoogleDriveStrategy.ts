@@ -2,7 +2,9 @@ import { OAuth2Client } from 'googleapis-common';
 import { IDriveStrategy } from './IDriveStrategy';
 import { drive, auth, drive_v3 } from '@googleapis/drive';
 import { bytesToGigabytes } from '../../helpers/helpers';
-import { DriveQuota } from '../../types/global.types';
+import { DriveQuota, Nullable } from '../../types/global.types';
+
+type Credentials = typeof auth.OAuth2.prototype.credentials;
 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
@@ -47,7 +49,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	public async getDriveQuota(token: string): Promise<DriveQuota | null> {
+	public async getDriveQuota(token: string): Promise<Nullable<DriveQuota>> {
 		try {
 			this.setToken(token);
 			const res = await this.drive.about.get({ fields: 'storageQuota' });
@@ -70,7 +72,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 	}
 
 	private setToken(tokenStr: string) {
-		const token = JSON.parse(tokenStr);
+		const token: Credentials = JSON.parse(tokenStr);
 		this.oAuth2Client.setCredentials(token);
 	}
 }
