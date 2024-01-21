@@ -31,7 +31,7 @@ export const useHandleAuthCodeFromUrl = () => {
 		return () => {
 			ignore = true;
 		};
-	}, []);
+	}, [dispatch]);
 };
 
 // Helpers
