@@ -1,4 +1,4 @@
-import { DriveQuota, Nullable } from '../../types/global.types';
+import { DriveQuota, FileEntity, Nullable } from '../../types/global.types';
 import { IDriveStrategy } from './IDriveStrategy';
 
 export default class DriveContext {
@@ -26,5 +26,9 @@ export default class DriveContext {
 
 	public async getDriveQuota(token: string): Promise<Nullable<DriveQuota>> {
 		return this.strategy.getDriveQuota(token);
+	}
+
+	public async getDriveFiles(token: string, folderId?: string): Promise<Nullable<FileEntity[]>> {
+		return this.strategy.getDriveFiles(token);
 	}
 }

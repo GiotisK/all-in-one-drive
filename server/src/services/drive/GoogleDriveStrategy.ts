@@ -2,9 +2,10 @@ import { OAuth2Client } from 'googleapis-common';
 import { IDriveStrategy } from './IDriveStrategy';
 import { drive, auth, drive_v3 } from '@googleapis/drive';
 import { bytesToGigabytes } from '../../helpers/helpers';
-import { DriveQuota, Nullable } from '../../types/global.types';
+import { DriveQuota, DriveType, FileEntity, FileType, Nullable } from '../../types/global.types';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
+type GoogleDriveFile = drive_v3.Schema$File;
 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
 
@@ -71,8 +72,53 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
+	public async getDriveFiles(token: string, folderId?: string): Promise<Nullable<FileEntity[]>> {
+		try {
+			this.setToken(token);
+			const filesQuery = this.createFilesQuery(folderId);
+			const res = await this.drive.files.list({
+				q: filesQuery,
+				pageSize: 1000,
+				fields: 'nextPageToken, files(id, size, name, mimeType, createdTime, webContentLink, exportLinks, parents, permissionIds, owners)',
+			});
+			const files = res.data.files;
+			const driveEmail = await this.getUserDriveEmail(token);
+
+			return files ? this.mapToUniversalFileEntityFormat(files, driveEmail) : null;
+		} catch {
+			return null;
+		}
+	}
+
 	private setToken(tokenStr: string) {
 		const token: Credentials = JSON.parse(tokenStr);
 		this.oAuth2Client.setCredentials(token);
+	}
+
+	private createFilesQuery(folderId?: string): string {
+		const rootFilesQuery = "'root' in parents and not trashed";
+		const folderFilesQuery = `'${folderId}' in parents`;
+
+		return folderId ? folderFilesQuery : rootFilesQuery;
+	}
+
+	private mapToUniversalFileEntityFormat(
+		files: GoogleDriveFile[],
+		driveEmail: string
+	): FileEntity[] {
+		const driveEntities: FileEntity[] = files.map(file => {
+			return {
+				name: file.name ?? '-',
+				drive: DriveType.GoogleDrive,
+				email: driveEmail,
+				type: this.determineEntityType(file.mimeType ?? ''),
+			};
+		});
+
+		return driveEntities;
+	}
+
+	private determineEntityType(mimeType?: string): FileType {
+		return mimeType === 'application/vnd.google-apps.folder' ? FileType.Folder : FileType.File;
 	}
 }

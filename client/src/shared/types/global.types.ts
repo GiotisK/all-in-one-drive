@@ -40,8 +40,20 @@ export type DriveQuota = {
 	total: string;
 };
 
-export interface DriveEntity {
+export type DriveEntity = {
 	type: DriveType;
 	email: string;
 	quota: DriveQuota;
+};
+
+export type FileEntity = {
+	name: string;
+	type: FileType;
+	email: string;
+	drive: DriveType;
+};
+
+export enum FileType {
+	Folder = 'folder',
+	File = 'file',
 }

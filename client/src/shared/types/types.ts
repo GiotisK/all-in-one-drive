@@ -9,6 +9,7 @@ export enum FileType {
 
 export type MultiMediaType = 'audio' | 'video' | 'image';
 
+//TODO: remove and use from global types when everything is set
 export interface FileEntity {
 	type: FileType;
 	id: string;
