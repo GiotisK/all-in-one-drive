@@ -47,10 +47,14 @@ export type DriveEntity = {
 };
 
 export type FileEntity = {
+	id: string;
 	name: string;
 	type: FileType;
 	email: string;
 	drive: DriveType;
+	size: string;
+	date: string;
+	extension: string;
 };
 
 export enum FileType {
