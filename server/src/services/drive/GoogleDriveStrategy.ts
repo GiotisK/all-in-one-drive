@@ -22,10 +22,12 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 	}
 
 	public getAuthLink(): string {
-		return this.oAuth2Client.generateAuthUrl({
+		const authLink = this.oAuth2Client.generateAuthUrl({
 			access_type: 'offline',
 			scope: SCOPES,
 		});
+
+		return authLink ?? null;
 	}
 
 	public async generateOAuth2token(authCode: string): Promise<string> {

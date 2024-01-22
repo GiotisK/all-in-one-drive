@@ -7,7 +7,7 @@ import {
 	getDrivesController,
 	deleteDriveController,
 } from './drives.controllers';
-//TODO: remove comments
+
 const router: Router = express.Router();
 router.get('/', authorize, getDrivesController);
 router.get('/:drive/authlink', authorize, authLinkController);

@@ -73,7 +73,7 @@ export const getDriveEntities = async (userEmail: string): Promise<Nullable<Driv
 	const driveProperties = await getDriveProperties(userEmail);
 	if (driveProperties) {
 		const driveEntities: DriveEntity[] = [];
-		let promiseArr: Promise<Nullable<DriveQuota>>[] = [];
+		const promiseArr: Promise<Nullable<DriveQuota>>[] = [];
 
 		try {
 			driveProperties.forEach(async properties => {

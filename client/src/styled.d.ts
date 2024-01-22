@@ -10,6 +10,7 @@ declare module 'styled-components' {
 			textPrimary: string;
 			textSecondary: string;
 			green: string;
+			gray: string;
 			red: string;
 			orange: string;
 			background: string;

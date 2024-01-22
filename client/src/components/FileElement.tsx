@@ -19,12 +19,12 @@ const FileElementContainer = styled(ElementContainer)`
 `;
 
 const FolderElementContainer = styled(ElementContainer)`
-	z-index: -1;
+	z-index: 1;
 	position: relative;
 	height: 30px;
 	width: 40px;
 	min-width: 40px;
-	background-color: darkgray;
+	background-color: ${({ theme }) => theme.colors.backgroundSecondary};
 	border-radius: 0 4px 4px 4px;
 
 	&:before {
@@ -34,7 +34,7 @@ const FolderElementContainer = styled(ElementContainer)`
 		min-width: 20px;
 		height: 5px;
 		border-radius: 20px 20px 0 0;
-		background-color: darkgray;
+		background-color: ${({ theme }) => theme.colors.backgroundSecondary};
 		top: -5px;
 		left: 0px;
 	}

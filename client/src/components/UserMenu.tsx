@@ -25,7 +25,7 @@ const CircleButtonContainer = styled.div`
 	border-radius: 35px;
 	margin-right: 10px;
 	box-shadow: ${({ theme }) => theme.colors.boxShadow};
-	background-color: lightgray;
+	background-color: ${({ theme }) => theme.colors.gray};
 	cursor: pointer;
 	border-width: 1.5px;
 	border-color: ${({ theme }) => theme.colors.border};

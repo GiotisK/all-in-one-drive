@@ -14,6 +14,8 @@ import { RootState } from '../redux/store/types';
 import { DriveType } from '../shared/types/global.types';
 import { ModalContainer } from '../components/Modals/ModalContainer';
 import { useCheckAuthAndRedirect, useFetchDrives, useHandleAuthCodeFromUrl } from '../hooks';
+import { useFetchFiles } from '../hooks/useFetchFiles';
+import { Loader } from '../components/Loader';
 
 const RowsScrollview = styled.div`
 	flex: 1;
@@ -21,13 +23,19 @@ const RowsScrollview = styled.div`
 	background-color: ${({ theme }) => theme.colors.background};
 `;
 
+const LoaderContainer = styled.div`
+	margin-top: 3%;
+`;
+
 export const DrivePage = (): JSX.Element => {
 	const [sideMenuVisible, setSideMenuVisible] = useState(false);
 	const isUserAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+	const files = useSelector((state: RootState) => state.files.files);
 
 	useCheckAuthAndRedirect();
 	useHandleAuthCodeFromUrl();
 	useFetchDrives();
+	const { loading: filesLoading } = useFetchFiles();
 
 	return isUserAuthenticated ? (
 		<div
@@ -42,6 +50,7 @@ export const DrivePage = (): JSX.Element => {
 					setSideMenuVisible(prevVisible => !prevVisible);
 				}}
 			/>
+			{/*TODO: convert containers to styled components */}
 			<div
 				style={{
 					display: 'flex',
@@ -58,30 +67,36 @@ export const DrivePage = (): JSX.Element => {
 							}}
 						/>
 						<LoadingBar />
-						{[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16].map(i => (
-							<FileRow
-								key={i}
-								file={{
-									id: '1',
-									date: '212312',
-									drive: DriveType.Dropbox,
-									extension: '.jsx',
-									fileEmail: 'palaris@moris.com',
-									isShared: false,
-									name: 'palaris',
-									ownerEmail: 'moloris@molia.com',
-									permissions: '',
-									size: 123,
-									type: FileType.File,
-								}}
-								onFileClick={function (): void {
-									throw new Error('Function not implemented.');
-								}}
-								onCopyShareLinkClick={function (): void {
-									throw new Error('Function not implemented.');
-								}}
-							/>
-						))}
+						{filesLoading ? (
+							<LoaderContainer>
+								<Loader size={25} />
+							</LoaderContainer>
+						) : (
+							files.map((file, index) => (
+								<FileRow
+									key={index}
+									file={{
+										id: index.toString(),
+										date: '212312',
+										drive: file.drive,
+										extension: '-',
+										fileEmail: file.email,
+										isShared: false,
+										name: file.name,
+										ownerEmail: file.email,
+										permissions: '',
+										size: 123,
+										type: file.type,
+									}}
+									onFileClick={function (): void {
+										throw new Error('Function not implemented.');
+									}}
+									onCopyShareLinkClick={function (): void {
+										throw new Error('Function not implemented.');
+									}}
+								/>
+							))
+						)}
 					</DropZone>
 					<FloatingButtonsContainer />
 				</RowsScrollview>
