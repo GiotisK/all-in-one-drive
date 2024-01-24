@@ -1,10 +1,10 @@
-import { AuthLocals, CustomRequest } from '../../../types/types';
+import { AuthLocals } from '../../../types/types';
 import { registerUser, loginUser } from './user.service';
 import { Response, Request } from 'express';
 import { AuthUserResponse, RegisterUserRequestBody, Status } from '../../../types/global.types';
 
 export const registerUserController = async (
-	req: CustomRequest<RegisterUserRequestBody>,
+	req: Request<void, void, RegisterUserRequestBody>,
 	res: Response
 ): Promise<void> => {
 	try {
@@ -20,7 +20,7 @@ export const registerUserController = async (
 };
 
 export const loginUserController = async (
-	req: CustomRequest<RegisterUserRequestBody>,
+	req: Request<void, void, RegisterUserRequestBody>,
 	res: Response
 ): Promise<void> => {
 	try {
@@ -42,9 +42,10 @@ export const logoutUserController = async (_req: Request, res: Response): Promis
 	res.clearCookie('token').status(Status.OK).send();
 };
 
-export const authUserController = async (_req: Request, res: Response): Promise<void> => {
-	const { email } = res.locals as AuthLocals;
-	const responseData: AuthUserResponse = { email };
-
-	res.status(Status.OK).send(responseData);
+export const authUserController = async (
+	_req: Request,
+	res: Response<AuthUserResponse, AuthLocals>
+): Promise<void> => {
+	const { email } = res.locals;
+	res.status(Status.OK).send({ email });
 };
