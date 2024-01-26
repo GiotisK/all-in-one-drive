@@ -1,13 +1,13 @@
 import {
 	deleteDriveProperties,
-	getDriveProperties,
+	getAllDrives,
 	getEncryptedTokenAsString,
 	saveDriveProperties,
 } from '../../../services/database/mongodb.service';
 import DriveContext from '../../../services/drive/DriveContext';
 import { EncryptedData, decrypt, encrypt } from '../../../services/encryption/encryption.service';
 import { DriveEntity, DriveQuota, DriveType, Nullable } from '../../../types/global.types';
-import { getDriveStrategyFromString } from './drive.helpers';
+import { getDriveStrategyFromString } from './drives.helpers';
 
 export const getAuthLink = (drive: string): string | undefined => {
 	const driveStrategy = getDriveStrategyFromString(drive);
@@ -70,7 +70,7 @@ export const getDriveQuota = async (
 };
 
 export const getDriveEntities = async (userEmail: string): Promise<Nullable<DriveEntity[]>> => {
-	const driveProperties = await getDriveProperties(userEmail);
+	const driveProperties = await getAllDrives(userEmail);
 	if (driveProperties) {
 		const driveEntities: DriveEntity[] = [];
 		const promiseArr: Promise<Nullable<DriveQuota>>[] = [];

@@ -13,9 +13,12 @@ const filesSlice = createSlice({
 		setFiles: (state: FilesState, { payload: files }: PayloadAction<FileEntity[]>) => {
 			state.files = files;
 		},
+		deleteFile: (state: FilesState, { payload: fileId }: PayloadAction<string>) => {
+			state.files = state.files.filter(file => file.id !== fileId);
+		},
 	},
 });
 
-export const { setFiles } = filesSlice.actions;
+export const { setFiles, deleteFile } = filesSlice.actions;
 
 export default filesSlice.reducer;

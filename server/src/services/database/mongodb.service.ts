@@ -49,11 +49,31 @@ export const getEncryptedTokenAsString = async (
 	}
 };
 
-export const getDriveProperties = async (userEmail: string): Promise<Nullable<DriveSchema[]>> => {
+export const getAllDrives = async (userEmail: string): Promise<Nullable<DriveSchema[]>> => {
 	try {
 		const user = await User.findOne({ email: userEmail }).exec();
 		return user ? user.drives : null;
 	} catch {
+		return null;
+	}
+};
+
+export const getDrive = async (
+	userEmail: string,
+	driveEmail: string,
+	driveType: DriveType
+): Promise<Nullable<DriveSchema>> => {
+	try {
+		const user = await User.findOne({
+			email: userEmail,
+		}).exec();
+
+		const foundDrive = user?.drives.find(
+			drive => drive.email === driveEmail && drive.driveType === driveType
+		);
+
+		return foundDrive ?? null;
+	} catch (e) {
 		return null;
 	}
 };

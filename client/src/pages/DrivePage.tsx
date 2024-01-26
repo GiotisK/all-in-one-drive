@@ -76,16 +76,16 @@ export const DrivePage = (): JSX.Element => {
 								<FileRow
 									key={index}
 									file={{
-										id: index.toString(),
-										date: '212312',
+										id: file.id,
+										date: file.date,
 										drive: file.drive,
-										extension: '-',
-										fileEmail: file.email,
+										extension: file.extension,
+										email: file.email,
 										isShared: false,
 										name: file.name,
 										ownerEmail: file.email,
 										permissions: '',
-										size: 123,
+										size: file.size,
 										type: file.type,
 									}}
 									onFileClick={function (): void {

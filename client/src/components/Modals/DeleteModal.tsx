@@ -1,13 +1,15 @@
 import { BaseModal } from './BaseModal';
-import { Entity, FileEntity, FileType } from '../../shared/types/types';
+import { Entity, FileType } from '../../shared/types/types';
 import { CreateDriveSvg } from '../../shared/utils/utils';
 import { styled } from 'styled-components';
-import { DriveEntity, DriveType } from '../../shared/types/global.types';
+import { DriveEntity, DriveType, FileEntity } from '../../shared/types/global.types';
 import { DeleteModalState } from '../../redux/slices/modal/types';
 import { deleteDriveEntity } from '../../services/drives/drives.service';
 import { useDispatch } from 'react-redux';
 import { deleteDrive } from '../../redux/slices/drives/drivesSlice';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
+import { deleteFile } from '../../redux/slices/files/filesSlice';
+import { deleteDriveFile } from '../../services/drives/files/drives.files.service';
 
 interface DeleteFileProps {
 	file: FileEntity;
@@ -66,13 +68,18 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 	const { entity } = state;
 
 	const sendDeleteDriveRequest = async () => {
-		if (entity && isDriveEntity(entity)) {
+		if (!entity) return;
+
+		if (isDriveEntity(entity)) {
 			const { email, type } = entity;
 			const success = await deleteDriveEntity(email, type);
-			if (success) {
-				dispatch(deleteDrive(entity));
-				dispatch(closeModals());
-			}
+			success && dispatch(deleteDrive(entity));
+			dispatch(closeModals());
+		} else if (isFileEntity(entity)) {
+			const { drive, email, id } = entity;
+			const success = await deleteDriveFile(drive, email, id);
+			success && dispatch(deleteFile(id));
+			dispatch(closeModals());
 		}
 	};
 

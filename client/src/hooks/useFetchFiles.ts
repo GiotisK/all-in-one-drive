@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { getRootFiles } from '../services/files/files.service';
+import { getRootFiles } from '../services/drives/files/drives.files.service';
 import { useDispatch } from 'react-redux';
 import { setFiles } from '../redux/slices/files/filesSlice';
 

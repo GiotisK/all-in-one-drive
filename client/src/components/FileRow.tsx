@@ -1,11 +1,14 @@
 import { useRef, useState } from 'react';
 import { FileElement } from './FileElement';
 import { SvgNames } from '../shared/utils/svg-utils';
-import { CreateDriveSvg, formatBytes } from '../shared/utils/utils';
+import { CreateDriveSvg } from '../shared/utils/utils';
 import { IconButton } from './IconButton';
 import { styled, useTheme } from 'styled-components';
-import { FileEntity } from '../shared/types/types';
 import { useOutsideClicker } from '../hooks';
+import { FileEntity } from '../shared/types/global.types';
+import { useDispatch } from 'react-redux';
+import { openModal } from '../redux/slices/modal/modalSlice';
+import { ModalKind } from '../redux/slices/modal/types';
 
 const Container = styled.div`
 	display: flex;
@@ -96,11 +99,16 @@ type FileMenuRow = {
 
 export const FileRow = ({ file, onFileClick, onCopyShareLinkClick }: IProps): JSX.Element => {
 	const theme = useTheme();
+	const dispatch = useDispatch();
 	const [menuToggle, setMenuToggle] = useState(false);
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
+
+	const onDeleteClick = () => {
+		dispatch(openModal({ kind: ModalKind.Delete, state: { entity: file } }));
+	};
 
 	const fileMenuRows: FileMenuRow[] = [
 		{
@@ -123,9 +131,7 @@ export const FileRow = ({ file, onFileClick, onCopyShareLinkClick }: IProps): JS
 		},
 		{
 			text: 'Delete',
-			onClick: () => {
-				console.log('delete');
-			},
+			onClick: onDeleteClick,
 		},
 	];
 
@@ -160,10 +166,10 @@ export const FileRow = ({ file, onFileClick, onCopyShareLinkClick }: IProps): JS
 			</FirstColumn>
 			<SecondColumn>
 				{CreateDriveSvg(file.drive)}
-				<Text>{file.fileEmail}</Text>
+				<Text>{file.email}</Text>
 			</SecondColumn>
 			<ThirdColumn>
-				<Text>{formatBytes(file.size)}</Text>
+				<Text>{file.size}</Text>
 			</ThirdColumn>
 			<FourthColumn>
 				<Text>{file.date}</Text>

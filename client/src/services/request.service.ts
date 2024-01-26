@@ -13,6 +13,6 @@ export const putRequest = async <T>(path: string, data: T) => {
 	return axiosInstance.put(path, data);
 };
 
-export const deleteRequest = async (path: string) => {
+export const deleteRequest = async <T>(path: string): Promise<AxiosResponse<T>> => {
 	return axiosInstance.delete(path);
 };

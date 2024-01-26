@@ -29,6 +29,10 @@ export default class DriveContext {
 	}
 
 	public async getDriveFiles(token: string, folderId?: string): Promise<Nullable<FileEntity[]>> {
-		return this.strategy.getDriveFiles(token);
+		return this.strategy.getDriveFiles(token, folderId);
+	}
+
+	public async deleteFile(token: string, fileId: string): Promise<boolean> {
+		return this.strategy.deleteFile(token, fileId);
 	}
 }

@@ -4,7 +4,6 @@ import {
 	RegisterUserRequestBody,
 	Status,
 } from '../shared/types/global.types';
-import { EmptyBody } from '../shared/types/types';
 import { getRequest, postRequest } from './request.service';
 
 export const registerUser = async (email: string, password: string): Promise<boolean> => {
@@ -46,7 +45,7 @@ export const logoutUser = async (): Promise<boolean> => {
 type AuthUserReturn = { success: boolean; email: string };
 export const authUser = async (): Promise<AuthUserReturn> => {
 	try {
-		const res = await getRequest<EmptyBody, AuthUserResponse>('/users/auth');
+		const res = await getRequest<AuthUserResponse>('/users/auth');
 		const { email } = res.data;
 
 		return { success: res.status === Status.OK, email };

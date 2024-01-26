@@ -93,6 +93,17 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
+	public async deleteFile(token: string, fileId: string): Promise<boolean> {
+		try {
+			this.setToken(token);
+			await this.drive.files.delete({ fileId });
+
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
 	private setToken(tokenStr: string) {
 		const token: Credentials = JSON.parse(tokenStr);
 		this.oAuth2Client.setCredentials(token);

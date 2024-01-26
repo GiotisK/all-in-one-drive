@@ -1,4 +1,4 @@
-import { FileEntity, DriveQuota, Nullable } from '../../types/global.types';
+import { FileEntity, DriveQuota, Nullable, DriveType } from '../../types/global.types';
 
 export interface IDriveStrategy {
 	getAuthLink(): string;
@@ -6,4 +6,5 @@ export interface IDriveStrategy {
 	getUserDriveEmail(token: string): Promise<string>;
 	getDriveQuota(token: string): Promise<Nullable<DriveQuota>>;
 	getDriveFiles(token: string, folderId?: string): Promise<Nullable<FileEntity[]>>;
+	deleteFile(token: string, fileId: string): Promise<boolean>;
 }
