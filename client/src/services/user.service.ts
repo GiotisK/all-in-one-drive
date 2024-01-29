@@ -7,49 +7,29 @@ import {
 import { getRequest, postRequest } from './request.service';
 
 export const registerUser = async (email: string, password: string): Promise<boolean> => {
-	try {
-		const res = await postRequest<RegisterUserRequestBody, void>('/users/register', {
-			email,
-			password,
-		});
-
-		return res.status === Status.OK;
-	} catch {
-		return false;
-	}
+	const res = await postRequest<RegisterUserRequestBody, void>('/users/register', {
+		email,
+		password,
+	});
+	return res.status === Status.OK;
 };
 
 export const loginUser = async (email: string, password: string): Promise<boolean> => {
-	try {
-		const res = await postRequest<LoginUserRequestBody, void>('/users/login', {
-			email,
-			password,
-		});
-
-		return res.status === Status.OK;
-	} catch {
-		return false;
-	}
+	const res = await postRequest<LoginUserRequestBody, void>('/users/login', {
+		email,
+		password,
+	});
+	return res.status === Status.OK;
 };
 
 export const logoutUser = async (): Promise<boolean> => {
-	try {
-		const res = await getRequest('/users/logout');
-
-		return res.status === Status.OK;
-	} catch {
-		return false;
-	}
+	const res = await getRequest('/users/logout');
+	return res.status === Status.OK;
 };
 
-type AuthUserReturn = { success: boolean; email: string };
-export const authUser = async (): Promise<AuthUserReturn> => {
-	try {
-		const res = await getRequest<AuthUserResponse>('/users/auth');
-		const { email } = res.data;
+export const authUser = async (): Promise<string> => {
+	const res = await getRequest<AuthUserResponse>('/users/auth');
+	const { email } = res.data;
 
-		return { success: res.status === Status.OK, email };
-	} catch {
-		return { success: false, email: '' };
-	}
+	return email;
 };

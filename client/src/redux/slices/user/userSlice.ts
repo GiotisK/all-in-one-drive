@@ -1,24 +1,62 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { UserState } from './types';
+import {
+	requestErrorState,
+	requestInitialState,
+	requestPendingState,
+	requestSuccessState,
+} from '../constants';
+import { authorizeUser, loginUser, logoutUser } from '../../async-actions/user.async.actions';
 
 const initialState: UserState = {
 	isAuthenticated: false,
 	email: '',
+	requests: {
+		authorize: requestInitialState,
+		login: requestInitialState,
+		logout: requestInitialState,
+	},
 };
 
 const userSlice = createSlice({
 	name: 'user',
 	initialState,
-	reducers: {
-		//TODO: use async thunks instead for better handling
-		setIsAuthenticated: (state: UserState, action: PayloadAction<boolean>) => {
-			state.isAuthenticated = action.payload;
-		},
-		setEmail: (state: UserState, action: PayloadAction<string>) => {
-			state.email = action.payload;
-		},
+	reducers: {},
+	extraReducers: builder => {
+		builder
+			.addCase(loginUser.pending, state => {
+				state.requests.login = requestPendingState;
+			})
+			.addCase(loginUser.fulfilled, state => {
+				state.requests.login = requestSuccessState;
+			})
+			.addCase(loginUser.rejected, state => {
+				state.requests.login = requestErrorState;
+			});
+		builder
+			.addCase(logoutUser.pending, state => {
+				state.requests.login = requestPendingState;
+			})
+			.addCase(logoutUser.fulfilled, state => {
+				state.isAuthenticated = false;
+				state.requests.logout = requestSuccessState;
+			})
+			.addCase(logoutUser.rejected, state => {
+				state.requests.logout = requestErrorState;
+			});
+		builder
+			.addCase(authorizeUser.pending, state => {
+				state.requests.authorize = requestPendingState;
+			})
+			.addCase(authorizeUser.fulfilled, (state, { payload: email }) => {
+				state.isAuthenticated = true;
+				state.email = email;
+				state.requests.authorize = requestSuccessState;
+			})
+			.addCase(authorizeUser.rejected, state => {
+				state.requests.authorize = requestErrorState;
+			});
 	},
 });
 
-export const { setIsAuthenticated, setEmail } = userSlice.actions;
 export default userSlice.reducer;

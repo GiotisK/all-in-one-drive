@@ -1,4 +1,3 @@
-export * from './useCheckAuth';
-export * from './useFetchDrives';
+export * from './useCheckAuthAndRedirect';
 export * from './useHandleAuthCodeFromUrl';
 export * from './useOutsideClicker';

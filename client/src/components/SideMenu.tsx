@@ -49,9 +49,8 @@ const NoDrivesTextClickable = styled(NoDrivesText)`
 
 export const SideMenu = (): JSX.Element => {
 	const dispatch = useDispatch();
-	const { drives } = useSelector((state: RootState) => state.drives);
-
-	const drivesLoading = false;
+	const drives = useSelector((state: RootState) => state.drives.drives);
+	const loading = useSelector((state: RootState) => state.drives.requests.getDrives.loading);
 
 	const onAddDriveClick = (): void => {
 		dispatch(openModal({ kind: ModalKind.AddDrive }));
@@ -68,7 +67,7 @@ export const SideMenu = (): JSX.Element => {
 				<Checkbox onChange={() => null} checked={true} style={{ marginLeft: '5%' }} />
 			</Header>
 
-			{drivesLoading ? (
+			{loading ? (
 				<Loader size={25} />
 			) : !drives.length ? (
 				<>

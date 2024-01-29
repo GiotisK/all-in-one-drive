@@ -5,6 +5,7 @@ import { styled, useTheme } from 'styled-components';
 import { Button } from '../Button';
 import { useDispatch } from 'react-redux';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
+import { Loader } from '../Loader';
 
 const Container = styled.div`
 	position: fixed;
@@ -59,9 +60,15 @@ const HeaderText = styled.p`
 
 const Footer = styled.div`
 	display: flex;
+	justify-content: space-between;
 	width: 90%;
-	justify-content: flex-end;
 	border-top: 1px solid ${props => props.theme.colors.border};
+`;
+
+const ButtonsContainer = styled.div`
+	display: flex;
+	flex: 1;
+	justify-content: flex-end;
 `;
 
 type ButtonProps = {
@@ -76,6 +83,7 @@ type HeaderProps = {
 type FooterProps = {
 	leftButton?: ButtonProps;
 	rightButton?: ButtonProps;
+	showLoader?: boolean;
 };
 
 interface IProps {
@@ -113,24 +121,27 @@ export const BaseModal = ({
 				{children}
 				{footerProps && (
 					<Footer>
-						{footerProps.leftButton && (
-							<Button
-								text={footerProps.leftButton.text}
-								style={{ margin: '3%' }}
-								type='secondary'
-								onClick={() => {
-									footerProps.leftButton?.onClick?.();
-									onCloseModals();
-								}}
-							/>
-						)}
-						{footerProps.rightButton && (
-							<Button
-								text={footerProps.rightButton.text}
-								style={{ marginTop: '3%' }}
-								onClick={footerProps.rightButton.onClick}
-							/>
-						)}
+						{footerProps.showLoader && <Loader size={10} />}
+						<ButtonsContainer>
+							{footerProps.leftButton && (
+								<Button
+									text={footerProps.leftButton.text}
+									style={{ margin: '3%' }}
+									type='secondary'
+									onClick={() => {
+										footerProps.leftButton?.onClick?.();
+										onCloseModals();
+									}}
+								/>
+							)}
+							{footerProps.rightButton && (
+								<Button
+									text={footerProps.rightButton.text}
+									style={{ marginTop: '3%' }}
+									onClick={footerProps.rightButton.onClick}
+								/>
+							)}
+						</ButtonsContainer>
 					</Footer>
 				)}
 			</ModalContainer>

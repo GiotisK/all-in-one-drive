@@ -3,12 +3,11 @@ import { Input } from './Input';
 import { ResponseText } from './ResponseText';
 import { Button } from './Button';
 import { styled } from 'styled-components';
-import { loginUser, registerUser } from '../services/user.service';
-import { useDispatch } from 'react-redux';
-import { setIsAuthenticated } from '../redux/slices/user/userSlice';
-import { routes } from '../shared/constants/routes';
 import { useNavigate } from 'react-router-dom';
 import { Nullable } from '../shared/types/global.types';
+import { loginUser } from '../redux/async-actions/user.async.actions';
+import { useAppDispatch } from '../redux/store/store';
+import { registerUser } from '../services/user.service';
 
 const centerAbsoluteDivInPage = `
 	position: absolute;
@@ -95,7 +94,7 @@ enum Mode {
 }
 
 export const CredentialsBox = (): JSX.Element => {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const navigate = useNavigate();
 
 	const [mode, setMode] = useState<Mode>(Mode.Login);
@@ -122,16 +121,17 @@ export const CredentialsBox = (): JSX.Element => {
 		let isRequestSuccessful = false;
 
 		if (mode === Mode.Login) {
-			isRequestSuccessful = await loginUser(inputValues.email, inputValues.password);
-			if (isRequestSuccessful) {
-				dispatch(setIsAuthenticated(true));
-				navigate(routes.drive);
-			}
+			const { email, password } = inputValues;
+			dispatch(loginUser({ email, password }));
 		} else if (mode === Mode.Register) {
-			isRequestSuccessful = await registerUser(inputValues.email, inputValues.password);
+			try {
+				await registerUser(inputValues.email, inputValues.password);
+				isRequestSuccessful = true;
+				setIsFormRequestSuccessful(isRequestSuccessful);
+			} catch {
+				//TODO: show toast
+			}
 		}
-
-		setIsFormRequestSuccessful(isRequestSuccessful);
 	};
 
 	const renderResponseMessage = (): Nullable<JSX.Element> => {

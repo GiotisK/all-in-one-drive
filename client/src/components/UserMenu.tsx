@@ -1,13 +1,12 @@
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useOutsideClicker } from '../hooks';
-import { logoutUser } from '../services/user.service';
-import { useNavigate } from 'react-router-dom';
-import { routes } from '../shared/constants/routes';
 import { RootState } from '../redux/store/types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { ModalKind } from '../redux/slices/modal/types';
 import { openModal } from '../redux/slices/modal/modalSlice';
+import { useAppDispatch } from '../redux/store/store';
+import { logoutUser } from '../redux/async-actions/user.async.actions';
 
 const PopupMenuContainer = styled.div`
 	display: flex;
@@ -104,13 +103,12 @@ const SettingsText = styled.p`
 
 export const UserMenu = (): JSX.Element => {
 	const { email } = useSelector((state: RootState) => state.user);
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 
 	const [menuVisible, setMenuVisible] = useState(false);
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
-	const navigate = useNavigate();
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuVisible(false));
 
 	const virtualDriveEnabled = true;
@@ -142,8 +140,7 @@ export const UserMenu = (): JSX.Element => {
 			{
 				title: 'Signout',
 				onClick: async () => {
-					const success = await logoutUser();
-					success && navigate(routes.login);
+					dispatch(logoutUser());
 				},
 			},
 		];

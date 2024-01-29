@@ -15,8 +15,12 @@ const ButtonsContainer = styled.div`
 
 export const AddDriveModal = (): JSX.Element => {
 	const onDriveClick = async (drive: DriveType): Promise<void> => {
-		const authLink = await getAuthLink(drive);
-		authLink && window.location.replace(authLink);
+		try {
+			const authLink = await getAuthLink(drive);
+			authLink && window.location.replace(authLink);
+		} catch {
+			//TODO: show toast
+		}
 	};
 
 	return (

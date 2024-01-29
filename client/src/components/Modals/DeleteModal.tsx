@@ -4,12 +4,13 @@ import { CreateDriveSvg } from '../../shared/utils/utils';
 import { styled } from 'styled-components';
 import { DriveEntity, DriveType, FileEntity } from '../../shared/types/global.types';
 import { DeleteModalState } from '../../redux/slices/modal/types';
-import { deleteDriveEntity } from '../../services/drives/drives.service';
-import { useDispatch } from 'react-redux';
-import { deleteDrive } from '../../redux/slices/drives/drivesSlice';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
-import { deleteFile } from '../../redux/slices/files/filesSlice';
-import { deleteDriveFile } from '../../services/drives/files/drives.files.service';
+import { useAppDispatch } from '../../redux/store/store';
+import { deleteDrive } from '../../redux/async-actions/drives.async.actions';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../redux/store/types';
+import { useEffect } from 'react';
+import { deleteFile } from '../../redux/async-actions/files.async.actions';
 
 interface DeleteFileProps {
 	file: FileEntity;
@@ -64,7 +65,10 @@ interface IProps {
 }
 
 export const DeleteModal = ({ state }: IProps): JSX.Element => {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
+	const deleteDriveStatus = useSelector((state: RootState) => state.drives.requests.deleteDrive);
+	const deleteFileStatus = useSelector((state: RootState) => state.files.requests.deleteFile);
+
 	const { entity } = state;
 
 	const sendDeleteDriveRequest = async () => {
@@ -72,16 +76,27 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 
 		if (isDriveEntity(entity)) {
 			const { email, type } = entity;
-			const success = await deleteDriveEntity(email, type);
-			success && dispatch(deleteDrive(entity));
-			dispatch(closeModals());
+			dispatch(deleteDrive({ email, type }));
 		} else if (isFileEntity(entity)) {
-			const { drive, email, id } = entity;
-			const success = await deleteDriveFile(drive, email, id);
-			success && dispatch(deleteFile(id));
-			dispatch(closeModals());
+			const { email, drive, id } = entity;
+			dispatch(deleteFile({ email, drive, id }));
 		}
 	};
+
+	useEffect(() => {
+		const isDeleteDriveSuccessful = deleteDriveStatus.done && !deleteDriveStatus.error;
+		const isDeleteFileSuccessful = deleteFileStatus.done && !deleteFileStatus.error;
+
+		if (isDeleteDriveSuccessful || isDeleteFileSuccessful) {
+			dispatch(closeModals());
+		}
+	}, [
+		deleteDriveStatus.done,
+		deleteDriveStatus.error,
+		deleteFileStatus.done,
+		deleteFileStatus.error,
+		dispatch,
+	]);
 
 	return (
 		<BaseModal
@@ -94,6 +109,7 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 					text: 'Delete',
 					onClick: sendDeleteDriveRequest,
 				},
+				showLoader: deleteDriveStatus.loading,
 			}}
 		>
 			<Content>

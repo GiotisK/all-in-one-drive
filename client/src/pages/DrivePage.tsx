@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { FileType } from '../shared/types/types';
 import { MenuBanner } from '../components/MenuBanner';
 import { DropZone } from '../components/DropZone';
 import { FileRow } from '../components/FileRow';
@@ -11,11 +10,10 @@ import { styled } from 'styled-components';
 import { useSelector } from 'react-redux';
 import { RootState } from '../redux/store/types';
 
-import { DriveType } from '../shared/types/global.types';
 import { ModalContainer } from '../components/Modals/ModalContainer';
-import { useCheckAuthAndRedirect, useFetchDrives, useHandleAuthCodeFromUrl } from '../hooks';
-import { useFetchFiles } from '../hooks/useFetchFiles';
+import { useCheckAuthAndRedirect, useHandleAuthCodeFromUrl } from '../hooks';
 import { Loader } from '../components/Loader';
+import { useFetchInitialData } from '../hooks/useFetchInitialData';
 
 const RowsScrollview = styled.div`
 	flex: 1;
@@ -28,14 +26,14 @@ const LoaderContainer = styled.div`
 `;
 
 export const DrivePage = (): JSX.Element => {
-	const [sideMenuVisible, setSideMenuVisible] = useState(false);
+	const [sideMenuVisible, setSideMenuVisible] = useState(true);
 	const isUserAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
 	const files = useSelector((state: RootState) => state.files.files);
+	const loading = useSelector((state: RootState) => state.files.requests.getFiles.loading);
 
 	useCheckAuthAndRedirect();
 	useHandleAuthCodeFromUrl();
-	useFetchDrives();
-	const { loading: filesLoading } = useFetchFiles();
+	useFetchInitialData();
 
 	return isUserAuthenticated ? (
 		<div
@@ -67,7 +65,7 @@ export const DrivePage = (): JSX.Element => {
 							}}
 						/>
 						<LoadingBar />
-						{filesLoading ? (
+						{loading ? (
 							<LoaderContainer>
 								<Loader size={25} />
 							</LoaderContainer>
