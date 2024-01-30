@@ -43,11 +43,6 @@ export const DrivePage = (): JSX.Element => {
 				height: '100%',
 			}}
 		>
-			<TitleBanner
-				onBurgerMenuClick={() => {
-					setSideMenuVisible(prevVisible => !prevVisible);
-				}}
-			/>
 			{/*TODO: convert containers to styled components */}
 			<div
 				style={{
@@ -58,6 +53,12 @@ export const DrivePage = (): JSX.Element => {
 			>
 				{sideMenuVisible && <SideMenu />}
 				<RowsScrollview>
+					<TitleBanner
+						onBurgerMenuClick={() => {
+							setSideMenuVisible(prevVisible => !prevVisible);
+						}}
+					/>
+
 					<DropZone>
 						<MenuBanner
 							onBackButtonClick={() => {
