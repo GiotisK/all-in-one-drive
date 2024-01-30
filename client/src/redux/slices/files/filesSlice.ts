@@ -37,11 +37,8 @@ const filesSlice = createSlice({
 			.addCase(deleteFile.pending, state => {
 				state.requests.deleteFile = requestPendingState;
 			})
-			.addCase(deleteFile.fulfilled, (state, { payload }) => {
-				const { drive, email, id } = payload;
-				state.files = state.files.filter(
-					file => file.drive !== drive && file.email !== email && file.id !== id
-				);
+			.addCase(deleteFile.fulfilled, (state, { payload: fileId }) => {
+				state.files = state.files.filter(file => file.id !== fileId);
 				state.requests.deleteFile = requestSuccessState;
 			})
 			.addCase(deleteFile.rejected, state => {

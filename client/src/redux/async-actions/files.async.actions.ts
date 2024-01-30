@@ -4,7 +4,6 @@ import { deleteDriveFile, getRootFiles } from '../../services/drives/files/drive
 
 export const getFiles = createAsyncThunk('files/getFiles', async () => {
 	const files = await getRootFiles();
-
 	return files;
 });
 
@@ -13,7 +12,6 @@ export const deleteFile = createAsyncThunk(
 	'files/deleteFile',
 	async ({ drive, email, id }: DeleteFileParams) => {
 		await deleteDriveFile(drive, email, id);
-
-		return { email, drive, id };
+		return id;
 	}
 );

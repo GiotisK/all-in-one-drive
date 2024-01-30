@@ -64,8 +64,8 @@ interface IProps {
 
 export const DeleteModal = ({ state }: IProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const deleteDriveStatus = useAppSelector(state => state.drives.requests.deleteDrive);
-	const deleteFileStatus = useAppSelector(state => state.files.requests.deleteFile);
+	const deleteDriveReq = useAppSelector(state => state.drives.requests.deleteDrive);
+	const deleteFileReq = useAppSelector(state => state.files.requests.deleteFile);
 
 	const { entity } = state;
 
@@ -82,17 +82,17 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 	};
 
 	useEffect(() => {
-		const isDeleteDriveSuccessful = deleteDriveStatus.done && !deleteDriveStatus.error;
-		const isDeleteFileSuccessful = deleteFileStatus.done && !deleteFileStatus.error;
+		const isDeleteDriveSuccessful = deleteDriveReq.done && !deleteDriveReq.error;
+		const isDeleteFileSuccessful = deleteFileReq.done && !deleteFileReq.error;
 
 		if (isDeleteDriveSuccessful || isDeleteFileSuccessful) {
 			dispatch(closeModals());
 		}
 	}, [
-		deleteDriveStatus.done,
-		deleteDriveStatus.error,
-		deleteFileStatus.done,
-		deleteFileStatus.error,
+		deleteDriveReq.done,
+		deleteDriveReq.error,
+		deleteFileReq.done,
+		deleteFileReq.error,
 		dispatch,
 	]);
 
@@ -107,7 +107,7 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 					text: 'Delete',
 					onClick: sendDeleteDriveRequest,
 				},
-				showLoader: deleteDriveStatus.loading,
+				showLoader: deleteDriveReq.loading || deleteFileReq.loading,
 			}}
 		>
 			<Content>
