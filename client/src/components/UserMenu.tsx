@@ -50,8 +50,8 @@ const PopupMenu = styled.div`
 	justify-content: space-between;
 	height: max-content;
 	width: 250px;
-	margin-top: 4%;
-	margin-right: 5%;
+	margin-top: 3%;
+	margin-right: 1%;
 	border: solid 1px ${({ theme }) => theme.colors.border};
 	border-radius: 5px;
 	background-color: ${({ theme }) => theme.colors.background};
