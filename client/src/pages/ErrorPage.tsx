@@ -6,6 +6,8 @@ const ErrorPageBody = styled.div`
 	display: flex;
 	flex: 1;
 	flex-direction: column;
+	background-color: ${({ theme }) => theme.colors.background};
+	height: 100%;
 `;
 
 const ErrorElementsContainer = styled.div`
@@ -18,16 +20,16 @@ const ErrorElementsContainer = styled.div`
 
 const OopsText = styled.h1`
 	font-size: 50px;
-	color: black;
+	color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const InfoText = styled.h2`
-	color: black;
+	color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const ErrorCodeText = styled.h3`
 	font-size: 13px;
-	color: gray;
+	color: ${({ theme }) => theme.colors.textSecondary};
 `;
 
 const GoBackText = styled.div`
