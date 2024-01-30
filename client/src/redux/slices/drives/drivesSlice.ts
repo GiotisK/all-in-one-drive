@@ -7,6 +7,7 @@ import {
 	requestPendingState,
 	requestSuccessState,
 } from '../constants';
+import { logoutUser } from '../../async-actions/user.async.actions';
 
 const initialState: DrivesState = {
 	drives: [],
@@ -46,6 +47,9 @@ const drivesSlice = createSlice({
 			.addCase(deleteDrive.rejected, state => {
 				state.requests.deleteDrive = requestErrorState;
 			});
+		builder.addCase(logoutUser.fulfilled, () => {
+			return initialState;
+		});
 	},
 });
 

@@ -37,9 +37,8 @@ const userSlice = createSlice({
 			.addCase(logoutUser.pending, state => {
 				state.requests.login = requestPendingState;
 			})
-			.addCase(logoutUser.fulfilled, state => {
-				state.isAuthenticated = false;
-				state.requests.logout = requestSuccessState;
+			.addCase(logoutUser.fulfilled, () => {
+				return initialState;
 			})
 			.addCase(logoutUser.rejected, state => {
 				state.requests.logout = requestErrorState;

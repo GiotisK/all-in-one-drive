@@ -7,6 +7,7 @@ import {
 	requestSuccessState,
 } from '../constants';
 import { deleteFile, getFiles } from '../../async-actions/files.async.actions';
+import { logoutUser } from '../../async-actions/user.async.actions';
 
 const initialState: FilesState = {
 	files: [],
@@ -46,6 +47,9 @@ const filesSlice = createSlice({
 			.addCase(deleteFile.rejected, state => {
 				state.requests.deleteFile = requestErrorState;
 			});
+		builder.addCase(logoutUser.fulfilled, () => {
+			return initialState;
+		});
 	},
 });
 
