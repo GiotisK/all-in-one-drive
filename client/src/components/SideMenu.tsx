@@ -2,11 +2,10 @@ import { styled } from 'styled-components';
 import { Checkbox } from './Checkbox';
 import { DriveRow } from './DriveRow';
 import { Loader } from './Loader';
-import { useDispatch, useSelector } from 'react-redux';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
-import { RootState } from '../redux/store/types';
 import { DriveEntity } from '../shared/types/global.types';
+import { useAppDispatch, useAppSelector } from '../redux/store/store';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
@@ -48,9 +47,9 @@ const NoDrivesTextClickable = styled(NoDrivesText)`
 `;
 
 export const SideMenu = (): JSX.Element => {
-	const dispatch = useDispatch();
-	const drives = useSelector((state: RootState) => state.drives.drives);
-	const loading = useSelector((state: RootState) => state.drives.requests.getDrives.loading);
+	const dispatch = useAppDispatch();
+	const drives = useAppSelector(state => state.drives.drives);
+	const drivesLoading = useAppSelector(state => state.drives.requests.getDrives.loading);
 
 	const onAddDriveClick = (): void => {
 		dispatch(openModal({ kind: ModalKind.AddDrive }));
@@ -67,7 +66,7 @@ export const SideMenu = (): JSX.Element => {
 				<Checkbox onChange={() => null} checked={true} style={{ marginLeft: '5%' }} />
 			</Header>
 
-			{loading ? (
+			{drivesLoading ? (
 				<Loader size={25} />
 			) : !drives.length ? (
 				<>

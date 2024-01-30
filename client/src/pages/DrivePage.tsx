@@ -7,13 +7,14 @@ import { TitleBanner } from '../components/TitleBanner';
 import { FloatingButtonsContainer } from '../components/FloatingButtons/FloatingButtonsContainer';
 import { LoadingBar } from '../components/LoadingBar';
 import { styled } from 'styled-components';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store/types';
 
 import { ModalContainer } from '../components/Modals/ModalContainer';
-import { useCheckAuthAndRedirect, useHandleAuthCodeFromUrl } from '../hooks';
+import { useCheckAuth, useHandleAuthCodeFromUrl } from '../hooks';
 import { Loader } from '../components/Loader';
 import { useFetchInitialData } from '../hooks/useFetchInitialData';
+import { Navigate } from 'react-router-dom';
+import { routes } from '../shared/constants/routes';
+import { useAppSelector } from '../redux/store/store';
 
 const RowsScrollview = styled.div`
 	flex: 1;
@@ -27,11 +28,11 @@ const LoaderContainer = styled.div`
 
 export const DrivePage = (): JSX.Element => {
 	const [sideMenuVisible, setSideMenuVisible] = useState(true);
-	const isUserAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
-	const files = useSelector((state: RootState) => state.files.files);
-	const loading = useSelector((state: RootState) => state.files.requests.getFiles.loading);
+	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
+	const files = useAppSelector(state => state.files.files);
+	const filesLoading = useAppSelector(state => state.files.requests.getFiles.loading);
 
-	useCheckAuthAndRedirect();
+	useCheckAuth();
 	useHandleAuthCodeFromUrl();
 	useFetchInitialData();
 
@@ -66,7 +67,7 @@ export const DrivePage = (): JSX.Element => {
 							}}
 						/>
 						<LoadingBar />
-						{loading ? (
+						{filesLoading ? (
 							<LoaderContainer>
 								<Loader size={25} />
 							</LoaderContainer>
@@ -103,6 +104,6 @@ export const DrivePage = (): JSX.Element => {
 			<ModalContainer />
 		</div>
 	) : (
-		<></>
+		<Navigate to={routes.login} />
 	);
 };

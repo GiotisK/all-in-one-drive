@@ -3,7 +3,6 @@ import { Input } from './Input';
 import { ResponseText } from './ResponseText';
 import { Button } from './Button';
 import { styled } from 'styled-components';
-import { useNavigate } from 'react-router-dom';
 import { Nullable } from '../shared/types/global.types';
 import { loginUser } from '../redux/async-actions/user.async.actions';
 import { useAppDispatch } from '../redux/store/store';
@@ -95,7 +94,6 @@ enum Mode {
 
 export const CredentialsBox = (): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const navigate = useNavigate();
 
 	const [mode, setMode] = useState<Mode>(Mode.Login);
 

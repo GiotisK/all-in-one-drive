@@ -13,7 +13,7 @@ export const requestPendingState: RequestState = {
 };
 
 export const requestErrorState: RequestState = {
-	done: true,
+	done: false,
 	loading: false,
 	error: true,
 };

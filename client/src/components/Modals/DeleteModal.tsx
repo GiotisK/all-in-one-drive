@@ -5,10 +5,8 @@ import { styled } from 'styled-components';
 import { DriveEntity, DriveType, FileEntity } from '../../shared/types/global.types';
 import { DeleteModalState } from '../../redux/slices/modal/types';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
-import { useAppDispatch } from '../../redux/store/store';
+import { useAppDispatch, useAppSelector } from '../../redux/store/store';
 import { deleteDrive } from '../../redux/async-actions/drives.async.actions';
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store/types';
 import { useEffect } from 'react';
 import { deleteFile } from '../../redux/async-actions/files.async.actions';
 
@@ -66,8 +64,8 @@ interface IProps {
 
 export const DeleteModal = ({ state }: IProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const deleteDriveStatus = useSelector((state: RootState) => state.drives.requests.deleteDrive);
-	const deleteFileStatus = useSelector((state: RootState) => state.files.requests.deleteFile);
+	const deleteDriveStatus = useAppSelector(state => state.drives.requests.deleteDrive);
+	const deleteFileStatus = useAppSelector(state => state.files.requests.deleteFile);
 
 	const { entity } = state;
 

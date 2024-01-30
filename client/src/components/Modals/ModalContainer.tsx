@@ -1,5 +1,3 @@
-import { useSelector } from 'react-redux';
-import { RootState } from '../../redux/store/types';
 import { AddDriveModal } from './AddDriveModal';
 import { DeleteModal } from './DeleteModal';
 import { ExportFormatModal } from './ExportFormatModal';
@@ -8,9 +6,10 @@ import { RenameModal } from './RenameModal';
 import { UploadModal } from './UploadModal';
 import { ModalKind } from '../../redux/slices/modal/types';
 import { Nullable } from '../../shared/types/global.types';
+import { useAppSelector } from '../../redux/store/store';
 
 export const ModalContainer = (): Nullable<JSX.Element> => {
-	const { modal } = useSelector((state: RootState) => state.modal);
+	const { modal } = useAppSelector(state => state.modal);
 
 	return (
 		modal && (

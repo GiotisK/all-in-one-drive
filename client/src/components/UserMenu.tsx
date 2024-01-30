@@ -1,11 +1,9 @@
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
 import { useOutsideClicker } from '../hooks';
-import { RootState } from '../redux/store/types';
-import { useSelector } from 'react-redux';
 import { ModalKind } from '../redux/slices/modal/types';
 import { openModal } from '../redux/slices/modal/modalSlice';
-import { useAppDispatch } from '../redux/store/store';
+import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { logoutUser } from '../redux/async-actions/user.async.actions';
 
 const PopupMenuContainer = styled.div`
@@ -102,7 +100,7 @@ const SettingsText = styled.p`
 `;
 
 export const UserMenu = (): JSX.Element => {
-	const { email } = useSelector((state: RootState) => state.user);
+	const { email } = useAppSelector(state => state.user);
 	const dispatch = useAppDispatch();
 
 	const [menuVisible, setMenuVisible] = useState(false);

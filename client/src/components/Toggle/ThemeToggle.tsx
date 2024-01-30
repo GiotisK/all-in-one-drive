@@ -1,9 +1,8 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../../redux/store/types';
 import { SvgNames, createSvg } from '../../shared/utils/svg-utils';
 import { Toggle } from './Toggle';
 import { toggleTheme } from '../../redux/slices/settings/settingsSlice';
 import { styled } from 'styled-components';
+import { useAppDispatch, useAppSelector } from '../../redux/store/store';
 
 const SvgContainer = styled.div`
 	display: flex;
@@ -14,8 +13,8 @@ const SvgContainer = styled.div`
 `;
 
 export const ThemeToggle = () => {
-	const dispatch = useDispatch();
-	const themeMode = useSelector((state: RootState) => state.settings.themeMode);
+	const dispatch = useAppDispatch();
+	const themeMode = useAppSelector(state => state.settings.themeMode);
 
 	const handleThemeChange = () => {
 		saveThemeToLocalStorage();

@@ -2,7 +2,10 @@ import styled from 'styled-components';
 import { CredentialsBox } from '../components/CredentialsBox';
 import { ReactComponent as Banner } from '../assets/svgs/landing_page_banner.svg';
 import { ThemeToggle } from '../components/Toggle/ThemeToggle';
-import { useCheckAuthAndRedirect } from '../hooks';
+import { useCheckAuth } from '../hooks';
+import { Navigate } from 'react-router-dom';
+import { routes } from '../shared/constants/routes';
+import { useAppSelector } from '../redux/store/store';
 
 const LandingPageContainer = styled.div`
 	display: flex;
@@ -32,9 +35,13 @@ const ThemeToggleWrapper = styled.div`
 `;
 
 export const LandingPage = (): JSX.Element => {
-	useCheckAuthAndRedirect();
+	const isAuthenticated = useAppSelector(state => state.user.isAuthenticated);
 
-	return (
+	useCheckAuth();
+
+	return isAuthenticated ? (
+		<Navigate to={routes.drive} />
+	) : (
 		<LandingPageContainer>
 			<LandingPageTitle>aio drive</LandingPageTitle>
 			<ThemeToggleWrapper>
