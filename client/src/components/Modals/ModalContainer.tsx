@@ -18,7 +18,7 @@ export const ModalContainer = (): Nullable<JSX.Element> => {
 				{modal.kind === ModalKind.Delete && <DeleteModal state={modal.state} />}
 				{modal.kind === ModalKind.ExportFormat && <ExportFormatModal state={modal.state} />}
 				{modal.kind === ModalKind.MultiMedia && <MultimediaModal state={modal.state} />}
-				{modal.kind === ModalKind.Rename && <RenameModal />}
+				{modal.kind === ModalKind.Rename && <RenameModal state={modal.state} />}
 				{modal.kind === ModalKind.Upload && <UploadModal state={modal.state} />}
 			</>
 		)

@@ -18,6 +18,10 @@ export interface AuthUserResponse {
 	email: string;
 }
 
+export interface RenameFileRequestBody {
+	name: string;
+}
+
 export enum Status {
 	OK = 200,
 	BAD_REQUEST = 400,

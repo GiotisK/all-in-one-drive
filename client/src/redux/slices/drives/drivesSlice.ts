@@ -22,6 +22,7 @@ const drivesSlice = createSlice({
 	initialState,
 	reducers: {},
 	extraReducers: builder => {
+		// getDrives
 		builder
 			.addCase(getDrives.pending, state => {
 				state.requests.getDrives = requestPendingState;
@@ -33,6 +34,8 @@ const drivesSlice = createSlice({
 			.addCase(getDrives.rejected, state => {
 				state.requests.getDrives = requestErrorState;
 			});
+
+		// deleteDrive
 		builder
 			.addCase(deleteDrive.pending, state => {
 				state.requests.deleteDrive = requestPendingState;
@@ -47,6 +50,8 @@ const drivesSlice = createSlice({
 			.addCase(deleteDrive.rejected, state => {
 				state.requests.deleteDrive = requestErrorState;
 			});
+
+		// logout
 		builder.addCase(logoutUser.fulfilled, () => {
 			return initialState;
 		});

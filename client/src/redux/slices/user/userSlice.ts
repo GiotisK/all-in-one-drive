@@ -23,6 +23,7 @@ const userSlice = createSlice({
 	initialState,
 	reducers: {},
 	extraReducers: builder => {
+		// loginUser
 		builder
 			.addCase(loginUser.pending, state => {
 				state.requests.login = requestPendingState;
@@ -33,6 +34,8 @@ const userSlice = createSlice({
 			.addCase(loginUser.rejected, state => {
 				state.requests.login = requestErrorState;
 			});
+
+		//logoutUser
 		builder
 			.addCase(logoutUser.pending, state => {
 				state.requests.login = requestPendingState;
@@ -43,6 +46,8 @@ const userSlice = createSlice({
 			.addCase(logoutUser.rejected, state => {
 				state.requests.logout = requestErrorState;
 			});
+
+		// authorizeUser
 		builder
 			.addCase(authorizeUser.pending, state => {
 				state.requests.authorize = requestPendingState;

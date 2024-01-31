@@ -1,4 +1,4 @@
-import { Nullable } from '../../../shared/types/global.types';
+import { FileEntity, Nullable } from '../../../shared/types/global.types';
 import { Entity, FileType, MultiMediaType } from '../../../shared/types/types';
 
 export type DeleteModalState = {
@@ -11,6 +11,10 @@ export type ExportFormatModalState = {
 
 export type MultimediaModalState = {
 	multiMediaType: Nullable<MultiMediaType>;
+};
+
+export type RenameModalState = {
+	entity: Nullable<FileEntity>;
 };
 
 export type UploadModalState = {
@@ -31,7 +35,7 @@ export type Modal =
 	| { kind: ModalKind.Delete; state: DeleteModalState }
 	| { kind: ModalKind.ExportFormat; state: ExportFormatModalState }
 	| { kind: ModalKind.MultiMedia; state: MultimediaModalState }
-	| { kind: ModalKind.Rename }
+	| { kind: ModalKind.Rename; state: RenameModalState }
 	| { kind: ModalKind.Upload; state: UploadModalState };
 
 export interface ModalState {

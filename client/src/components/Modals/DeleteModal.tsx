@@ -69,7 +69,7 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 
 	const { entity } = state;
 
-	const sendDeleteDriveRequest = async () => {
+	const sendDeleteEntityRequest = async () => {
 		if (!entity) return;
 
 		if (isDriveEntity(entity)) {
@@ -82,8 +82,8 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 	};
 
 	useEffect(() => {
-		const isDeleteDriveSuccessful = deleteDriveReq.done && !deleteDriveReq.error;
-		const isDeleteFileSuccessful = deleteFileReq.done && !deleteFileReq.error;
+		const isDeleteDriveSuccessful = deleteDriveReq.done;
+		const isDeleteFileSuccessful = deleteFileReq.done;
 
 		if (isDeleteDriveSuccessful || isDeleteFileSuccessful) {
 			dispatch(closeModals());
@@ -105,7 +105,7 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 				},
 				rightButton: {
 					text: 'Delete',
-					onClick: sendDeleteDriveRequest,
+					onClick: sendDeleteEntityRequest,
 				},
 				showLoader: deleteDriveReq.loading || deleteFileReq.loading,
 			}}

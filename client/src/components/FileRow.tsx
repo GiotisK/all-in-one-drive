@@ -110,6 +110,10 @@ export const FileRow = ({ file, onFileClick, onCopyShareLinkClick }: IProps): JS
 		dispatch(openModal({ kind: ModalKind.Delete, state: { entity: file } }));
 	};
 
+	const onRenameClick = () => {
+		dispatch(openModal({ kind: ModalKind.Rename, state: { entity: file } }));
+	};
+
 	const fileMenuRows: FileMenuRow[] = [
 		{
 			text: 'Download',
@@ -119,9 +123,7 @@ export const FileRow = ({ file, onFileClick, onCopyShareLinkClick }: IProps): JS
 		},
 		{
 			text: 'Rename',
-			onClick: () => {
-				console.log('rename');
-			},
+			onClick: onRenameClick,
 		},
 		{
 			...(file.isShared ? { text: 'Unshare' } : { text: 'Share' }),

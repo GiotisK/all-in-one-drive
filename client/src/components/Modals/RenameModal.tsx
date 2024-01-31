@@ -1,6 +1,11 @@
 import { styled } from 'styled-components';
 import { Input } from '../Input';
 import { BaseModal } from './BaseModal';
+import { RenameModalState } from '../../redux/slices/modal/types';
+import { useAppDispatch, useAppSelector } from '../../redux/store/store';
+import { closeModals } from '../../redux/slices/modal/modalSlice';
+import { useState, ChangeEvent, useEffect } from 'react';
+import { renameFile } from '../../redux/async-actions/files.async.actions';
 
 const Content = styled.div`
 	display: flex;
@@ -9,7 +14,32 @@ const Content = styled.div`
 	width: 500px;
 `;
 
-export const RenameModal = (): JSX.Element => {
+interface IProps {
+	state: RenameModalState;
+}
+
+export const RenameModal = ({ state }: IProps): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const renameFileReq = useAppSelector(state => state.files.requests.renameFile);
+	const [inputValue, setInputValue] = useState<string>('');
+	const { entity } = state;
+
+	const onInputChange = (evt: ChangeEvent<HTMLInputElement>) => {
+		setInputValue(evt.target.value);
+	};
+
+	const sendRenameFileRequest = async () => {
+		if (!entity) return;
+		const { drive, email, id } = entity;
+		dispatch(renameFile({ drive, email, id, newName: inputValue }));
+	};
+
+	useEffect(() => {
+		if (renameFileReq.done) {
+			dispatch(closeModals());
+		}
+	}, [dispatch, renameFileReq.done]);
+
 	return (
 		<BaseModal
 			headerProps={{ title: 'Rename' }}
@@ -19,11 +49,13 @@ export const RenameModal = (): JSX.Element => {
 				},
 				rightButton: {
 					text: 'Rename',
+					onClick: sendRenameFileRequest,
 				},
+				showLoader: renameFileReq.loading,
 			}}
 		>
 			<Content>
-				<Input title='Rename file' />
+				<Input value={inputValue} onChange={onInputChange} title='Name' />
 			</Content>
 		</BaseModal>
 	);

@@ -9,8 +9,12 @@ export const postRequest = async <T, U>(path: string, data?: T): Promise<AxiosRe
 	return axiosInstance.post(path, data);
 };
 
-export const putRequest = async <T>(path: string, data: T) => {
+export const putRequest = async <T>(path: string, data?: T) => {
 	return axiosInstance.put(path, data);
+};
+
+export const patchRequest = async <T, U>(path: string, data?: T): Promise<AxiosResponse<U>> => {
+	return axiosInstance.patch(path, data);
 };
 
 export const deleteRequest = async <T>(path: string): Promise<AxiosResponse<T>> => {

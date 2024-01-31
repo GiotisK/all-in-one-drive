@@ -6,7 +6,7 @@ import {
 	requestPendingState,
 	requestSuccessState,
 } from '../constants';
-import { deleteFile, getFiles } from '../../async-actions/files.async.actions';
+import { deleteFile, getFiles, renameFile } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
 
 const initialState: FilesState = {
@@ -14,6 +14,7 @@ const initialState: FilesState = {
 	requests: {
 		getFiles: requestInitialState,
 		deleteFile: requestInitialState,
+		renameFile: requestInitialState,
 	},
 };
 
@@ -22,6 +23,7 @@ const filesSlice = createSlice({
 	initialState,
 	reducers: {},
 	extraReducers: builder => {
+		// getFiles
 		builder
 			.addCase(getFiles.pending, state => {
 				state.requests.getFiles = requestPendingState;
@@ -33,6 +35,8 @@ const filesSlice = createSlice({
 			.addCase(getFiles.rejected, state => {
 				state.requests.getFiles = requestErrorState;
 			});
+
+		// deleteFile
 		builder
 			.addCase(deleteFile.pending, state => {
 				state.requests.deleteFile = requestPendingState;
@@ -44,6 +48,21 @@ const filesSlice = createSlice({
 			.addCase(deleteFile.rejected, state => {
 				state.requests.deleteFile = requestErrorState;
 			});
+
+		// renameFile
+		builder
+			.addCase(renameFile.pending, state => {
+				state.requests.renameFile = requestPendingState;
+			})
+			.addCase(renameFile.fulfilled, (state, { payload: fileId }) => {
+				state.files = state.files.filter(file => file.id !== fileId);
+				state.requests.renameFile = requestSuccessState;
+			})
+			.addCase(renameFile.rejected, state => {
+				state.requests.renameFile = requestErrorState;
+			});
+
+		// logout
 		builder.addCase(logoutUser.fulfilled, () => {
 			return initialState;
 		});

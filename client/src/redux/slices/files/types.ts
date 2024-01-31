@@ -6,5 +6,6 @@ export interface FilesState {
 	requests: {
 		getFiles: RequestState;
 		deleteFile: RequestState;
+		renameFile: RequestState;
 	};
 }
