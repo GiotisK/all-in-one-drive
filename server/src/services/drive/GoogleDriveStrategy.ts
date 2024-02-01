@@ -3,7 +3,7 @@ import { IDriveStrategy } from './IDriveStrategy';
 import { drive, auth, drive_v3 } from '@googleapis/drive';
 import { bytesToGigabytes, normalizeBytes } from '../../helpers/helpers';
 import { DriveQuota, DriveType, FileEntity, FileType, Nullable } from '../../types/global.types';
-import mime from 'mime-types';
+import mime from 'mime';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
@@ -124,7 +124,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const fileType = this.determineEntityType(file.mimeType ?? '');
 			const size = fileType === FileType.File ? normalizeBytes(file.size ?? '') : '';
 			const normalizedDate = file.createdTime?.substring(0, 10) ?? '-';
-			const extension = file.mimeType ? mime.extension(file.mimeType) : '-';
+			const extension = file.mimeType ? mime.getExtension(file.mimeType) : '-';
 
 			return {
 				id: file.id ?? '',
