@@ -21,7 +21,7 @@ interface IProps {
 export const RenameModal = ({ state }: IProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const renameFileReq = useAppSelector(state => state.files.requests.renameFile);
-	const [inputValue, setInputValue] = useState<string>('');
+	const [inputValue, setInputValue] = useState<string>(state.entity?.name ?? '');
 	const { entity } = state;
 
 	const onInputChange = (evt: ChangeEvent<HTMLInputElement>) => {

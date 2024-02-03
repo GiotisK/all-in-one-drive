@@ -1,8 +1,9 @@
 import {
 	DriveType,
 	FileEntity,
-	RenameFileRequestBody,
 	Status,
+	PatchFileRequestBody,
+	PatchFileResponse,
 } from '../../../shared/types/global.types';
 import { deleteRequest, getRequest, patchRequest } from '../../request.service';
 
@@ -25,10 +26,10 @@ export const renameDriveFile = async (
 	driveEmail: string,
 	fileId: string,
 	newName: string
-): Promise<boolean> => {
-	const res = await patchRequest<RenameFileRequestBody, void>(
+): Promise<string> => {
+	const res = await patchRequest<PatchFileRequestBody, PatchFileResponse>(
 		`drives/${drive}/${driveEmail}/files/${fileId}`,
 		{ name: newName }
 	);
-	return res.status === Status.OK;
+	return res.data.name ?? '';
 };

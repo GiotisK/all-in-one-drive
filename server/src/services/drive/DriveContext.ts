@@ -35,4 +35,16 @@ export default class DriveContext {
 	public async deleteFile(token: string, fileId: string): Promise<boolean> {
 		return this.strategy.deleteFile(token, fileId);
 	}
+
+	public async renameFile(token: string, fileId: string, name: string): Promise<boolean> {
+		return this.strategy.renameFile(token, fileId, name);
+	}
+
+	public async shareFile(
+		token: string,
+		fileId: string,
+		share: boolean
+	): Promise<Nullable<string>> {
+		return this.strategy.shareFile(token, fileId, share);
+	}
 }

@@ -54,8 +54,12 @@ const filesSlice = createSlice({
 			.addCase(renameFile.pending, state => {
 				state.requests.renameFile = requestPendingState;
 			})
-			.addCase(renameFile.fulfilled, (state, { payload: fileId }) => {
-				state.files = state.files.filter(file => file.id !== fileId);
+			.addCase(renameFile.fulfilled, (state, { payload }) => {
+				const { name, id } = payload;
+				const fileForUpdateIndex = state.files.findIndex(file => file.id === id);
+				const tempFiles = [...state.files];
+				tempFiles[fileForUpdateIndex].name = name;
+				state.files = tempFiles;
 				state.requests.renameFile = requestSuccessState;
 			})
 			.addCase(renameFile.rejected, state => {

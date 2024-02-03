@@ -18,8 +18,14 @@ export interface AuthUserResponse {
 	email: string;
 }
 
-export interface RenameFileRequestBody {
-	name: string;
+export interface PatchFileRequestBody {
+	name?: string;
+	share?: boolean;
+}
+
+export interface PatchFileResponse {
+	name?: string;
+	sharedLink?: boolean;
 }
 
 export enum Status {

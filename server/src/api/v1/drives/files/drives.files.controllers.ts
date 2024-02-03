@@ -1,7 +1,13 @@
 import { Request, Response } from 'express';
 import { AuthLocals } from '../../../../types/types';
-import { deleteFile, getRootFiles } from './drives.files.service';
-import { DriveType, FileEntity, Status } from '../../../../types/global.types';
+import { deleteFile, getRootFiles, renameFile } from './drives.files.service';
+import {
+	DriveType,
+	FileEntity,
+	PatchFileRequestBody,
+	PatchFileResponse,
+	Status,
+} from '../../../../types/global.types';
 
 export const getRootFilesController = async (
 	_req: Request,
@@ -17,10 +23,10 @@ export const getRootFilesController = async (
 	}
 };
 
-type DeleteFileQueryParams = { drive: DriveType; email: string; fileId: string };
+type DeleteFilePathParams = { drive: DriveType; email: string; fileId: string };
 export const deleteFileController = async (
-	req: Request<DeleteFileQueryParams>,
-	res: Response<FileEntity[], AuthLocals>
+	req: Request<DeleteFilePathParams>,
+	res: Response<void, AuthLocals>
 ) => {
 	const { email: userEmail } = res.locals;
 	const { drive, email: driveEmail, fileId } = req.params;
@@ -28,4 +34,37 @@ export const deleteFileController = async (
 	const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
 
 	res.status(statusId).send();
+};
+
+type PatchFilePathParams = { drive: DriveType; email: string; fileId: string };
+export const editFileController = async (
+	req: Request<PatchFilePathParams, void, PatchFileRequestBody>,
+	res: Response<PatchFileResponse, AuthLocals>
+) => {
+	const { name, share } = req.body;
+	const { drive, email: driveEmail, fileId } = req.params;
+	const { email: userEmail } = res.locals;
+	const responseBody: PatchFileResponse = {};
+	let renameSuccess = false;
+	let shareSuccess = false;
+
+	if (name) {
+		renameSuccess = await renameFile(drive, userEmail, driveEmail, fileId, name);
+		if (renameSuccess) {
+			responseBody.name = name;
+		}
+	}
+
+	if (share) {
+		//sharedLink = await shareFile(drive, userEmail, driveEmail, fileId);
+		// if(shareSuccess){
+		// 	responseBody.sharedLink = sharedLink
+		// }
+	}
+
+	if (renameSuccess || shareSuccess) {
+		res.status(Status.OK).send(responseBody);
+	} else {
+		res.status(Status.INTERNAL_SERVER_ERROR).send();
+	}
 };

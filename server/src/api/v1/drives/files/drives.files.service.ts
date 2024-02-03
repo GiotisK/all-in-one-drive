@@ -33,7 +33,6 @@ export const getRootFiles = async (userEmail: string): Promise<Nullable<FileEnti
 			return null;
 		}
 	}
-
 	return null;
 };
 
@@ -51,6 +50,29 @@ export const deleteFile = async (
 			if (ctxAndToken) {
 				const { ctx, token } = ctxAndToken;
 				return ctx.deleteFile(token, fileId);
+			}
+		} catch {
+			return false;
+		}
+	}
+	return false;
+};
+
+export const renameFile = async (
+	drive: DriveType,
+	userEmail: string,
+	driveEmail: string,
+	fileId: string,
+	name: string
+): Promise<boolean> => {
+	const driveProperties = await getDrive(userEmail, driveEmail, drive);
+	if (driveProperties) {
+		try {
+			const { token: encryptedTokenStr, driveType } = driveProperties;
+			const ctxAndToken = getDriveContextAndToken(driveType, encryptedTokenStr);
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.renameFile(token, fileId, name);
 			}
 		} catch {
 			return false;

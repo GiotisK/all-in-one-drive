@@ -24,7 +24,7 @@ type RenameFileParams = { drive: DriveType; email: string; id: string; newName: 
 export const renameFile = createAsyncThunk(
 	'files/renameFile',
 	async ({ drive, email, id, newName }: RenameFileParams) => {
-		await renameDriveFile(drive, email, id, newName);
-		return id;
+		const name = await renameDriveFile(drive, email, id, newName);
+		return { name, id };
 	}
 );

@@ -104,6 +104,39 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
+	public async renameFile(token: string, fileId: string, name: string): Promise<boolean> {
+		try {
+			this.setToken(token);
+			await this.drive.files.update({
+				fileId,
+				requestBody: {
+					name,
+				},
+			});
+
+			return true;
+		} catch {
+			return false;
+		}
+	}
+
+	public async shareFile(
+		token: string,
+		fileId: string,
+		share: boolean
+	): Promise<Nullable<string>> {
+		try {
+			/* this.setToken(token);
+			await this.drive.permissions.create({
+				res
+			}); */
+
+			return '';
+		} catch {
+			return null;
+		}
+	}
+
 	private setToken(tokenStr: string) {
 		const token: Credentials = JSON.parse(tokenStr);
 		this.oAuth2Client.setCredentials(token);
