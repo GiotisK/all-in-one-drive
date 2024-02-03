@@ -22,7 +22,7 @@
 		"@types/mongoose": "^5.11.97",
 		"@types/node": "^20.3.1",
 		"concurrently": "^8.2.0",
-		"mime": "^4.0.1",
+		"mime": "3.0.1",
 		"nodemon": "^2.0.22",
 		"prettier": "2.8.8",
 		"typescript": "^5.1.3"

@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieparser from 'cookie-parser';
@@ -7,7 +7,7 @@ import { connectDB } from './src/configs/database/database.config';
 
 dotenv.config();
 
-const app: Express = express();
+const app = express();
 const port = process.env.PORT;
 const frontendURL = process.env.FRONTEND_URL;
 
