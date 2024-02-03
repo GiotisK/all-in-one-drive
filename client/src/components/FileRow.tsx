@@ -184,15 +184,15 @@ export const FileRow = ({ file, onFileClick }: IProps): JSX.Element => {
 			<FourthColumn>
 				<Text>{file.date}</Text>
 				{filemenu}
-				{file.sharedLink && (
-					<IconButton
-						icon={SvgNames.Link}
-						color={theme?.colors.green}
-						size={20}
-						onClick={() => navigator.clipboard.writeText(file.sharedLink ?? '')}
-					/>
-				)}
 			</FourthColumn>
+			{file.sharedLink && (
+				<IconButton
+					icon={SvgNames.Link}
+					color={theme?.colors.green}
+					size={20}
+					onClick={() => navigator.clipboard.writeText(file.sharedLink ?? '')}
+				/>
+			)}
 		</Container>
 	);
 };
