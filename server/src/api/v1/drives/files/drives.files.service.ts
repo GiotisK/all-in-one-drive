@@ -1,8 +1,6 @@
 import { getAllDrives, getDrive } from '../../../../services/database/mongodb.service';
-import DriveContext from '../../../../services/drive/DriveContext';
-import { EncryptedData, decrypt } from '../../../../services/encryption/encryption.service';
 import { DriveType, FileEntity, Nullable } from '../../../../types/global.types';
-import { getDriveStrategyFromString } from '../drives.helpers';
+import { getDriveContextAndToken } from '../drives.helpers';
 
 export const getRootFiles = async (userEmail: string): Promise<Nullable<FileEntity[]>> => {
 	const fileEntities: Array<FileEntity[]> = [];
@@ -14,13 +12,10 @@ export const getRootFiles = async (userEmail: string): Promise<Nullable<FileEnti
 		try {
 			driveProperties.forEach(async properties => {
 				const { token: encryptedTokenStr, driveType } = properties;
-				const driveStrategy = getDriveStrategyFromString(driveType);
+				const ctxAndToken = getDriveContextAndToken(driveType, encryptedTokenStr);
 
-				if (driveStrategy) {
-					const encryptedToken = JSON.parse(encryptedTokenStr) as EncryptedData;
-					const token = decrypt(encryptedToken);
-
-					const ctx = new DriveContext(driveStrategy);
+				if (ctxAndToken) {
+					const { ctx, token } = ctxAndToken;
 					promiseArr.push(ctx.getDriveFiles(token));
 				}
 			});
@@ -52,11 +47,9 @@ export const deleteFile = async (
 	if (driveProperties) {
 		try {
 			const { token: encryptedTokenStr, driveType } = driveProperties;
-			const driveStrategy = getDriveStrategyFromString(driveType);
-			if (driveStrategy) {
-				const encryptedToken = JSON.parse(encryptedTokenStr) as EncryptedData;
-				const token = decrypt(encryptedToken);
-				const ctx = new DriveContext(driveStrategy);
+			const ctxAndToken = getDriveContextAndToken(driveType, encryptedTokenStr);
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
 				return ctx.deleteFile(token, fileId);
 			}
 		} catch {

@@ -23,3 +23,9 @@ export function decrypt(encrypted: EncryptedData): string {
 	decrypted += decipher.final('utf-8');
 	return decrypted;
 }
+
+export function getDecryptedTokenFromEncryptedTokenString(encryptedTokenStr: string) {
+	const encryptedToken = JSON.parse(encryptedTokenStr) as EncryptedData;
+	const token = decrypt(encryptedToken);
+	return token;
+}
