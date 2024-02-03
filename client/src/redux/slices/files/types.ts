@@ -7,5 +7,7 @@ export interface FilesState {
 		getFiles: RequestState;
 		deleteFile: RequestState;
 		renameFile: RequestState;
+		shareFile: RequestState;
+		unshareFile: RequestState;
 	};
 }

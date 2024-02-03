@@ -8,5 +8,6 @@ export interface IDriveStrategy {
 	getDriveFiles(token: string, folderId?: string): Promise<Nullable<FileEntity[]>>;
 	deleteFile(token: string, fileId: string): Promise<boolean>;
 	renameFile(token: string, fileId: string, name: string): Promise<boolean>;
-	shareFile(token: string, fileId: string, share: boolean): Promise<Nullable<string>>;
+	shareFile(token: string, fileId: string): Promise<Nullable<string>>;
+	unshareFile(token: string, fileId: string): Promise<boolean>;
 }

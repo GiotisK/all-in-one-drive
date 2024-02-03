@@ -81,17 +81,12 @@ export const DrivePage = (): JSX.Element => {
 										drive: file.drive,
 										extension: file.extension,
 										email: file.email,
-										isShared: false,
+										sharedLink: file.sharedLink,
 										name: file.name,
-										ownerEmail: file.email,
-										permissions: '',
 										size: file.size,
 										type: file.type,
 									}}
 									onFileClick={function (): void {
-										throw new Error('Function not implemented.');
-									}}
-									onCopyShareLinkClick={function (): void {
 										throw new Error('Function not implemented.');
 									}}
 								/>

@@ -6,9 +6,10 @@ import { IconButton } from './IconButton';
 import { styled, useTheme } from 'styled-components';
 import { useOutsideClicker } from '../hooks';
 import { FileEntity } from '../shared/types/global.types';
-import { useDispatch } from 'react-redux';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
+import { shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
+import { useAppDispatch, useAppSelector } from '../redux/store/store';
 
 const Container = styled.div`
 	display: flex;
@@ -89,7 +90,6 @@ const MenuRowText = styled.p`
 interface IProps {
 	file: FileEntity;
 	onFileClick: () => void;
-	onCopyShareLinkClick: () => void;
 }
 
 type FileMenuRow = {
@@ -97,9 +97,9 @@ type FileMenuRow = {
 	onClick: () => void;
 };
 
-export const FileRow = ({ file, onFileClick, onCopyShareLinkClick }: IProps): JSX.Element => {
+export const FileRow = ({ file, onFileClick }: IProps): JSX.Element => {
 	const theme = useTheme();
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const [menuToggle, setMenuToggle] = useState(false);
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
@@ -114,6 +114,16 @@ export const FileRow = ({ file, onFileClick, onCopyShareLinkClick }: IProps): JS
 		dispatch(openModal({ kind: ModalKind.Rename, state: { entity: file } }));
 	};
 
+	const onShareClick = () => {
+		const { drive, email, id } = file;
+		dispatch(shareFile({ drive, email, id }));
+	};
+
+	const onUnshareClick = () => {
+		const { drive, email, id } = file;
+		dispatch(unshareFile({ drive, email, id }));
+	};
+
 	const fileMenuRows: FileMenuRow[] = [
 		{
 			text: 'Download',
@@ -126,10 +136,8 @@ export const FileRow = ({ file, onFileClick, onCopyShareLinkClick }: IProps): JS
 			onClick: onRenameClick,
 		},
 		{
-			...(file.isShared ? { text: 'Unshare' } : { text: 'Share' }),
-			onClick: () => {
-				console.log('share');
-			},
+			text: file.sharedLink ? 'Unshare' : 'Share Publicly',
+			onClick: file.sharedLink ? onUnshareClick : onShareClick,
 		},
 		{
 			text: 'Delete',
@@ -176,15 +184,12 @@ export const FileRow = ({ file, onFileClick, onCopyShareLinkClick }: IProps): JS
 			<FourthColumn>
 				<Text>{file.date}</Text>
 				{filemenu}
-
-				{file.isShared && (
+				{file.sharedLink && (
 					<IconButton
 						icon={SvgNames.Link}
 						color={theme?.colors.green}
 						size={20}
-						onClick={() => {
-							console.log('share');
-						}}
+						onClick={() => navigator.clipboard.writeText(file.sharedLink ?? '')}
 					/>
 				)}
 			</FourthColumn>

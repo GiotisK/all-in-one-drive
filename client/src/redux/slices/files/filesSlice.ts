@@ -6,7 +6,13 @@ import {
 	requestPendingState,
 	requestSuccessState,
 } from '../constants';
-import { deleteFile, getFiles, renameFile } from '../../async-actions/files.async.actions';
+import {
+	deleteFile,
+	getFiles,
+	renameFile,
+	shareFile,
+	unshareFile,
+} from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
 
 const initialState: FilesState = {
@@ -15,6 +21,8 @@ const initialState: FilesState = {
 		getFiles: requestInitialState,
 		deleteFile: requestInitialState,
 		renameFile: requestInitialState,
+		shareFile: requestInitialState,
+		unshareFile: requestInitialState,
 	},
 };
 
@@ -64,6 +72,39 @@ const filesSlice = createSlice({
 			})
 			.addCase(renameFile.rejected, state => {
 				state.requests.renameFile = requestErrorState;
+			});
+
+		// shareFile
+		builder
+			.addCase(shareFile.pending, state => {
+				state.requests.shareFile = requestPendingState;
+			})
+			.addCase(shareFile.fulfilled, (state, { payload }) => {
+				const { sharedLink, id } = payload;
+				const fileForUpdateIndex = state.files.findIndex(file => file.id === id);
+				const tempFiles = [...state.files];
+				tempFiles[fileForUpdateIndex].sharedLink = sharedLink;
+				state.files = tempFiles;
+				state.requests.shareFile = requestSuccessState;
+			})
+			.addCase(shareFile.rejected, state => {
+				state.requests.shareFile = requestErrorState;
+			});
+
+		// unshareFile
+		builder
+			.addCase(unshareFile.pending, state => {
+				state.requests.unshareFile = requestPendingState;
+			})
+			.addCase(unshareFile.fulfilled, (state, { payload: id }) => {
+				const fileForUpdateIndex = state.files.findIndex(file => file.id === id);
+				const tempFiles = [...state.files];
+				delete tempFiles[fileForUpdateIndex].sharedLink;
+				state.files = tempFiles;
+				state.requests.unshareFile = requestSuccessState;
+			})
+			.addCase(unshareFile.rejected, state => {
+				state.requests.unshareFile = requestErrorState;
 			});
 
 		// logout

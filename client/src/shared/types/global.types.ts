@@ -24,8 +24,19 @@ export interface PatchFileRequestBody {
 }
 
 export interface PatchFileResponse {
-	name?: string;
-	sharedLink?: boolean;
+	operation: {
+		rename?: {
+			success: boolean;
+			name: string;
+		};
+		share?: {
+			success: boolean;
+			sharedLink: string;
+		};
+		unshare?: {
+			success: boolean;
+		};
+	};
 }
 
 export enum Status {
@@ -61,6 +72,7 @@ export type FileEntity = {
 	size: string;
 	date: string;
 	extension: string;
+	sharedLink?: Nullable<string>;
 };
 
 export enum FileType {

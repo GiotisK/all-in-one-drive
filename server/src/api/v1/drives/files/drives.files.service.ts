@@ -80,3 +80,48 @@ export const renameFile = async (
 	}
 	return false;
 };
+
+export const shareFile = async (
+	drive: DriveType,
+	userEmail: string,
+	driveEmail: string,
+	fileId: string
+): Promise<Nullable<string>> => {
+	const driveProperties = await getDrive(userEmail, driveEmail, drive);
+	if (driveProperties) {
+		try {
+			const { token: encryptedTokenStr, driveType } = driveProperties;
+			const ctxAndToken = getDriveContextAndToken(driveType, encryptedTokenStr);
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				const sharedLink = await ctx.shareFile(token, fileId);
+				return sharedLink ?? null;
+			}
+		} catch (e) {
+			return null;
+		}
+	}
+	return null;
+};
+
+export const unshareFile = async (
+	drive: DriveType,
+	userEmail: string,
+	driveEmail: string,
+	fileId: string
+): Promise<boolean> => {
+	const driveProperties = await getDrive(userEmail, driveEmail, drive);
+	if (driveProperties) {
+		try {
+			const { token: encryptedTokenStr, driveType } = driveProperties;
+			const ctxAndToken = getDriveContextAndToken(driveType, encryptedTokenStr);
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return await ctx.unshareFile(token, fileId);
+			}
+		} catch {
+			return false;
+		}
+	}
+	return false;
+};

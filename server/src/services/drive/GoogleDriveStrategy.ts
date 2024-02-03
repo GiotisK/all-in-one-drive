@@ -9,6 +9,8 @@ type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
+const PUBLIC_SHARED_LINK_BASE_URL = 'https://drive.google.com/open?id=';
+const PUBLIC_SHARED_PERMISSION_TYPE = 'anyone';
 
 export default class GoogleDriveStrategy implements IDriveStrategy {
 	private drive: drive_v3.Drive;
@@ -36,7 +38,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const tokenData = (await this.oAuth2Client.getToken(authCode)).tokens;
 
 			return JSON.stringify(tokenData);
-		} catch (err) {
+		} catch {
 			return '';
 		}
 	}
@@ -48,7 +50,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const email = res.data.user?.emailAddress;
 
 			return email ?? '';
-		} catch (err) {
+		} catch {
 			return '';
 		}
 	}
@@ -82,11 +84,10 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const res = await this.drive.files.list({
 				q: filesQuery,
 				pageSize: 1000,
-				fields: 'nextPageToken, files(id, size, name, mimeType, createdTime, webContentLink, exportLinks, parents, permissionIds, owners)',
+				fields: 'nextPageToken, files(id, size, name, mimeType, createdTime, shared, webContentLink, webViewLink, exportLinks, parents, permissions, owners)',
 			});
 			const files = res.data.files;
 			const driveEmail = await this.getUserDriveEmail(token);
-
 			return files ? this.mapToUniversalFileEntityFormat(files, driveEmail) : null;
 		} catch {
 			return null;
@@ -120,20 +121,45 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	public async shareFile(
-		token: string,
-		fileId: string,
-		share: boolean
-	): Promise<Nullable<string>> {
+	public async shareFile(token: string, fileId: string): Promise<Nullable<string>> {
 		try {
-			/* this.setToken(token);
+			this.setToken(token);
 			await this.drive.permissions.create({
-				res
-			}); */
+				fileId,
+				requestBody: {
+					role: 'reader',
+					type: PUBLIC_SHARED_PERMISSION_TYPE,
+				},
+			});
 
-			return '';
+			return PUBLIC_SHARED_LINK_BASE_URL + fileId;
 		} catch {
 			return null;
+		}
+	}
+
+	public async unshareFile(token: string, fileId: string): Promise<boolean> {
+		try {
+			this.setToken(token);
+			const res = await this.drive.permissions.list({
+				fileId,
+				fields: 'permissions(id, role, type)',
+			});
+
+			const publicSharedLinkPermission = res.data.permissions?.find(
+				permission => permission.type === PUBLIC_SHARED_PERMISSION_TYPE
+			);
+
+			if (publicSharedLinkPermission && publicSharedLinkPermission.id) {
+				await this.drive.permissions.delete({
+					fileId,
+					permissionId: publicSharedLinkPermission.id,
+				});
+				return true;
+			}
+			return false;
+		} catch {
+			return false;
 		}
 	}
 
@@ -158,6 +184,9 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const size = fileType === FileType.File ? normalizeBytes(file.size ?? '') : '';
 			const normalizedDate = file.createdTime?.substring(0, 10) ?? '-';
 			const extension = file.mimeType ? mime.getExtension(file.mimeType) : '-';
+			const isPubliclyShared = file.permissions?.find(
+				permission => permission.type === PUBLIC_SHARED_PERMISSION_TYPE
+			);
 
 			return {
 				id: file.id ?? '',
@@ -168,6 +197,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				size: size,
 				date: normalizedDate,
 				extension: extension || '-',
+				sharedLink: isPubliclyShared ? file.webViewLink : null,
 			};
 		});
 

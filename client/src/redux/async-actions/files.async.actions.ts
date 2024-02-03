@@ -4,6 +4,8 @@ import {
 	deleteDriveFile,
 	getRootFiles,
 	renameDriveFile,
+	shareDriveFile,
+	unshareDriveFile,
 } from '../../services/drives/files/drives.files.service';
 
 export const getFiles = createAsyncThunk('files/getFiles', async () => {
@@ -26,5 +28,23 @@ export const renameFile = createAsyncThunk(
 	async ({ drive, email, id, newName }: RenameFileParams) => {
 		const name = await renameDriveFile(drive, email, id, newName);
 		return { name, id };
+	}
+);
+
+type ShareFileParams = { drive: DriveType; email: string; id: string };
+export const shareFile = createAsyncThunk(
+	'files/shareFile',
+	async ({ drive, email, id }: ShareFileParams) => {
+		const sharedLink = await shareDriveFile(drive, email, id);
+		return { sharedLink, id };
+	}
+);
+
+type UnshareFileParams = { drive: DriveType; email: string; id: string };
+export const unshareFile = createAsyncThunk(
+	'files/unshareFile',
+	async ({ drive, email, id }: UnshareFileParams) => {
+		await unshareDriveFile(drive, email, id);
+		return id;
 	}
 );

@@ -40,11 +40,11 @@ export default class DriveContext {
 		return this.strategy.renameFile(token, fileId, name);
 	}
 
-	public async shareFile(
-		token: string,
-		fileId: string,
-		share: boolean
-	): Promise<Nullable<string>> {
-		return this.strategy.shareFile(token, fileId, share);
+	public async shareFile(token: string, fileId: string): Promise<Nullable<string>> {
+		return this.strategy.shareFile(token, fileId);
+	}
+
+	public async unshareFile(token: string, fileId: string): Promise<boolean> {
+		return this.strategy.unshareFile(token, fileId);
 	}
 }

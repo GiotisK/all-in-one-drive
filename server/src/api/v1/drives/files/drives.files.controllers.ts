@@ -1,6 +1,12 @@
 import { Request, Response } from 'express';
 import { AuthLocals } from '../../../../types/types';
-import { deleteFile, getRootFiles, renameFile } from './drives.files.service';
+import {
+	deleteFile,
+	getRootFiles,
+	renameFile,
+	shareFile,
+	unshareFile,
+} from './drives.files.service';
 import {
 	DriveType,
 	FileEntity,
@@ -44,25 +50,49 @@ export const editFileController = async (
 	const { name, share } = req.body;
 	const { drive, email: driveEmail, fileId } = req.params;
 	const { email: userEmail } = res.locals;
-	const responseBody: PatchFileResponse = {};
+	const responseBody: PatchFileResponse = { operation: {} };
 	let renameSuccess = false;
 	let shareSuccess = false;
+	let unshareSuccess = false;
 
+	//TODO: refactor to separate functions?
 	if (name) {
 		renameSuccess = await renameFile(drive, userEmail, driveEmail, fileId, name);
 		if (renameSuccess) {
-			responseBody.name = name;
+			responseBody.operation = {
+				rename: {
+					success: true,
+					name,
+				},
+			};
 		}
 	}
 
-	if (share) {
-		//sharedLink = await shareFile(drive, userEmail, driveEmail, fileId);
-		// if(shareSuccess){
-		// 	responseBody.sharedLink = sharedLink
-		// }
+	if (share === true) {
+		const sharedLink = await shareFile(drive, userEmail, driveEmail, fileId);
+		if (sharedLink) {
+			shareSuccess = true;
+			responseBody.operation = {
+				share: {
+					sharedLink,
+					success: true,
+				},
+			};
+		}
 	}
 
-	if (renameSuccess || shareSuccess) {
+	if (share === false) {
+		unshareSuccess = await unshareFile(drive, userEmail, driveEmail, fileId);
+		if (unshareSuccess) {
+			responseBody.operation = {
+				unshare: {
+					success: true,
+				},
+			};
+		}
+	}
+
+	if (renameSuccess || shareSuccess || unshareSuccess) {
 		res.status(Status.OK).send(responseBody);
 	} else {
 		res.status(Status.INTERNAL_SERVER_ERROR).send();
