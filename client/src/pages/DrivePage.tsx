@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { MenuBanner } from '../components/MenuBanner';
 import { DropZone } from '../components/DropZone';
-import { FileRow } from '../components/FileRow';
 import { SideMenu } from '../components/SideMenu';
 import { TitleBanner } from '../components/TitleBanner';
 import { FloatingButtonsContainer } from '../components/FloatingButtons/FloatingButtonsContainer';
@@ -10,11 +9,11 @@ import { styled } from 'styled-components';
 
 import { ModalContainer } from '../components/Modals/ModalContainer';
 import { useCheckAuth, useHandleAuthCodeFromUrl } from '../hooks';
-import { Loader } from '../components/Loader';
 import { useFetchInitialData } from '../hooks/useFetchInitialData';
 import { Navigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
 import { useAppSelector } from '../redux/store/store';
+import { FilesList } from '../components/FilesList';
 
 const RowsScrollview = styled.div`
 	flex: 1;
@@ -22,15 +21,9 @@ const RowsScrollview = styled.div`
 	background-color: ${({ theme }) => theme.colors.background};
 `;
 
-const LoaderContainer = styled.div`
-	margin-top: 3%;
-`;
-
 export const DrivePage = (): JSX.Element => {
 	const [sideMenuVisible, setSideMenuVisible] = useState(true);
 	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
-	const files = useAppSelector(state => state.files.files);
-	const filesLoading = useAppSelector(state => state.files.requests.getFiles.loading);
 
 	useCheckAuth();
 	useHandleAuthCodeFromUrl();
@@ -59,7 +52,6 @@ export const DrivePage = (): JSX.Element => {
 							setSideMenuVisible(prevVisible => !prevVisible);
 						}}
 					/>
-
 					<DropZone>
 						<MenuBanner
 							onBackButtonClick={() => {
@@ -67,31 +59,7 @@ export const DrivePage = (): JSX.Element => {
 							}}
 						/>
 						<LoadingBar />
-						{filesLoading ? (
-							<LoaderContainer>
-								<Loader size={25} />
-							</LoaderContainer>
-						) : (
-							files.map((file, index) => (
-								<FileRow
-									key={index}
-									file={{
-										id: file.id,
-										date: file.date,
-										drive: file.drive,
-										extension: file.extension,
-										email: file.email,
-										sharedLink: file.sharedLink,
-										name: file.name,
-										size: file.size,
-										type: file.type,
-									}}
-									onFileClick={function (): void {
-										throw new Error('Function not implemented.');
-									}}
-								/>
-							))
-						)}
+						<FilesList />
 					</DropZone>
 					<FloatingButtonsContainer />
 				</RowsScrollview>

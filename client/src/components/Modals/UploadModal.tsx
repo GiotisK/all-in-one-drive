@@ -1,8 +1,7 @@
 import { styled } from 'styled-components';
-import { FileType } from '../../shared/types/types';
 import { CreateDriveSvg } from '../../shared/utils/utils';
 import { BaseModal } from './BaseModal';
-import { DriveEntity, DriveType } from '../../shared/types/global.types';
+import { DriveEntity, FileType } from '../../shared/types/global.types';
 import { UploadModalState } from '../../redux/slices/modal/types';
 
 const Content = styled.div`

@@ -5,7 +5,7 @@ import { CreateDriveSvg } from '../shared/utils/utils';
 import { IconButton } from './IconButton';
 import { styled, useTheme } from 'styled-components';
 import { useOutsideClicker } from '../hooks';
-import { FileEntity } from '../shared/types/global.types';
+import { FileEntity, FileType } from '../shared/types/global.types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
 import { shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
@@ -89,7 +89,6 @@ const MenuRowText = styled.p`
 
 interface IProps {
 	file: FileEntity;
-	onFileClick: () => void;
 }
 
 type FileMenuRow = {
@@ -97,7 +96,7 @@ type FileMenuRow = {
 	onClick: () => void;
 };
 
-export const FileRow = ({ file, onFileClick }: IProps): JSX.Element => {
+export const FileRow = ({ file }: IProps): JSX.Element => {
 	const theme = useTheme();
 	const dispatch = useAppDispatch();
 	const [menuToggle, setMenuToggle] = useState(false);
@@ -122,6 +121,12 @@ export const FileRow = ({ file, onFileClick }: IProps): JSX.Element => {
 	const onUnshareClick = () => {
 		const { drive, email, id } = file;
 		dispatch(unshareFile({ drive, email, id }));
+	};
+
+	const onFileClick = () => {
+		if (file.type === FileType.Folder) {
+			console.log('');
+		}
 	};
 
 	const fileMenuRows: FileMenuRow[] = [

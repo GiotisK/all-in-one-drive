@@ -4,12 +4,14 @@ import { UserMenu } from './UserMenu';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 import { ThemeToggle } from './Toggle/ThemeToggle';
 import { Nullable } from '../shared/types/global.types';
+import { useAppSelector } from '../redux/store/store';
 
 const BannerContainer = styled.div`
 	display: flex;
 	position: sticky;
 	flex-direction: row;
 	align-items: center;
+	justify-content: space-between;
 	top: 0;
 	width: 100%;
 	height: 50px;
@@ -70,7 +72,13 @@ const QuotaGigabytes = styled.span`
 `;
 
 const ThemeToggleWrapper = styled.div`
-	margin-right: 2%;
+	margin-right: 20px;
+`;
+
+const ToggleAndMenuContainer = styled.div`
+	display: flex;
+	flex-direction: row;
+	align-items: center;
 `;
 
 interface TitleBannerProps {
@@ -85,32 +93,17 @@ interface TitleBannerProps {
 }
 
 export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
-	const handleAddDriveClick = () => {
-		props.onAddDriveClick?.();
-	};
-
-	const handleSignOutClick = () => {
-		props.onSignOutClick?.();
-	};
-
-	const handleSwitchDriveModeClick = () => {
-		props.onSwitchDriveModeClick?.();
-	};
-
-	const isLoggedIn = true;
+	const isAuthenticated = useAppSelector(state => state.user.isAuthenticated);
 	const virtualQuotaLoading = false;
 	const virtualQuotaStr = '5 / 5 GB';
-	const virtualDriveEnabled = true;
+	const virtualDriveEnabled = false;
 
 	return (
 		<BannerContainer>
 			<LogoMenuContainer>
-				{virtualDriveEnabled && (
-					<BurgerMenuButton onClick={props.onBurgerMenuClick}>
-						{createSvg(SvgNames.Burger, 30, 'white')}
-					</BurgerMenuButton>
-				)}
-
+				<BurgerMenuButton onClick={props.onBurgerMenuClick}>
+					{createSvg(SvgNames.Burger, 30, 'white')}
+				</BurgerMenuButton>
 				<LogoTitle>aio drive</LogoTitle>
 			</LogoMenuContainer>
 			{virtualDriveEnabled && (
@@ -123,10 +116,12 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 					)}
 				</QuotaLoaderContainer>
 			)}
-			<ThemeToggleWrapper>
-				<ThemeToggle />
-			</ThemeToggleWrapper>
-			{isLoggedIn && <UserMenu />}
+			<ToggleAndMenuContainer>
+				<ThemeToggleWrapper>
+					<ThemeToggle />
+				</ThemeToggleWrapper>
+				{isAuthenticated && <UserMenu />}
+			</ToggleAndMenuContainer>
 		</BannerContainer>
 	);
 };

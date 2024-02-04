@@ -1,8 +1,8 @@
 import { BaseModal } from './BaseModal';
-import { Entity, FileType } from '../../shared/types/types';
+import { Entity } from '../../shared/types/types';
 import { CreateDriveSvg } from '../../shared/utils/utils';
 import { styled } from 'styled-components';
-import { DriveEntity, DriveType, FileEntity } from '../../shared/types/global.types';
+import { DriveEntity, DriveType, FileEntity, FileType } from '../../shared/types/global.types';
 import { DeleteModalState } from '../../redux/slices/modal/types';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/store/store';

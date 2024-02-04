@@ -1,6 +1,6 @@
 import { styled } from 'styled-components';
-import { FileType } from '../shared/types/types';
 import { useAppSelector } from '../redux/store/store';
+import { FileType } from '../shared/types/global.types';
 
 const ElementContainer = styled.div`
 	display: flex;
@@ -19,24 +19,23 @@ const FileElementContainer = styled(ElementContainer)`
 	background-color: ${({ theme }) => theme.colors.backgroundSecondary};
 `;
 
-const FolderElementContainer = styled(ElementContainer)<{ $folderBorderTop: string }>`
+const FolderElementContainer = styled(ElementContainer)<{ $folderColor: string }>`
 	z-index: 1;
 	position: relative;
 	height: 30px;
 	width: 40px;
 	min-width: 40px;
-	background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+	background-color: ${({ $folderColor }) => $folderColor};
 	border-radius: 0 4px 4px 4px;
 
 	&:before {
-		border-top: 1px solid ${({ $folderBorderTop }) => $folderBorderTop};
 		position: absolute;
 		content: '';
 		width: 20px;
 		min-width: 20px;
 		height: 5px;
 		border-radius: 20px 20px 0 0;
-		background-color: ${({ theme }) => theme.colors.backgroundSecondary};
+		background-color: ${({ $folderColor }) => $folderColor};
 		top: -5px;
 		left: 0px;
 	}
@@ -56,9 +55,9 @@ interface IProps {
 
 export const FileElement = ({ extension = '', type }: IProps): JSX.Element => {
 	const themeMode = useAppSelector(state => state.settings.themeMode);
-	const folderBorderTopColor = themeMode === 'dark' ? 'transparent' : '#e9e9e9';
+	const folderColor = themeMode === 'dark' ? '#3E4042' : 'darkgray';
 	return type === FileType.Folder ? (
-		<FolderElementContainer $folderBorderTop={folderBorderTopColor} />
+		<FolderElementContainer $folderColor={folderColor} />
 	) : (
 		<FileElementContainer>
 			<ExtensionText>{extension}</ExtensionText>
