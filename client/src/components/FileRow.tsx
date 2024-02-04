@@ -9,7 +9,7 @@ import { FileEntity } from '../shared/types/global.types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
 import { shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
-import { useAppDispatch, useAppSelector } from '../redux/store/store';
+import { useAppDispatch } from '../redux/store/store';
 
 const Container = styled.div`
 	display: flex;
