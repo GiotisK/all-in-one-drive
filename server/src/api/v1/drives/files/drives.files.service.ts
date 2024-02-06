@@ -44,14 +44,10 @@ export const deleteFile = async (
 ): Promise<boolean> => {
 	const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
 	if (encryptedTokenStr) {
-		try {
-			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
-			if (ctxAndToken) {
-				const { ctx, token } = ctxAndToken;
-				return ctx.deleteFile(token, fileId);
-			}
-		} catch {
-			return false;
+		const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+		if (ctxAndToken) {
+			const { ctx, token } = ctxAndToken;
+			return ctx.deleteFile(token, fileId);
 		}
 	}
 	return false;
@@ -66,14 +62,10 @@ export const renameFile = async (
 ): Promise<boolean> => {
 	const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
 	if (encryptedTokenStr) {
-		try {
-			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
-			if (ctxAndToken) {
-				const { ctx, token } = ctxAndToken;
-				return ctx.renameFile(token, fileId, name);
-			}
-		} catch {
-			return false;
+		const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+		if (ctxAndToken) {
+			const { ctx, token } = ctxAndToken;
+			return ctx.renameFile(token, fileId, name);
 		}
 	}
 	return false;
@@ -87,15 +79,10 @@ export const shareFile = async (
 ): Promise<Nullable<string>> => {
 	const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
 	if (encryptedTokenStr) {
-		try {
-			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
-			if (ctxAndToken) {
-				const { ctx, token } = ctxAndToken;
-				const sharedLink = await ctx.shareFile(token, fileId);
-				return sharedLink ?? null;
-			}
-		} catch {
-			return null;
+		const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+		if (ctxAndToken) {
+			const { ctx, token } = ctxAndToken;
+			return ctx.shareFile(token, fileId);
 		}
 	}
 	return null;
@@ -109,14 +96,10 @@ export const unshareFile = async (
 ): Promise<boolean> => {
 	const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
 	if (encryptedTokenStr) {
-		try {
-			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
-			if (ctxAndToken) {
-				const { ctx, token } = ctxAndToken;
-				return await ctx.unshareFile(token, fileId);
-			}
-		} catch {
-			return false;
+		const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+		if (ctxAndToken) {
+			const { ctx, token } = ctxAndToken;
+			return ctx.unshareFile(token, fileId);
 		}
 	}
 	return false;
