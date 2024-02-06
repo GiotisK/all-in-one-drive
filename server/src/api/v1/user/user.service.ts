@@ -1,7 +1,10 @@
-import User from '../../../models/user.model';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { isAcceptablePasswordLength, isEmailFormat } from './user.helpers';
+import {
+	comparePasswordWithHash,
+	generateJsonWebToken,
+	hashPassword,
+} from '../../../services/encryption/encryption.service';
+import { getUser, saveUser } from '../../../services/database/mongodb.service';
 
 export const registerUser = async (email: string, password: string): Promise<boolean> => {
 	const arePasswordAndEmailAcceptable =
@@ -9,12 +12,9 @@ export const registerUser = async (email: string, password: string): Promise<boo
 	if (!arePasswordAndEmailAcceptable) {
 		return false;
 	}
-	const saltRounds = parseInt(process.env.SALT_ROUNDS!);
-	const hashedPassword = await bcrypt.hash(password, saltRounds);
-	const user = new User({ email, password: hashedPassword });
-	const savedUserDocument = await user.save();
-
-	return !!savedUserDocument;
+	const hashedPassword = await hashPassword(password);
+	const userSaveSuccess = await saveUser(email, hashedPassword);
+	return userSaveSuccess;
 };
 
 type LoginServiceData = {
@@ -22,16 +22,11 @@ type LoginServiceData = {
 	token: string;
 };
 export const loginUser = async (email: string, password: string): Promise<LoginServiceData> => {
-	const user = await User.findOne({ email });
-
+	const user = await getUser(email);
 	if (user && user.password) {
-		const isPasswordCorrect = await bcrypt.compare(password, user.password);
+		const isPasswordCorrect = await comparePasswordWithHash(password, user.password);
 		if (isPasswordCorrect) {
-			const secret = process.env.JWT_SECRET!;
-			const payload = { email };
-			const token = jwt.sign(payload, secret, {
-				expiresIn: process.env.TOKEN_EXPIRATION!,
-			});
+			const token = generateJsonWebToken(email);
 			return { success: true, token: token };
 		}
 	}

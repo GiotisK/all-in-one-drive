@@ -1,6 +1,20 @@
 import User, { DriveSchema } from '../../models/user.model';
 import { DriveType, Nullable } from '../../types/global.types';
 
+export const saveUser = async (email: string, password: string) => {
+	try {
+		const user = new User({ email, password });
+		const savedUserDocument = await user.save();
+		return !!savedUserDocument;
+	} catch {
+		return false;
+	}
+};
+
+export const getUser = async (email: string) => {
+	return User.findOne({ email }).exec();
+};
+
 export const saveDriveProperties = async (
 	encryptedTokenData: string,
 	driveEmail: string,
