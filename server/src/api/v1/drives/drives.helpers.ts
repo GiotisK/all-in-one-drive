@@ -15,13 +15,11 @@ export const getDriveStrategyFromString = (drive: string): Nullable<IDriveStrate
 
 export const getDriveContextAndToken = (drive: string, encryptedTokenStr?: string) => {
 	const driveStrategy = getDriveStrategyFromString(drive);
-
 	if (driveStrategy) {
 		let token = '';
 		if (encryptedTokenStr) {
 			token = getDecryptedTokenFromEncryptedTokenString(encryptedTokenStr);
 		}
-
 		const ctx = new DriveContext(driveStrategy);
 		return { ctx, token };
 	}
