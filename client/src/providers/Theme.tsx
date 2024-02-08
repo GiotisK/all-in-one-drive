@@ -16,7 +16,8 @@ const lightTheme: DefaultTheme = {
 		backgroundSecondary: 'white',
 		border: 'lightgray',
 		boxShadow: '0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23)',
-		panel: '#f0f0f0',
+		panelBackground: '#f0f0f0',
+		panelSvg: 'gray',
 	},
 };
 
@@ -28,13 +29,14 @@ const darkTheme: DefaultTheme = {
 		textSecondary: 'dimgray',
 		green: '#82d882',
 		gray: '#333333',
-		red: '#CC4E5C',
-		orange: '#8B0000',
+		red: '#dc143c',
+		orange: '#e9692c',
 		background: '#18191A',
 		backgroundSecondary: '#3E4042',
 		border: '#555555',
 		boxShadow: '0 -2px 10px rgba(0, 0, 0, 1);',
-		panel: '#222222',
+		panelBackground: '#222222',
+		panelSvg: 'white',
 	},
 };
 

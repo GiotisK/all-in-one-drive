@@ -124,18 +124,6 @@ export const UserMenu = (): JSX.Element => {
 				},
 			},
 			{
-				title: 'Switch to all-in-one drive',
-				onClick: () => {
-					return;
-				},
-			},
-			{
-				title: 'Switch to virtual drive',
-				onClick: () => {
-					return;
-				},
-			},
-			{
 				title: 'Signout',
 				onClick: async () => {
 					dispatch(logoutUser());

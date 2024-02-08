@@ -17,7 +17,8 @@ declare module 'styled-components' {
 			backgroundSecondary: string;
 			border: string;
 			boxShadow: string;
-			panel: string;
+			panelBackground: string;
+			panelSvg: string;
 		};
 	}
 }
