@@ -4,10 +4,12 @@ import {
 	deleteFileController,
 	getRootFilesController,
 	editFileController,
+	getFolderFilesController,
 } from './drives.files.controllers';
 
 const router: Router = express.Router();
 router.get('/files', authorize, getRootFilesController);
+router.get('/:drive/:email/files/:folderId', authorize, getFolderFilesController);
 router.delete('/:drive/:email/files/:fileId', authorize, deleteFileController);
 router.patch('/:drive/:email/files/:fileId', authorize, editFileController);
 

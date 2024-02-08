@@ -14,6 +14,7 @@ import { Navigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
 import { useAppSelector } from '../redux/store/store';
 import { FilesList } from '../components/FilesList';
+import { useFetchFolderContents } from '../hooks/useFetchFolderContents';
 
 const RowsScrollview = styled.div`
 	flex: 1;
@@ -24,10 +25,10 @@ const RowsScrollview = styled.div`
 export const DrivePage = (): JSX.Element => {
 	const [sideMenuVisible, setSideMenuVisible] = useState(true);
 	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
-
 	useCheckAuth();
 	useHandleAuthCodeFromUrl();
 	useFetchInitialData();
+	useFetchFolderContents();
 
 	return isUserAuthenticated ? (
 		<div

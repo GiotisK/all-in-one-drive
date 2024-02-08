@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
 import { getDrives } from '../redux/async-actions/drives.async.actions';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
-import { getFiles } from '../redux/async-actions/files.async.actions';
 
+//TODO: since getfiles got removed maybe rename to usegetdrives or sth
 export const useFetchInitialData = () => {
 	const dispatch = useAppDispatch();
 	const isAuthenticated = useAppSelector(state => state.user.isAuthenticated);
@@ -12,6 +12,5 @@ export const useFetchInitialData = () => {
 		if (!isAuthenticated || areRequestsSent.current) return;
 		areRequestsSent.current = true;
 		dispatch(getDrives());
-		dispatch(getFiles());
 	}, [dispatch, isAuthenticated]);
 };

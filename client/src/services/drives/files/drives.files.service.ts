@@ -13,6 +13,17 @@ export const getRootFiles = async (): Promise<FileEntity[]> => {
 	return fileEntities;
 };
 
+export const getFolderFiles = async (
+	drive: DriveType,
+	email: string,
+	id: string
+): Promise<FileEntity[]> => {
+	const { data: fileEntities } = await getRequest<FileEntity[]>(
+		`drives/${drive}/${email}/files/${id}`
+	);
+	return fileEntities;
+};
+
 export const deleteDriveFile = async (
 	drive: DriveType,
 	driveEmail: string,

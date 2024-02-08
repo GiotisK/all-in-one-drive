@@ -36,6 +36,22 @@ export const getRootFiles = async (userEmail: string): Promise<Nullable<FileEnti
 	return null;
 };
 
+export const getFolderFiles = async (
+	drive: DriveType,
+	userEmail: string,
+	driveEmail: string,
+	folderId: string
+) => {
+	const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
+	if (encryptedTokenStr) {
+		const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+		if (ctxAndToken) {
+			const { ctx, token } = ctxAndToken;
+			return ctx.getDriveFiles(token, folderId);
+		}
+	}
+};
+
 export const deleteFile = async (
 	drive: DriveType,
 	userEmail: string,

@@ -10,8 +10,11 @@ const LoaderContainer = styled.div`
 export const FilesList = () => {
 	const files = useAppSelector(state => state.files.files);
 	const filesLoading = useAppSelector(state => state.files.requests.getFiles.loading);
+	const folderFilesLoading = useAppSelector(
+		state => state.files.requests.getFolderDriveFiles.loading
+	);
 
-	return filesLoading ? (
+	return filesLoading || folderFilesLoading ? (
 		<LoaderContainer>
 			<Loader size={25} />
 		</LoaderContainer>

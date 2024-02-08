@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthLocals } from '../../../../types/types';
 import {
 	deleteFile,
+	getFolderFiles,
 	getRootFiles,
 	renameFile,
 	shareFile,
@@ -21,6 +22,22 @@ export const getRootFilesController = async (
 ) => {
 	const { email } = res.locals;
 	const files = await getRootFiles(email);
+
+	if (files) {
+		res.status(Status.OK).send(files);
+	} else {
+		res.status(Status.INTERNAL_SERVER_ERROR).send();
+	}
+};
+
+type GetFolderFilesParams = { drive: DriveType; email: string; folderId: string };
+export const getFolderFilesController = async (
+	req: Request<GetFolderFilesParams>,
+	res: Response<FileEntity[], AuthLocals>
+) => {
+	const { email: userEmail } = res.locals;
+	const { drive, email: driveEmail, folderId } = req.params;
+	const files = await getFolderFiles(drive, userEmail, driveEmail, folderId);
 
 	if (files) {
 		res.status(Status.OK).send(files);

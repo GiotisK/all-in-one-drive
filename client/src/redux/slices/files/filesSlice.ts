@@ -9,6 +9,7 @@ import {
 import {
 	deleteFile,
 	getFiles,
+	getFolderDriveFiles,
 	renameFile,
 	shareFile,
 	unshareFile,
@@ -19,6 +20,7 @@ const initialState: FilesState = {
 	files: [],
 	requests: {
 		getFiles: requestInitialState,
+		getFolderDriveFiles: requestInitialState,
 		deleteFile: requestInitialState,
 		renameFile: requestInitialState,
 		shareFile: requestInitialState,
@@ -42,6 +44,19 @@ const filesSlice = createSlice({
 			})
 			.addCase(getFiles.rejected, state => {
 				state.requests.getFiles = requestErrorState;
+			});
+
+		// getFolderFiles
+		builder
+			.addCase(getFolderDriveFiles.pending, state => {
+				state.requests.getFolderDriveFiles = requestPendingState;
+			})
+			.addCase(getFolderDriveFiles.fulfilled, (state, { payload: files }) => {
+				state.files = files;
+				state.requests.getFolderDriveFiles = requestSuccessState;
+			})
+			.addCase(getFolderDriveFiles.rejected, state => {
+				state.requests.getFolderDriveFiles = requestErrorState;
 			});
 
 		// deleteFile

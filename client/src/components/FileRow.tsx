@@ -10,6 +10,8 @@ import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
 import { shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
 import { useAppDispatch } from '../redux/store/store';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '../shared/constants/routes';
 
 const Container = styled.div`
 	display: flex;
@@ -98,6 +100,7 @@ type FileMenuRow = {
 
 export const FileRow = ({ file }: IProps): JSX.Element => {
 	const theme = useTheme();
+	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
 	const [menuToggle, setMenuToggle] = useState(false);
 	const menuRef = useRef(null);
@@ -125,7 +128,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 
 	const onFileClick = () => {
 		if (file.type === FileType.Folder) {
-			console.log('');
+			navigate(`${routes.drive}/${file.drive}/${file.email}/${file.id}`);
 		}
 	};
 

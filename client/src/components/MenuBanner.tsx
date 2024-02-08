@@ -1,11 +1,21 @@
-import { styled } from 'styled-components';
+import { styled, useTheme } from 'styled-components';
 import { SvgNames } from '../shared/utils/svg-utils';
 import { IconButton } from './IconButton';
 
 const Container = styled.div`
 	display: flex;
-	align-items: flex-end;
+	flex-direction: column;
 	border-bottom: 0.5px solid ${({ theme }) => theme.colors.border};
+`;
+
+const FirstRow = styled.div`
+	display: flex;
+	flex-direction: row;
+`;
+
+const SecondRow = styled.div`
+	display: flex;
+	flex-direction: row;
 `;
 
 const BackButtonContainer = styled.div`
@@ -20,48 +30,63 @@ const TabTitle = styled.p`
 	user-select: none;
 `;
 
-const tabs = ['Name', 'Drive', 'Size', 'Date'];
+enum Tab {
+	Name = 'Name',
+	Drive = 'Drive',
+	Size = 'Size',
+	Date = 'Date',
+}
 
 interface IProps {
 	onBackButtonClick: () => void;
 }
 
 export const MenuBanner = (props: IProps) => {
+	const theme = useTheme();
 	const isUploading = false;
 
-	const getTabWidth = (tab: string) => {
+	const getTabWidth = (tab: Tab) => {
 		switch (tab) {
-			case 'Name':
+			case Tab.Name:
 				return '40%';
-			case 'Size':
+			case Tab.Size:
 				return '10%';
-			case 'Drive':
+			case Tab.Drive:
 				return '20%';
-			case 'Date':
+			case Tab.Date:
 				return '20%';
 		}
 	};
 
 	return (
 		<Container>
-			{false && (
-				<BackButtonContainer
-					onClick={props.onBackButtonClick}
-					style={{
-						pointerEvents: isUploading ? 'none' : 'all',
-						cursor: isUploading ? 'default' : 'pointer',
-					}}
-				>
-					<IconButton icon={SvgNames.Back} size={23} onClick={props.onBackButtonClick} />
-				</BackButtonContainer>
-			)}
-			{tabs.map((tab, index) => {
-				return (
-					<div key={index} style={{ width: getTabWidth(tab) }}>
-						<TabTitle>{tab}</TabTitle>
-					</div>
-				);
-			})}
+			<FirstRow>
+				{true && (
+					<BackButtonContainer
+						onClick={props.onBackButtonClick}
+						style={{
+							pointerEvents: isUploading ? 'none' : 'all',
+							cursor: isUploading ? 'default' : 'pointer',
+						}}
+					>
+						<IconButton
+							icon={SvgNames.Back}
+							size={23}
+							onClick={props.onBackButtonClick}
+							color={theme?.colors.textPrimary}
+						/>
+					</BackButtonContainer>
+				)}
+			</FirstRow>
+			<SecondRow>
+				{Object.values(Tab).map((tab, index) => {
+					return (
+						<div key={index} style={{ width: getTabWidth(tab) }}>
+							<TabTitle>{tab}</TabTitle>
+						</div>
+					);
+				})}
+			</SecondRow>
 		</Container>
 	);
 };

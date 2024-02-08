@@ -5,6 +5,7 @@ export interface FilesState {
 	files: FileEntity[];
 	requests: {
 		getFiles: RequestState;
+		getFolderDriveFiles: RequestState;
 		deleteFile: RequestState;
 		renameFile: RequestState;
 		shareFile: RequestState;

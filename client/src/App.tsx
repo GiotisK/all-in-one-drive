@@ -16,7 +16,9 @@ function App() {
 					<Routes>
 						<Route path={routes.home} element={<HomePage />} />
 						<Route path={routes.login} element={<LandingPage />} />
-						<Route path={routes.drive} element={<DrivePage />} />
+						<Route path={routes.drive} element={<DrivePage />}>
+							<Route path={':drive/:email/:folderId'} element={<DrivePage />} />
+						</Route>
 						<Route path='*' element={<ErrorPage />} />
 					</Routes>
 				</Theme>
