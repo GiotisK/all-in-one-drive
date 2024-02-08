@@ -102,9 +102,6 @@ export const SideMenu = (): JSX.Element => {
 							drive={type}
 							email={email}
 							enabled
-							onClick={() => {
-								console.log('cliked');
-							}}
 							onDeleteDriveClick={() => {
 								onDeleteDriveClick(drive);
 							}}

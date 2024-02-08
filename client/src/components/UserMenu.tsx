@@ -11,6 +11,7 @@ const PopupMenuContainer = styled.div`
 	flex-direction: column;
 	align-items: flex-end;
 	right: 1%;
+	position: relative;
 `;
 
 const CircleButtonContainer = styled.div`
@@ -48,8 +49,8 @@ const PopupMenu = styled.div`
 	justify-content: space-between;
 	height: max-content;
 	width: 250px;
-	margin-top: 3%;
-	margin-right: 1%;
+	top: 55px;
+	right: 25px;
 	border: solid 1px ${({ theme }) => theme.colors.border};
 	border-radius: 5px;
 	background-color: ${({ theme }) => theme.colors.background};

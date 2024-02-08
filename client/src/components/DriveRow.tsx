@@ -81,7 +81,6 @@ const DriveSvgContainer = styled.div`
 interface IProps {
 	email: string;
 	quota: DriveQuota;
-	onClick: () => void;
 	onDeleteDriveClick: () => void;
 	drive: DriveType;
 	enabled: boolean;
@@ -95,7 +94,7 @@ export const DriveRow = (props: IProps): JSX.Element => {
 	};
 
 	return (
-		<DriveElementContainer style={{ opacity: props.enabled ? 1 : 0.8 }} onClick={props.onClick}>
+		<DriveElementContainer style={{ opacity: props.enabled ? 1 : 0.8 }}>
 			<DriveSvgContainer>{CreateDriveSvg(props.drive)}</DriveSvgContainer>
 
 			<EmailQuotaContainer>
