@@ -5,6 +5,8 @@ import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 import { ThemeToggle } from './Toggle/ThemeToggle';
 import { Nullable } from '../shared/types/global.types';
 import { useAppSelector } from '../redux/store/store';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '../shared/constants/routes';
 
 const BannerContainer = styled.div`
 	display: flex;
@@ -37,6 +39,7 @@ const LogoTitle = styled.p`
 	margin-bottom: 3px;
 	font-size: 32px;
 	user-select: none;
+	cursor: pointer;
 `;
 
 const BurgerMenuButton = styled.div`
@@ -93,10 +96,15 @@ interface TitleBannerProps {
 }
 
 export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
+	const navigate = useNavigate();
 	const isAuthenticated = useAppSelector(state => state.user.isAuthenticated);
 	const virtualQuotaLoading = false;
 	const virtualQuotaStr = '5 / 5 GB';
 	const virtualDriveEnabled = false;
+
+	const navigateToDrivePath = () => {
+		navigate(routes.drive);
+	};
 
 	return (
 		<BannerContainer>
@@ -104,7 +112,7 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 				<BurgerMenuButton onClick={props.onBurgerMenuClick}>
 					{createSvg(SvgNames.Burger, 30, 'white')}
 				</BurgerMenuButton>
-				<LogoTitle>aio drive</LogoTitle>
+				<LogoTitle onClick={navigateToDrivePath}>aio drive</LogoTitle>
 			</LogoMenuContainer>
 			{virtualDriveEnabled && (
 				<QuotaLoaderContainer>
