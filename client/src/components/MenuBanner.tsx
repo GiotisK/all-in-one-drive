@@ -1,6 +1,8 @@
 import { styled, useTheme } from 'styled-components';
 import { SvgNames } from '../shared/utils/svg-utils';
 import { IconButton } from './IconButton';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '../shared/constants/routes';
 
 const Container = styled.div`
 	display: flex;
@@ -37,13 +39,11 @@ enum Tab {
 	Date = 'Date',
 }
 
-interface IProps {
-	onBackButtonClick: () => void;
-}
-
-export const MenuBanner = (props: IProps) => {
+export const MenuBanner = () => {
 	const theme = useTheme();
+	const navigate = useNavigate();
 	const isUploading = false;
+	const shouldShowBackButton = location.pathname !== routes.drive;
 
 	const getTabWidth = (tab: Tab) => {
 		switch (tab) {
@@ -58,12 +58,15 @@ export const MenuBanner = (props: IProps) => {
 		}
 	};
 
+	const goBack = () => {
+		navigate(-1);
+	};
+
 	return (
 		<Container>
 			<FirstRow>
-				{true && (
+				{shouldShowBackButton && (
 					<BackButtonContainer
-						onClick={props.onBackButtonClick}
 						style={{
 							pointerEvents: isUploading ? 'none' : 'all',
 							cursor: isUploading ? 'default' : 'pointer',
@@ -72,7 +75,7 @@ export const MenuBanner = (props: IProps) => {
 						<IconButton
 							icon={SvgNames.Back}
 							size={23}
-							onClick={props.onBackButtonClick}
+							onClick={goBack}
 							color={theme?.colors.textPrimary}
 						/>
 					</BackButtonContainer>

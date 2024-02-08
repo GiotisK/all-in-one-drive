@@ -54,11 +54,7 @@ export const DrivePage = (): JSX.Element => {
 						}}
 					/>
 					<DropZone>
-						<MenuBanner
-							onBackButtonClick={() => {
-								console.log('back pressed');
-							}}
-						/>
+						<MenuBanner />
 						<LoadingBar />
 						<FilesList />
 					</DropZone>
