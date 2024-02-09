@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { DriveType, FileEntity } from '../../shared/types/global.types';
+import { DriveType } from '../../shared/types/global.types';
 import {
 	deleteDriveFile,
 	getFolderFiles,

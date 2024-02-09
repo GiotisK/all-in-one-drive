@@ -15,6 +15,7 @@ import {
 	unshareFile,
 } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
+import { deleteDrive } from '../../async-actions/drives.async.actions';
 
 const initialState: FilesState = {
 	files: [],
@@ -121,6 +122,12 @@ const filesSlice = createSlice({
 			.addCase(unshareFile.rejected, state => {
 				state.requests.unshareFile = requestErrorState;
 			});
+
+		// deleteDrive
+		builder.addCase(deleteDrive.fulfilled, (state, { payload }) => {
+			const { type, email } = payload;
+			state.files = state.files.filter(file => file.email !== email && file.drive !== type);
+		});
 
 		// logout
 		builder.addCase(logoutUser.fulfilled, () => {
