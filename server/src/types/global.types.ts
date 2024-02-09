@@ -58,6 +58,7 @@ export type DriveQuota = {
 };
 
 export type DriveEntity = {
+	id: string;
 	type: DriveType;
 	email: string;
 	quota: DriveQuota;

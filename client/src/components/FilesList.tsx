@@ -32,8 +32,8 @@ export const FilesList = () => {
 		<NoFilesText>No files exist...</NoFilesText>
 	) : (
 		<>
-			{files.map((file, index) => (
-				<FileRow key={index} file={file} />
+			{files.map(file => (
+				<FileRow key={file.id} file={file} />
 			))}
 		</>
 	);

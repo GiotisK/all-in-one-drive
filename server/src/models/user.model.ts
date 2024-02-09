@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { DriveType } from '../types/global.types';
 
 export type DriveSchema = {
+	id: string;
 	email: string;
 	virtualFolderId?: string;
 	token: string;

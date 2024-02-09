@@ -1,5 +1,6 @@
 import User, { DriveSchema } from '../../models/user.model';
 import { DriveType, Nullable } from '../../types/global.types';
+import { v4 as generateUuid } from 'uuid';
 
 export const saveUser = async (email: string, password: string) => {
 	try {
@@ -23,6 +24,7 @@ export const saveDriveProperties = async (
 ): Promise<boolean> => {
 	try {
 		const driveProperties: DriveSchema = {
+			id: generateUuid(),
 			email: driveEmail,
 			token: encryptedTokenData,
 			driveType: drive,
@@ -98,12 +100,12 @@ export const deleteDriveProperties = async (
 	drive: DriveType
 ) => {
 	try {
-		const updatedUser = await User.updateOne(
+		const result = await User.updateOne(
 			{ email: userEmail },
 			{ $pull: { drives: { email: driveEmail, driveType: drive } } }
 		).exec();
 
-		return !!updatedUser;
+		return result.modifiedCount > 0;
 	} catch {
 		return null;
 	}

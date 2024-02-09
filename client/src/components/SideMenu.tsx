@@ -94,8 +94,8 @@ export const SideMenu = (): JSX.Element => {
 					</NoDrivesTextClickable>
 				</>
 			) : (
-				drives.map((drive, index) => {
-					const { type, email, quota } = drive;
+				drives.map(drive => {
+					const { type, email, quota, id } = drive;
 
 					return (
 						<DriveRow
@@ -106,7 +106,7 @@ export const SideMenu = (): JSX.Element => {
 								onDeleteDriveClick(drive);
 							}}
 							quota={quota}
-							key={index}
+							key={id}
 						/>
 					);
 				})

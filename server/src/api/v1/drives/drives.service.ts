@@ -80,10 +80,11 @@ export const getDriveEntities = async (userEmail: string): Promise<Nullable<Driv
 			const quotas = await Promise.all(promiseArr);
 
 			quotas.forEach((quota, index) => {
-				const { email, driveType } = driveProperties[index];
+				const { email, driveType, id } = driveProperties[index];
 
 				if (quota) {
 					driveEntities.push({
+						id: id,
 						email,
 						type: driveType,
 						quota,
