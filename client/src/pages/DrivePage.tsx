@@ -16,6 +16,18 @@ import { useAppSelector } from '../redux/store/store';
 import { FilesList } from '../components/FilesList';
 import { useFetchFolderContents } from '../hooks/useFetchFolderContents';
 
+const OuterContainer = styled.div`
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+`;
+
+const InnerContainer = styled.div`
+	display: flex;
+	flex-direction: row;
+	height: 100%;
+`;
+
 const RowsScrollview = styled.div`
 	flex: 1;
 	overflow: auto;
@@ -31,21 +43,8 @@ export const DrivePage = (): JSX.Element => {
 	useFetchFolderContents();
 
 	return isUserAuthenticated ? (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'column',
-				height: '100%',
-			}}
-		>
-			{/*TODO: convert containers to styled components */}
-			<div
-				style={{
-					display: 'flex',
-					flexDirection: 'row',
-					height: '100%',
-				}}
-			>
+		<OuterContainer>
+			<InnerContainer>
 				{sideMenuVisible && <SideMenu />}
 				<RowsScrollview>
 					<TitleBanner
@@ -60,9 +59,9 @@ export const DrivePage = (): JSX.Element => {
 					</DropZone>
 					<FloatingButtonsContainer />
 				</RowsScrollview>
-			</div>
+			</InnerContainer>
 			<ModalContainer />
-		</div>
+		</OuterContainer>
 	) : (
 		<Navigate to={routes.login} />
 	);
