@@ -1,25 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { DriveType, Nullable } from '../shared/types/global.types';
 import { connectDrive } from '../services/drives/drives.service';
 import { getDrives } from '../redux/async-actions/drives.async.actions';
 import { useAppDispatch } from '../redux/store/store';
+import { useLocation, useSearchParams } from 'react-router-dom';
+import { getFiles } from '../redux/async-actions/files.async.actions';
 
 export const useHandleAuthCodeFromUrl = () => {
 	const dispatch = useAppDispatch();
+	const location = useLocation();
+	const [params] = useSearchParams();
+	const isRequestSent = useRef<boolean>(false);
 
 	useEffect(() => {
 		let ignore = false;
-		const url = document.location.search;
-		const params = new URLSearchParams(url);
 		const authCode = params.get('code');
-		const drive = getDriveFromAuthCodeUrl(url);
+		const drive = getDriveFromAuthCodeUrl(location.search);
 		const canSendConnectDriveRequest = authCode && drive && !ignore;
 
+		//TODO: fix double connect request
 		(async () => {
-			if (canSendConnectDriveRequest) {
+			if (canSendConnectDriveRequest && !isRequestSent.current) {
 				try {
+					isRequestSent.current = true;
 					const success = await connectDrive(authCode, drive);
-					success && dispatch(getDrives());
+					if (success) {
+						dispatch(getDrives());
+						dispatch(getFiles());
+					}
 				} catch {
 					//TODO: show toast
 				}
@@ -29,7 +37,7 @@ export const useHandleAuthCodeFromUrl = () => {
 		return () => {
 			ignore = true;
 		};
-	}, [dispatch]);
+	}, [dispatch, location.search, params]);
 };
 
 // Helpers
