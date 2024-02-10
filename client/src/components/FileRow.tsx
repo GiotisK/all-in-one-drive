@@ -9,13 +9,15 @@ import { FileEntity, FileType } from '../shared/types/global.types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
 import { shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
-import { useAppDispatch } from '../redux/store/store';
+import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
+import { Loader } from './Loader';
 
 const Container = styled.div`
 	display: flex;
 	flex-direction: row;
+	align-items: center;
 	margin-left: 10px;
 	padding: 10px 0 10px 10px;
 	border-bottom: solid 0.5px ${({ theme }) => theme.colors.border};
@@ -89,6 +91,11 @@ const MenuRowText = styled.p`
 	}
 `;
 
+const LoaderContainer = styled.div`
+	margin-left: 5px;
+	margin-top: 5px;
+`;
+
 interface IProps {
 	file: FileEntity;
 }
@@ -102,9 +109,15 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
+	const { shareFile: shareFileReq, unshareFile: unshareFileReq } = useAppSelector(
+		state => state.files.requests
+	);
 	const [menuToggle, setMenuToggle] = useState(false);
+	const [shareOrUnshareClicked, setShareOrUnshareClicked] = useState(false);
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
+
+	const { drive, email, id } = file;
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
 
@@ -116,14 +129,16 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		dispatch(openModal({ kind: ModalKind.Rename, state: { entity: file } }));
 	};
 
-	const onShareClick = () => {
-		const { drive, email, id } = file;
-		dispatch(shareFile({ drive, email, id }));
+	const onShareClick = async () => {
+		setShareOrUnshareClicked(true);
+		await dispatch(shareFile({ drive, email, id }));
+		setShareOrUnshareClicked(false);
 	};
 
-	const onUnshareClick = () => {
-		const { drive, email, id } = file;
-		dispatch(unshareFile({ drive, email, id }));
+	const onUnshareClick = async () => {
+		setShareOrUnshareClicked(true);
+		await dispatch(unshareFile({ drive, email, id }));
+		setShareOrUnshareClicked(false);
 	};
 
 	const onFileClick = () => {
@@ -193,6 +208,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 				<Text>{file.date}</Text>
 				{filemenu}
 			</FourthColumn>
+
 			{file.sharedLink && (
 				<IconButton
 					icon={SvgNames.Link}
@@ -200,6 +216,11 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 					size={20}
 					onClick={() => navigator.clipboard.writeText(file.sharedLink ?? '')}
 				/>
+			)}
+			{(shareFileReq.loading || unshareFileReq.loading) && shareOrUnshareClicked && (
+				<LoaderContainer>
+					<Loader size={8} />
+				</LoaderContainer>
 			)}
 		</Container>
 	);
