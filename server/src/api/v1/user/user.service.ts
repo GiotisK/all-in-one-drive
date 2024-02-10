@@ -1,34 +1,33 @@
 import { isAcceptablePasswordLength, isEmailFormat } from './user.helpers';
-import {
-	comparePasswordWithHash,
-	generateJsonWebToken,
-	hashPassword,
-} from '../../../services/encryption/encryption.service';
-import { getUser, saveUser } from '../../../services/database/mongodb.service';
+import EncryptionService from '../../../services/encryption/encryption.service';
+import DatabaseService from '../../../services/database/mongodb.service';
 
-export const registerUser = async (email: string, password: string): Promise<boolean> => {
-	const arePasswordAndEmailAcceptable =
-		isEmailFormat(email) && isAcceptablePasswordLength(password);
-	if (!arePasswordAndEmailAcceptable) {
-		return false;
-	}
-	const hashedPassword = await hashPassword(password);
-	const userSaveSuccess = await saveUser(email, hashedPassword);
-	return userSaveSuccess;
-};
-
-type LoginServiceData = {
-	success: boolean;
-	token: string;
-};
-export const loginUser = async (email: string, password: string): Promise<LoginServiceData> => {
-	const user = await getUser(email);
-	if (user && user.password) {
-		const isPasswordCorrect = await comparePasswordWithHash(password, user.password);
-		if (isPasswordCorrect) {
-			const token = generateJsonWebToken(email);
-			return { success: true, token: token };
+export class UserService {
+	async registerUser(email: string, password: string): Promise<boolean> {
+		const arePasswordAndEmailAcceptable =
+			isEmailFormat(email) && isAcceptablePasswordLength(password);
+		if (!arePasswordAndEmailAcceptable) {
+			return false;
 		}
+		const hashedPassword = await EncryptionService.hashPassword(password);
+		const userSaveSuccess = await DatabaseService.saveUser(email, hashedPassword);
+		return userSaveSuccess;
 	}
-	return { success: false, token: '' };
-};
+
+	async loginUser(email: string, password: string): Promise<{ success: boolean; token: string }> {
+		const user = await DatabaseService.getUser(email);
+		if (user && user.password) {
+			const isPasswordCorrect = await EncryptionService.comparePasswordWithHash(
+				password,
+				user.password
+			);
+			if (isPasswordCorrect) {
+				const token = EncryptionService.generateJsonWebToken(email);
+				return { success: true, token };
+			}
+		}
+		return { success: false, token: '' };
+	}
+}
+
+export default new UserService();

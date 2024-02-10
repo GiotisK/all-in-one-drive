@@ -1,22 +1,26 @@
 import { AxiosResponse } from 'axios';
 import { axiosInstance } from '../configs/axios.configs';
 
-export const getRequest = async <T>(path: string): Promise<AxiosResponse<T>> => {
-	return axiosInstance.get(path);
-};
+class RequestService {
+	async get<T>(path: string): Promise<AxiosResponse<T>> {
+		return axiosInstance.get(path);
+	}
 
-export const postRequest = async <T, U>(path: string, data?: T): Promise<AxiosResponse<U>> => {
-	return axiosInstance.post(path, data);
-};
+	async post<T, U>(path: string, data?: T): Promise<AxiosResponse<U>> {
+		return axiosInstance.post(path, data);
+	}
 
-export const putRequest = async <T>(path: string, data?: T) => {
-	return axiosInstance.put(path, data);
-};
+	async put<T>(path: string, data?: T) {
+		return axiosInstance.put(path, data);
+	}
 
-export const patchRequest = async <T, U>(path: string, data?: T): Promise<AxiosResponse<U>> => {
-	return axiosInstance.patch(path, data);
-};
+	async patch<T, U>(path: string, data?: T): Promise<AxiosResponse<U>> {
+		return axiosInstance.patch(path, data);
+	}
 
-export const deleteRequest = async <T>(path: string): Promise<AxiosResponse<T>> => {
-	return axiosInstance.delete(path);
-};
+	async delete<T>(path: string): Promise<AxiosResponse<T>> {
+		return axiosInstance.delete(path);
+	}
+}
+
+export default new RequestService();

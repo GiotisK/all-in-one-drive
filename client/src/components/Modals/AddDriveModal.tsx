@@ -2,7 +2,7 @@ import { BaseModal } from './BaseModal';
 import { AddDriveButton } from '../AddDriveButton';
 import { styled } from 'styled-components';
 import { DriveType } from '../../shared/types/global.types';
-import { getAuthLink } from '../../services/drives/drives.service';
+import DrivesService from '../../services/drives/drives.service';
 
 const ButtonsContainer = styled.div`
 	display: flex;
@@ -16,7 +16,7 @@ const ButtonsContainer = styled.div`
 export const AddDriveModal = (): JSX.Element => {
 	const onDriveClick = async (drive: DriveType): Promise<void> => {
 		try {
-			const authLink = await getAuthLink(drive);
+			const authLink = await DrivesService.getAuthLink(drive);
 			authLink && window.location.replace(authLink);
 		} catch {
 			//TODO: show toast

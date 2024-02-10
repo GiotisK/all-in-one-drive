@@ -6,7 +6,7 @@ import { styled } from 'styled-components';
 import { Nullable } from '../shared/types/global.types';
 import { loginUser } from '../redux/async-actions/user.async.actions';
 import { useAppDispatch } from '../redux/store/store';
-import { registerUser } from '../services/user.service';
+import UserService from '../services/user.service';
 
 const centerAbsoluteDivInPage = `
 	position: absolute;
@@ -123,7 +123,7 @@ export const CredentialsBox = (): JSX.Element => {
 			dispatch(loginUser({ email, password }));
 		} else if (mode === Mode.Register) {
 			try {
-				await registerUser(inputValues.email, inputValues.password);
+				await UserService.registerUser(inputValues.email, inputValues.password);
 				isRequestSuccessful = true;
 				setIsFormRequestSuccessful(isRequestSuccessful);
 			} catch {

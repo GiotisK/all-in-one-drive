@@ -1,5 +1,5 @@
 import { AuthLocals } from '../../../types/types';
-import { registerUser, loginUser } from './user.service';
+import UserService from './user.service';
 import { Response, Request } from 'express';
 import { AuthUserResponse, RegisterUserRequestBody, Status } from '../../../types/global.types';
 
@@ -9,7 +9,7 @@ export const registerUserController = async (
 ): Promise<void> => {
 	try {
 		const { email, password } = req.body;
-		const isRegisterSuccessfull = await registerUser(email, password);
+		const isRegisterSuccessfull = await UserService.registerUser(email, password);
 		const status = isRegisterSuccessfull ? Status.OK : Status.BAD_REQUEST;
 
 		res.status(status).send();
@@ -25,7 +25,7 @@ export const loginUserController = async (
 ): Promise<void> => {
 	try {
 		const { email, password } = req.body;
-		const { success, token } = await loginUser(email, password);
+		const { success, token } = await UserService.loginUser(email, password);
 
 		if (success) {
 			res.cookie('token', token, { httpOnly: true }).status(Status.OK).send();

@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react';
 import { DriveType, Nullable } from '../shared/types/global.types';
-import { connectDrive } from '../services/drives/drives.service';
+import DrivesService from '../services/drives/drives.service';
 import { getDrives } from '../redux/async-actions/drives.async.actions';
 import { useAppDispatch } from '../redux/store/store';
 import { useLocation, useSearchParams } from 'react-router-dom';
-import { getFiles } from '../redux/async-actions/files.async.actions';
+import { getRootFiles } from '../redux/async-actions/files.async.actions';
 
 export const useHandleAuthCodeFromUrl = () => {
 	const dispatch = useAppDispatch();
@@ -18,15 +18,14 @@ export const useHandleAuthCodeFromUrl = () => {
 		const drive = getDriveFromAuthCodeUrl(location.search);
 		const canSendConnectDriveRequest = authCode && drive && !ignore;
 
-		//TODO: fix double connect request
 		(async () => {
 			if (canSendConnectDriveRequest && !isRequestSent.current) {
 				try {
 					isRequestSent.current = true;
-					const success = await connectDrive(authCode, drive);
+					const success = await DrivesService.connectDrive(authCode, drive);
 					if (success) {
 						dispatch(getDrives());
-						dispatch(getFiles());
+						dispatch(getRootFiles());
 					}
 				} catch {
 					//TODO: show toast

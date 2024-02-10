@@ -8,7 +8,7 @@ import {
 } from '../constants';
 import {
 	deleteFile,
-	getFiles,
+	getRootFiles,
 	getFolderDriveFiles,
 	renameFile,
 	shareFile,
@@ -36,14 +36,14 @@ const filesSlice = createSlice({
 	extraReducers: builder => {
 		// getFiles
 		builder
-			.addCase(getFiles.pending, state => {
+			.addCase(getRootFiles.pending, state => {
 				state.requests.getFiles = requestPendingState;
 			})
-			.addCase(getFiles.fulfilled, (state, { payload: files }) => {
+			.addCase(getRootFiles.fulfilled, (state, { payload: files }) => {
 				state.files = files;
 				state.requests.getFiles = requestSuccessState;
 			})
-			.addCase(getFiles.rejected, state => {
+			.addCase(getRootFiles.rejected, state => {
 				state.requests.getFiles = requestErrorState;
 			});
 

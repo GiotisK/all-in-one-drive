@@ -1,122 +1,144 @@
-import {
-	getAllDrives,
-	getEncryptedTokenAsString,
-} from '../../../../services/database/mongodb.service';
+import DatabaseService from '../../../../services/database/mongodb.service';
 import { DriveType, FileEntity, Nullable } from '../../../../types/global.types';
 import { getDriveContextAndToken } from '../drives.helpers';
 
-export const getRootFiles = async (userEmail: string): Promise<Nullable<FileEntity[]>> => {
-	const fileEntities: Array<FileEntity[]> = [];
-	const driveProperties = await getAllDrives(userEmail);
-	if (driveProperties) {
-		const promiseArr: Promise<Nullable<FileEntity[]>>[] = [];
-		try {
-			driveProperties.forEach(async properties => {
-				const { token: encryptedTokenStr, driveType } = properties;
-				const ctxAndToken = getDriveContextAndToken(driveType, encryptedTokenStr);
+export class FilesService {
+	async getRootFiles(userEmail: string): Promise<Nullable<FileEntity[]>> {
+		const fileEntities: Array<FileEntity[]> = [];
+		const driveProperties = await DatabaseService.getAllDrives(userEmail);
+		if (driveProperties) {
+			const promiseArr: Promise<Nullable<FileEntity[]>>[] = [];
+			try {
+				driveProperties.forEach(async properties => {
+					const { token: encryptedTokenStr, driveType } = properties;
+					const ctxAndToken = getDriveContextAndToken(driveType, encryptedTokenStr);
 
-				if (ctxAndToken) {
-					const { ctx, token } = ctxAndToken;
-					promiseArr.push(ctx.getDriveFiles(token));
-				}
-			});
+					if (ctxAndToken) {
+						const { ctx, token } = ctxAndToken;
+						promiseArr.push(ctx.getDriveFiles(token));
+					}
+				});
 
-			const fileEntityLists = await Promise.all(promiseArr);
+				const fileEntityLists = await Promise.all(promiseArr);
 
-			fileEntityLists.forEach(list => {
-				if (list) {
-					fileEntities.push(list);
-				}
-			});
-			return fileEntities.flat() ?? null;
-		} catch {
-			return null;
+				fileEntityLists.forEach(list => {
+					if (list) {
+						fileEntities.push(list);
+					}
+				});
+				return fileEntities.flat() ?? null;
+			} catch {
+				return null;
+			}
 		}
+		return null;
 	}
-	return null;
-};
 
-export const getFolderFiles = async (
-	drive: DriveType,
-	userEmail: string,
-	driveEmail: string,
-	folderId: string
-) => {
-	const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
-	if (encryptedTokenStr) {
-		const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
-		if (ctxAndToken) {
-			const { ctx, token } = ctxAndToken;
-			return ctx.getDriveFiles(token, folderId);
+	async getFolderFiles(
+		drive: DriveType,
+		userEmail: string,
+		driveEmail: string,
+		folderId: string
+	): Promise<Nullable<FileEntity[]>> {
+		const encryptedTokenStr = await DatabaseService.getEncryptedTokenAsString(
+			userEmail,
+			driveEmail,
+			drive
+		);
+		if (encryptedTokenStr) {
+			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.getDriveFiles(token, folderId);
+			}
 		}
+		return null;
 	}
-};
 
-export const deleteFile = async (
-	drive: DriveType,
-	userEmail: string,
-	driveEmail: string,
-	fileId: string
-): Promise<boolean> => {
-	const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
-	if (encryptedTokenStr) {
-		const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
-		if (ctxAndToken) {
-			const { ctx, token } = ctxAndToken;
-			return ctx.deleteFile(token, fileId);
+	async deleteFile(
+		drive: DriveType,
+		userEmail: string,
+		driveEmail: string,
+		fileId: string
+	): Promise<boolean> {
+		const encryptedTokenStr = await DatabaseService.getEncryptedTokenAsString(
+			userEmail,
+			driveEmail,
+			drive
+		);
+		if (encryptedTokenStr) {
+			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.deleteFile(token, fileId);
+			}
 		}
+		return false;
 	}
-	return false;
-};
 
-export const renameFile = async (
-	drive: DriveType,
-	userEmail: string,
-	driveEmail: string,
-	fileId: string,
-	name: string
-): Promise<boolean> => {
-	const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
-	if (encryptedTokenStr) {
-		const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
-		if (ctxAndToken) {
-			const { ctx, token } = ctxAndToken;
-			return ctx.renameFile(token, fileId, name);
+	async renameFile(
+		drive: DriveType,
+		userEmail: string,
+		driveEmail: string,
+		fileId: string,
+		name: string
+	): Promise<boolean> {
+		const encryptedTokenStr = await DatabaseService.getEncryptedTokenAsString(
+			userEmail,
+			driveEmail,
+			drive
+		);
+		if (encryptedTokenStr) {
+			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.renameFile(token, fileId, name);
+			}
 		}
+		return false;
 	}
-	return false;
-};
 
-export const shareFile = async (
-	drive: DriveType,
-	userEmail: string,
-	driveEmail: string,
-	fileId: string
-): Promise<Nullable<string>> => {
-	const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
-	if (encryptedTokenStr) {
-		const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
-		if (ctxAndToken) {
-			const { ctx, token } = ctxAndToken;
-			return ctx.shareFile(token, fileId);
+	async shareFile(
+		drive: DriveType,
+		userEmail: string,
+		driveEmail: string,
+		fileId: string
+	): Promise<Nullable<string>> {
+		const encryptedTokenStr = await DatabaseService.getEncryptedTokenAsString(
+			userEmail,
+			driveEmail,
+			drive
+		);
+		if (encryptedTokenStr) {
+			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.shareFile(token, fileId);
+			}
 		}
+		return null;
 	}
-	return null;
-};
 
-export const unshareFile = async (
-	drive: DriveType,
-	userEmail: string,
-	driveEmail: string,
-	fileId: string
-): Promise<boolean> => {
-	const encryptedTokenStr = await getEncryptedTokenAsString(userEmail, driveEmail, drive);
-	if (encryptedTokenStr) {
-		const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
-		if (ctxAndToken) {
-			const { ctx, token } = ctxAndToken;
-			return ctx.unshareFile(token, fileId);
+	async unshareFile(
+		drive: DriveType,
+		userEmail: string,
+		driveEmail: string,
+		fileId: string
+	): Promise<boolean> {
+		const encryptedTokenStr = await DatabaseService.getEncryptedTokenAsString(
+			userEmail,
+			driveEmail,
+			drive
+		);
+		if (encryptedTokenStr) {
+			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.unshareFile(token, fileId);
+			}
 		}
+		return false;
 	}
-	return false;
-};
+}
+
+export default new FilesService();

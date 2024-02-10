@@ -1,7 +1,7 @@
 import DriveContext from '../../../services/drive/DriveContext';
 import GoogleDriveStrategy from '../../../services/drive/GoogleDriveStrategy';
 import { IDriveStrategy } from '../../../services/drive/IDriveStrategy';
-import { getDecryptedTokenFromEncryptedTokenString } from '../../../services/encryption/encryption.service';
+import EncryptionService from '../../../services/encryption/encryption.service';
 import { Nullable } from '../../../types/global.types';
 
 export const getDriveStrategyFromString = (drive: string): Nullable<IDriveStrategy> => {
@@ -18,7 +18,7 @@ export const getDriveContextAndToken = (drive: string, encryptedTokenStr?: strin
 	if (driveStrategy) {
 		let token = '';
 		if (encryptedTokenStr) {
-			token = getDecryptedTokenFromEncryptedTokenString(encryptedTokenStr);
+			token = EncryptionService.getDecryptedTokenFromEncryptedTokenString(encryptedTokenStr);
 		}
 		const ctx = new DriveContext(driveStrategy);
 		return { ctx, token };

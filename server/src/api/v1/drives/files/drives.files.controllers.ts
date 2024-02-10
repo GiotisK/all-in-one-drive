@@ -1,13 +1,6 @@
 import { Request, Response } from 'express';
 import { AuthLocals } from '../../../../types/types';
-import {
-	deleteFile,
-	getFolderFiles,
-	getRootFiles,
-	renameFile,
-	shareFile,
-	unshareFile,
-} from './drives.files.service';
+import FilesService from './drives.files.service';
 import {
 	DriveType,
 	FileEntity,
@@ -21,7 +14,7 @@ export const getRootFilesController = async (
 	res: Response<FileEntity[], AuthLocals>
 ) => {
 	const { email } = res.locals;
-	const files = await getRootFiles(email);
+	const files = await FilesService.getRootFiles(email);
 
 	if (files) {
 		res.status(Status.OK).send(files);
@@ -37,7 +30,7 @@ export const getFolderFilesController = async (
 ) => {
 	const { email: userEmail } = res.locals;
 	const { drive, email: driveEmail, folderId } = req.params;
-	const files = await getFolderFiles(drive, userEmail, driveEmail, folderId);
+	const files = await FilesService.getFolderFiles(drive, userEmail, driveEmail, folderId);
 
 	if (files) {
 		res.status(Status.OK).send(files);
@@ -53,7 +46,7 @@ export const deleteFileController = async (
 ) => {
 	const { email: userEmail } = res.locals;
 	const { drive, email: driveEmail, fileId } = req.params;
-	const success = await deleteFile(drive, userEmail, driveEmail, fileId);
+	const success = await FilesService.deleteFile(drive, userEmail, driveEmail, fileId);
 	const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
 
 	res.status(statusId).send();
@@ -74,7 +67,7 @@ export const editFileController = async (
 
 	//TODO: refactor to separate functions?
 	if (name) {
-		renameSuccess = await renameFile(drive, userEmail, driveEmail, fileId, name);
+		renameSuccess = await FilesService.renameFile(drive, userEmail, driveEmail, fileId, name);
 		if (renameSuccess) {
 			responseBody.operation = {
 				rename: {
@@ -86,7 +79,7 @@ export const editFileController = async (
 	}
 
 	if (share === true) {
-		const sharedLink = await shareFile(drive, userEmail, driveEmail, fileId);
+		const sharedLink = await FilesService.shareFile(drive, userEmail, driveEmail, fileId);
 		if (sharedLink) {
 			shareSuccess = true;
 			responseBody.operation = {
@@ -99,7 +92,7 @@ export const editFileController = async (
 	}
 
 	if (share === false) {
-		unshareSuccess = await unshareFile(drive, userEmail, driveEmail, fileId);
+		unshareSuccess = await FilesService.unshareFile(drive, userEmail, driveEmail, fileId);
 		if (unshareSuccess) {
 			responseBody.operation = {
 				unshare: {

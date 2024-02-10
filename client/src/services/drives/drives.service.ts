@@ -4,29 +4,34 @@ import {
 	DriveType,
 	Status,
 } from '../../shared/types/global.types';
-import { deleteRequest, getRequest, postRequest } from '../request.service';
+import RequestService from '../request.service';
 
-export const getAuthLink = async (drive: DriveType): Promise<string> => {
-	const res = await getRequest<string>(`/drives/${drive}/authlink`);
-	const authLink = res.data;
+export class DrivesService {
+	async getAuthLink(drive: DriveType): Promise<string> {
+		const res = await RequestService.get<string>(`/drives/${drive}/authlink`);
+		const authLink = res.data;
+		return authLink;
+	}
 
-	return authLink;
-};
+	async connectDrive(authCode: string, drive: DriveType): Promise<boolean> {
+		const res = await RequestService.post<ConnectDriveRequestBody, void>(
+			`/drives/${drive}/connect`,
+			{
+				authCode,
+			}
+		);
+		return res.status === Status.OK;
+	}
 
-export const connectDrive = async (authCode: string, drive: DriveType): Promise<boolean> => {
-	const res = await postRequest<ConnectDriveRequestBody, void>(`/drives/${drive}/connect`, {
-		authCode,
-	});
+	async getDrives(): Promise<DriveEntity[]> {
+		const { data } = await RequestService.get<DriveEntity[]>('/drives');
+		return data;
+	}
 
-	return res.status === Status.OK;
-};
+	async deleteDrive(driveEmail: string, drive: DriveType): Promise<boolean> {
+		const res = await RequestService.delete(`/drives/${drive}/${driveEmail}`);
+		return res.status === Status.OK;
+	}
+}
 
-export const getDriveEntities = async (): Promise<DriveEntity[]> => {
-	const { data } = await getRequest<DriveEntity[]>('/drives');
-	return data;
-};
-
-export const deleteDriveEntity = async (driveEmail: string, drive: DriveType): Promise<boolean> => {
-	const res = await deleteRequest(`/drives/${drive}/${driveEmail}`);
-	return res.status === Status.OK;
-};
+export default new DrivesService();
