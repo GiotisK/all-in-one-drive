@@ -34,7 +34,7 @@ export class DatabaseService {
 			const updatedUser = await User.findOneAndUpdate(
 				{ email: userEmail },
 				{
-					$set: { drives: driveProperties },
+					$push: { drives: driveProperties },
 				},
 				{ upsert: true, new: true }
 			).exec();

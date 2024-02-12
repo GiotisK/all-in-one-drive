@@ -88,6 +88,7 @@ export class DrivesService {
 							email,
 							type: driveType,
 							quota,
+							active: true,
 						});
 					}
 				});

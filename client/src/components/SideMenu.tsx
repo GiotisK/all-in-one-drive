@@ -4,10 +4,11 @@ import { DriveRow } from './DriveRow';
 import { Loader } from './Loader';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
-import { DriveEntity } from '../shared/types/global.types';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { SvgNames } from '../shared/utils/svg-utils';
 import { IconButton } from './IconButton';
+import { useEffect, useState } from 'react';
+import { toggleAllDrivesSelection } from '../redux/slices/drives/drivesSlice';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
@@ -17,6 +18,7 @@ const Container = styled.div`
 	width: 300px;
 	display: flex;
 	flex-direction: column;
+	user-select: none;
 `;
 
 const Header = styled.div`
@@ -55,26 +57,42 @@ const HeaderAndCheckContainer = styled.div`
 	justify-content: flex-start;
 	align-items: center;
 `;
+
+const LoaderContainer = styled.div`
+	margin-top: 5%;
+`;
+
 export const SideMenu = (): JSX.Element => {
 	const dispatch = useAppDispatch();
+	const [checked, setChecked] = useState(true);
 	const theme = useTheme();
 	const drives = useAppSelector(state => state.drives.drives);
 	const drivesLoading = useAppSelector(state => state.drives.requests.getDrives.loading);
+
+	useEffect(() => {
+		const hasAtLeastOneInactive = drives.some(drive => !drive.active);
+		setChecked(!hasAtLeastOneInactive);
+	}, [drives]);
 
 	const onAddDriveClick = (): void => {
 		dispatch(openModal({ kind: ModalKind.AddDrive }));
 	};
 
-	const onDeleteDriveClick = (drive: DriveEntity): void => {
-		dispatch(openModal({ kind: ModalKind.Delete, state: { entity: drive } }));
+	const toggleCheckBox = () => {
+		setChecked(prevChecked => !prevChecked);
+		dispatch(toggleAllDrivesSelection(!checked));
 	};
 
 	return (
 		<Container>
 			<Header>
 				<HeaderAndCheckContainer>
-					<HeaderText onClick={() => null}>Connected Drives</HeaderText>
-					<Checkbox onChange={() => null} checked={true} style={{ marginLeft: '5%' }} />
+					<HeaderText onClick={toggleCheckBox}>Connected Drives</HeaderText>
+					<Checkbox
+						onChange={toggleCheckBox}
+						checked={checked}
+						style={{ marginLeft: '5%' }}
+					/>
 				</HeaderAndCheckContainer>
 				<IconButton
 					icon={SvgNames.Plus}
@@ -85,7 +103,9 @@ export const SideMenu = (): JSX.Element => {
 			</Header>
 
 			{drivesLoading ? (
-				<Loader size={25} />
+				<LoaderContainer>
+					<Loader size={25} />
+				</LoaderContainer>
 			) : !drives.length ? (
 				<>
 					<NoDrivesText>There are no connected drives...</NoDrivesText>
@@ -95,20 +115,7 @@ export const SideMenu = (): JSX.Element => {
 				</>
 			) : (
 				drives.map(drive => {
-					const { type, email, quota, id } = drive;
-
-					return (
-						<DriveRow
-							drive={type}
-							email={email}
-							enabled
-							onDeleteDriveClick={() => {
-								onDeleteDriveClick(drive);
-							}}
-							quota={quota}
-							key={id}
-						/>
-					);
+					return <DriveRow drive={drive} key={drive.id} />;
 				})
 			)}
 		</Container>

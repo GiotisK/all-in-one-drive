@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DrivesState } from './types';
 import { getDrives, deleteDrive } from '../../async-actions/drives.async.actions';
 import {
@@ -20,7 +20,22 @@ const initialState: DrivesState = {
 const drivesSlice = createSlice({
 	name: 'drives',
 	initialState,
-	reducers: {},
+	reducers: {
+		toggleDriveSelection(state, action: PayloadAction<string>) {
+			const tempDrives = [...state.drives];
+			const index = tempDrives.findIndex(drive => drive.id === action.payload);
+
+			if (index >= 0) {
+				tempDrives[index].active = !tempDrives[index].active;
+				state.drives = tempDrives;
+			}
+		},
+		toggleAllDrivesSelection(state, action: PayloadAction<boolean>) {
+			const tempDrives = [...state.drives];
+			tempDrives.forEach(drive => (drive.active = action.payload));
+			state.drives = tempDrives;
+		},
+	},
 	extraReducers: builder => {
 		// getDrives
 		builder
@@ -40,11 +55,8 @@ const drivesSlice = createSlice({
 			.addCase(deleteDrive.pending, state => {
 				state.requests.deleteDrive = requestPendingState;
 			})
-			.addCase(deleteDrive.fulfilled, (state, { payload }) => {
-				const { type, email } = payload;
-				state.drives = state.drives.filter(
-					drive => drive.type !== type && drive.email !== email
-				);
+			.addCase(deleteDrive.fulfilled, (state, { payload: id }) => {
+				state.drives = state.drives.filter(drive => drive.id !== id);
 				state.requests.deleteDrive = requestSuccessState;
 			})
 			.addCase(deleteDrive.rejected, state => {
@@ -59,3 +71,4 @@ const drivesSlice = createSlice({
 });
 
 export default drivesSlice.reducer;
+export const { toggleDriveSelection, toggleAllDrivesSelection } = drivesSlice.actions;

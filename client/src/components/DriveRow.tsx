@@ -1,7 +1,11 @@
 import styled, { useTheme } from 'styled-components';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 import { CreateDriveSvg } from '../shared/utils/utils';
-import { DriveQuota, DriveType } from '../shared/types/global.types';
+import { DriveEntity, DriveQuota, DriveType } from '../shared/types/global.types';
+import { ModalKind } from '../redux/slices/modal/types';
+import { openModal } from '../redux/slices/modal/modalSlice';
+import { useAppDispatch } from '../redux/store/store';
+import { toggleDriveSelection } from '../redux/slices/drives/drivesSlice';
 
 const DriveElementContainer = styled.div`
 	display: flex;
@@ -79,36 +83,42 @@ const DriveSvgContainer = styled.div`
 `;
 
 interface IProps {
-	email: string;
-	quota: DriveQuota;
-	onDeleteDriveClick: () => void;
-	drive: DriveType;
-	enabled: boolean;
+	drive: DriveEntity;
 }
 
-export const DriveRow = (props: IProps): JSX.Element => {
+export const DriveRow = ({ drive }: IProps): JSX.Element => {
+	const dispatch = useAppDispatch();
 	const theme = useTheme();
 
 	const formatQuota = (quota: DriveQuota) => {
 		return quota.used + ' / ' + quota.total + 'GB';
 	};
 
+	const onDriveClick = (): void => {
+		dispatch(toggleDriveSelection(drive.id));
+	};
+
+	const onDeleteDriveClick = (e: React.MouseEvent): void => {
+		e.stopPropagation();
+		dispatch(openModal({ kind: ModalKind.Delete, state: { entity: drive } }));
+	};
+
 	return (
-		<DriveElementContainer style={{ opacity: props.enabled ? 1 : 0.8 }}>
-			<DriveSvgContainer>{CreateDriveSvg(props.drive)}</DriveSvgContainer>
+		<DriveElementContainer onClick={onDriveClick} style={{ opacity: drive.active ? 1 : 0.5 }}>
+			<DriveSvgContainer>{CreateDriveSvg(drive.type)}</DriveSvgContainer>
 
 			<EmailQuotaContainer>
-				<DriveElementEmail>{props.email}</DriveElementEmail>
-				<DriveElementQuota>{formatQuota(props.quota)}</DriveElementQuota>
+				<DriveElementEmail>{drive.email}</DriveElementEmail>
+				<DriveElementQuota>{formatQuota(drive.quota)}</DriveElementQuota>
 			</EmailQuotaContainer>
 
 			<TrashCanAndIndicatorContainer>
-				<TrashcanDiv onClick={props.onDeleteDriveClick}>
+				<TrashcanDiv onClick={onDeleteDriveClick}>
 					{createSvg(SvgNames.Trashcan, 25, 'gray')}
 				</TrashcanDiv>
 				<ActiveIndicator
 					style={{
-						backgroundColor: props.enabled ? theme?.colors.green : theme?.colors.border,
+						backgroundColor: drive.active ? theme?.colors.green : theme?.colors.border,
 					}}
 				/>
 			</TrashCanAndIndicatorContainer>

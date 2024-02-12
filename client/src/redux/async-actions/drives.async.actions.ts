@@ -7,11 +7,11 @@ export const getDrives = createAsyncThunk('drives/getDrives', async () => {
 	return drives;
 });
 
-type DeleteDriveParams = { email: string; type: DriveType };
+type DeleteDriveParams = { email: string; type: DriveType; id: string };
 export const deleteDrive = createAsyncThunk(
 	'drives/deleteDrive',
-	async ({ email, type }: DeleteDriveParams) => {
+	async ({ email, type, id }: DeleteDriveParams) => {
 		await DrivesService.deleteDrive(email, type);
-		return { email, type };
+		return id;
 	}
 );

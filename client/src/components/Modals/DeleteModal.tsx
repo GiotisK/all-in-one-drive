@@ -73,8 +73,8 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 		if (!entity) return;
 
 		if (isDriveEntity(entity)) {
-			const { email, type } = entity;
-			dispatch(deleteDrive({ email, type }));
+			const { email, type, id } = entity;
+			dispatch(deleteDrive({ email, type, id }));
 		} else if (isFileEntity(entity)) {
 			const { email, drive, id } = entity;
 			dispatch(deleteFile({ email, drive, id }));

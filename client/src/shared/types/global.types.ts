@@ -62,6 +62,7 @@ export type DriveEntity = {
 	type: DriveType;
 	email: string;
 	quota: DriveQuota;
+	active: boolean;
 };
 
 export type FileEntity = {
