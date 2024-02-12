@@ -1,18 +1,12 @@
 import express, { Router } from 'express';
 import authorize from '../../../middleware/authorize';
-import {
-	authLinkController,
-	connectDriveController,
-	driveQuotaController,
-	getDrivesController,
-	deleteDriveController,
-} from './drives.controllers';
+import DrivesController from './drives.controllers';
 
 const router: Router = express.Router();
-router.get('/', authorize, getDrivesController);
-router.get('/:drive/authlink', authorize, authLinkController);
-router.get('/:drive/quota/:email', authorize, driveQuotaController);
-router.post('/:drive/connect', authorize, connectDriveController);
-router.delete('/:drive/:email', authorize, deleteDriveController);
+router.get('/', authorize, DrivesController.getDrives);
+router.get('/:drive/authlink', authorize, DrivesController.authLink);
+router.get('/:drive/quota/:email', authorize, DrivesController.getDriveQuota);
+router.post('/:drive/connect', authorize, DrivesController.connectDrive);
+router.delete('/:drive/:email', authorize, DrivesController.deleteDrive);
 
 export default router;

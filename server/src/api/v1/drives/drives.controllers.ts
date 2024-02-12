@@ -9,68 +9,66 @@ import {
 } from '../../../types/global.types';
 import { AuthLocals } from '../../../types/types';
 
-export const authLinkController = (
-	req: Request<{ drive: DriveType }>,
-	res: Response<string>
-): void => {
-	const drive = req.params.drive;
-	const authLink = DrivesService.getAuthLink(drive);
+class DrivesController {
+	async authLink(req: Request<{ drive: DriveType }>, res: Response<string>): Promise<void> {
+		const drive = req.params.drive;
+		const authLink = DrivesService.getAuthLink(drive);
 
-	authLink ? res.status(Status.OK).send(authLink) : res.status(Status.BAD_REQUEST);
-};
-
-export const connectDriveController = async (
-	req: Request<{ drive: DriveType }, void, ConnectDriveRequestBody>,
-	res: Response<void, AuthLocals>
-): Promise<void> => {
-	const { email } = res.locals;
-	const drive = req.params.drive;
-	const { authCode } = req.body;
-	const success = await DrivesService.generateAndSaveOAuth2Token(authCode, drive, email);
-	const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
-
-	res.status(statusId).send();
-};
-
-export const driveQuotaController = async (
-	req: Request<{ drive: DriveType; email: string }>,
-	res: Response<DriveQuota, AuthLocals>
-): Promise<void> => {
-	const { email } = res.locals;
-	const drive = req.params.drive;
-	const driveEmail = req.params.email;
-
-	const quota = await DrivesService.getDriveQuota(email, driveEmail, drive);
-
-	if (quota) {
-		res.status(Status.OK).send(quota);
-	} else {
-		res.status(Status.INTERNAL_SERVER_ERROR);
+		authLink ? res.status(Status.OK).send(authLink) : res.status(Status.BAD_REQUEST);
 	}
-};
 
-export const getDrivesController = async (
-	_req: Request,
-	res: Response<DriveEntity[], AuthLocals>
-): Promise<void> => {
-	const { email } = res.locals;
-	const driveEntities = await DrivesService.getDrives(email);
+	async connectDrive(
+		req: Request<{ drive: DriveType }, void, ConnectDriveRequestBody>,
+		res: Response<void, AuthLocals>
+	): Promise<void> {
+		const { email } = res.locals;
+		const drive = req.params.drive;
+		const { authCode } = req.body;
+		const success = await DrivesService.generateAndSaveOAuth2Token(authCode, drive, email);
+		const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
 
-	if (driveEntities) {
-		res.status(Status.OK).send(driveEntities);
-	} else {
-		res.status(Status.INTERNAL_SERVER_ERROR).send();
+		res.status(statusId).send();
 	}
-};
 
-export const deleteDriveController = async (
-	req: Request<{ drive: DriveType; email: string }>,
-	res: Response<void, AuthLocals>
-): Promise<void> => {
-	const { email } = res.locals;
-	const { drive, email: driveEmail } = req.params;
-	const success = await DrivesService.deleteDrive(email, driveEmail, drive);
-	const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
+	async getDriveQuota(
+		req: Request<{ drive: DriveType; email: string }>,
+		res: Response<DriveQuota, AuthLocals>
+	): Promise<void> {
+		const { email } = res.locals;
+		const drive = req.params.drive;
+		const driveEmail = req.params.email;
 
-	res.status(statusId).send();
-};
+		const quota = await DrivesService.getDriveQuota(email, driveEmail, drive);
+
+		if (quota) {
+			res.status(Status.OK).send(quota);
+		} else {
+			res.status(Status.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	async getDrives(_req: Request, res: Response<DriveEntity[], AuthLocals>): Promise<void> {
+		const { email } = res.locals;
+		const driveEntities = await DrivesService.getDrives(email);
+
+		if (driveEntities) {
+			res.status(Status.OK).send(driveEntities);
+		} else {
+			res.status(Status.INTERNAL_SERVER_ERROR).send();
+		}
+	}
+
+	async deleteDrive(
+		req: Request<{ drive: DriveType; email: string }>,
+		res: Response<void, AuthLocals>
+	): Promise<void> {
+		const { email } = res.locals;
+		const { drive, email: driveEmail } = req.params;
+		const success = await DrivesService.deleteDrive(email, driveEmail, drive);
+		const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
+
+		res.status(statusId).send();
+	}
+}
+
+export default new DrivesController();
