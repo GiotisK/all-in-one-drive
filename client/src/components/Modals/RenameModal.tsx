@@ -31,14 +31,13 @@ export const RenameModal = ({ state }: IProps): JSX.Element => {
 	const sendRenameFileRequest = async () => {
 		if (!entity) return;
 		const { drive, email, id } = entity;
-		dispatch(renameFile({ drive, email, id, newName: inputValue }));
-	};
-
-	useEffect(() => {
-		if (renameFileReq.done) {
+		try {
+			await dispatch(renameFile({ drive, email, id, newName: inputValue }));
 			dispatch(closeModals());
+		} catch {
+			//TODO: show toast
 		}
-	}, [dispatch, renameFileReq.done]);
+	};
 
 	return (
 		<BaseModal
