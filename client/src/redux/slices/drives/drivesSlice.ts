@@ -55,7 +55,8 @@ const drivesSlice = createSlice({
 			.addCase(deleteDrive.pending, state => {
 				state.requests.deleteDrive = requestPendingState;
 			})
-			.addCase(deleteDrive.fulfilled, (state, { payload: id }) => {
+			.addCase(deleteDrive.fulfilled, (state, { payload }) => {
+				const { id } = payload;
 				state.drives = state.drives.filter(drive => drive.id !== id);
 				state.requests.deleteDrive = requestSuccessState;
 			})
