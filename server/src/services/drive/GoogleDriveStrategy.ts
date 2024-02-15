@@ -1,20 +1,36 @@
 import { OAuth2Client } from 'googleapis-common';
 import { IDriveStrategy } from './IDriveStrategy';
 import { drive, auth, drive_v3 } from '@googleapis/drive';
-import { bytesToGigabytes, normalizeBytes } from '../../helpers/helpers';
-import { DriveQuota, DriveType, FileEntity, FileType, Nullable } from '../../types/global.types';
+import { bytesToGigabytes, generateUUID, normalizeBytes } from '../../helpers/helpers';
+import {
+	ChangedFileEntity,
+	DriveChanges,
+	DriveQuota,
+	DriveType,
+	FileEntity,
+	FileType,
+	Nullable,
+	WatchChangesChannel,
+} from '../../types/global.types';
+import { LOCALTUNNEL_URL } from '../../tunnel/subdomain';
 import mime from 'mime';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
+type ParamsResourceChangesWatch = drive_v3.Params$Resource$Changes$Watch;
 
 const SCOPES = ['https://www.googleapis.com/auth/drive'];
+
 const PUBLIC_SHARED_LINK_BASE_URL = 'https://drive.google.com/open?id=';
 const PUBLIC_SHARED_PERMISSION_TYPE = 'anyone';
 
+const WEBHOOK_EXPIRATION_TIME_IN_MS = 24 * 60 * 60 * 1000; // 24hours
+const WEBHOOK_UUID = generateUUID();
+const WEBHOOK_ENDPOINT = `${LOCALTUNNEL_URL}/drives/webhook`;
+
 export default class GoogleDriveStrategy implements IDriveStrategy {
-	private drive: drive_v3.Drive;
-	private oAuth2Client: OAuth2Client;
+	private readonly drive: drive_v3.Drive;
+	private readonly oAuth2Client: OAuth2Client;
 
 	constructor() {
 		const credentials = JSON.parse(process.env.GOOGLE_DRIVE_CREDENTIALS!);
@@ -84,6 +100,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const res = await this.drive.files.list({
 				q: filesQuery,
 				pageSize: 1000,
+				//TODO: GIOTIS
 				fields: 'nextPageToken, files(id, size, name, mimeType, createdTime, shared, webContentLink, webViewLink, exportLinks, parents, permissions, owners)',
 			});
 			const files = res.data.files;
@@ -163,6 +180,135 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
+	public async fetchDriveChanges(
+		token: string,
+		startPageToken: string
+	): Promise<DriveChanges | undefined> {
+		this.setToken(token);
+
+		try {
+			const {
+				data: { changes = [], newStartPageToken },
+			} = await this.drive.changes.list({
+				pageToken: startPageToken,
+				fields: 'newStartPageToken, changes(file(id, name, permissions, webViewLink), time)',
+			});
+
+			const results: ChangedFileEntity[] = [];
+			changes.forEach(change => {
+				if (change.file) {
+					results.push({
+						id: change.file.id!,
+						removed: change.removed!,
+						name: change.file.name!,
+						date: change.time?.substring(0, 10) ?? '-',
+						sharedLink: this.isFilePubliclyShared(change.file)
+							? change.file.webViewLink!
+							: null,
+						type: FileType.File,
+					});
+				}
+			});
+
+			return {
+				changes: results,
+				startPageToken: newStartPageToken!,
+			};
+		} catch (err) {
+			console.error(
+				`An error occured while trying to fetch drive changes.\nError: ${
+					(err as Error).message
+				})`
+			);
+		}
+	}
+
+	public async unsubscribeForChanges(
+		token: string,
+		id: string,
+		resourceId: string
+	): Promise<void> {
+		this.setToken(token);
+		try {
+			await this.drive.channels.stop({
+				requestBody: {
+					id,
+					resourceId,
+				},
+			});
+			console.log(`Stopped drive notifications for channel id: ${id}`);
+		} catch (err) {
+			console.error(
+				`An error occured while trying to unsubscribe for changes.\nError: ${
+					(err as Error).message
+				}`
+			);
+		}
+	}
+
+	public async subscribeForChanges(
+		token: string,
+		driveEmail: string
+	): Promise<WatchChangesChannel | undefined> {
+		this.setToken(token);
+		const watchChangesChannel = await this.registerForDriveChanges(driveEmail);
+		return watchChangesChannel;
+	}
+
+	private async registerForDriveChanges(
+		driveEmail: string
+	): Promise<WatchChangesChannel | undefined> {
+		try {
+			const watchChangesRequest = await this.createChangesWatchRequest(
+				WEBHOOK_UUID,
+				WEBHOOK_ENDPOINT,
+				driveEmail
+			);
+			const response = await this.drive.changes.watch(watchChangesRequest);
+			console.log('[GoogleDriveStrategy::registerForDriveChanges]');
+			console.log(response.data);
+
+			return {
+				id: response.data.id ?? '',
+				resourceId: response.data.resourceId ?? '',
+				startPageToken: watchChangesRequest.pageToken ?? '',
+			};
+		} catch (err) {
+			console.error(
+				'An error occured while trying to subscribe to watch changes.\nError: ',
+				(err as Error).message
+			);
+		}
+	}
+
+	private async createChangesWatchRequest(
+		id: string,
+		address: string,
+		driveEmail: string
+	): Promise<ParamsResourceChangesWatch> {
+		const startPageToken = await this.getChangesStartPageToken();
+
+		return {
+			supportsAllDrives: true,
+			includeRemoved: true,
+			pageToken: startPageToken,
+			requestBody: {
+				id,
+				type: 'web_hook',
+				address,
+				expiration: String(Date.now() + WEBHOOK_EXPIRATION_TIME_IN_MS),
+				token: driveEmail,
+			},
+		};
+	}
+
+	private async getChangesStartPageToken(supportsAllDrives = true): Promise<string | undefined> {
+		const {
+			data: { startPageToken },
+		} = await this.drive.changes.getStartPageToken({ supportsAllDrives });
+		return startPageToken ?? undefined;
+	}
+
 	private setToken(tokenStr: string) {
 		const token: Credentials = JSON.parse(tokenStr);
 		this.oAuth2Client.setCredentials(token);
@@ -184,9 +330,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const size = fileType === FileType.File ? normalizeBytes(file.size ?? '') : '';
 			const normalizedDate = file.createdTime?.substring(0, 10) ?? '-';
 			const extension = file.mimeType ? mime.getExtension(file.mimeType) : '-';
-			const isPubliclyShared = file.permissions?.find(
-				permission => permission.type === PUBLIC_SHARED_PERMISSION_TYPE
-			);
+			const isPubliclyShared = this.isFilePubliclyShared(file);
 
 			return {
 				id: file.id ?? '',
@@ -206,5 +350,11 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 	private determineEntityType(mimeType?: string): FileType {
 		return mimeType === 'application/vnd.google-apps.folder' ? FileType.Folder : FileType.File;
+	}
+
+	private isFilePubliclyShared(file: GoogleDriveFile): boolean {
+		return (file.permissions ?? []).some(
+			permission => permission.type === PUBLIC_SHARED_PERMISSION_TYPE
+		);
 	}
 }

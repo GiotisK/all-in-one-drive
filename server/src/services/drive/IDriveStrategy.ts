@@ -1,4 +1,10 @@
-import { FileEntity, DriveQuota, Nullable, DriveType } from '../../types/global.types';
+import {
+	FileEntity,
+	DriveQuota,
+	Nullable,
+	WatchChangesChannel,
+	DriveChanges,
+} from '../../types/global.types';
 
 export interface IDriveStrategy {
 	getAuthLink(): string;
@@ -10,4 +16,10 @@ export interface IDriveStrategy {
 	renameFile(token: string, fileId: string, name: string): Promise<boolean>;
 	shareFile(token: string, fileId: string): Promise<Nullable<string>>;
 	unshareFile(token: string, fileId: string): Promise<boolean>;
+	subscribeForChanges(
+		token: string,
+		driveEmail: string
+	): Promise<WatchChangesChannel | undefined>;
+	unsubscribeForChanges(token: string, id: string, resourceId: string): Promise<void>;
+	fetchDriveChanges(token: string, driveEmail: string): Promise<DriveChanges | undefined>;
 }

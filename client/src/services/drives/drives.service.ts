@@ -1,10 +1,14 @@
+import RequestService from '../request.service';
 import {
 	ConnectDriveRequestBody,
+	DriveChanges,
 	DriveEntity,
 	DriveType,
 	Status,
+	SubscribeForChangesRequestBody,
+	UnsubscribeForChangesRequestBody,
+	WatchChangesChannel,
 } from '../../shared/types/global.types';
-import RequestService from '../request.service';
 
 export class DrivesService {
 	async getAuthLink(drive: DriveType): Promise<string> {
@@ -31,6 +35,51 @@ export class DrivesService {
 	async deleteDrive(driveEmail: string, drive: DriveType): Promise<boolean> {
 		const res = await RequestService.delete(`/drives/${drive}/${driveEmail}`);
 		return res.status === Status.OK;
+	}
+
+	public async subscribeForDriveChanges(
+		email: string,
+		drive: DriveType
+	): Promise<WatchChangesChannel> {
+		const { data: watchChangesChannel } = await RequestService.post<
+			SubscribeForChangesRequestBody,
+			WatchChangesChannel
+		>(`/drives/watch`, {
+			drive,
+			email,
+		});
+
+		return watchChangesChannel;
+	}
+
+	public async unsubscribeForDriveChanges(
+		email: string,
+		drive: DriveType,
+		id: string,
+		resourceId: string
+	): Promise<void> {
+		await RequestService.post<UnsubscribeForChangesRequestBody, void>(`/drives/stopwatch`, {
+			email,
+			drive,
+			id,
+			resourceId,
+		});
+	}
+
+	public async getDriveChanges(
+		email: string,
+		startPageToken: string,
+		driveType: DriveType = DriveType.GoogleDrive
+	) {
+		const { data: changes } = await RequestService.get<DriveChanges>(
+			`/drives/${driveType}/changes/${email}?startPageToken=${startPageToken}`
+		);
+
+		return {
+			email,
+			driveType,
+			changes,
+		};
 	}
 }
 

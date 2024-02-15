@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+import { config } from './common';
+
 export const axiosInstance = axios.create({
-	baseURL: 'http://localhost:8000/',
+	baseURL: config.baseURL,
 	headers: { 'Content-Type': 'application/json' },
 	timeout: 10000,
 	withCredentials: true,

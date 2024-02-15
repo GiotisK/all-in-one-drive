@@ -1,4 +1,10 @@
-import { DriveQuota, FileEntity, Nullable } from '../../types/global.types';
+import {
+	DriveChanges,
+	DriveQuota,
+	FileEntity,
+	Nullable,
+	WatchChangesChannel,
+} from '../../types/global.types';
 import { IDriveStrategy } from './IDriveStrategy';
 
 export default class DriveContext {
@@ -46,5 +52,27 @@ export default class DriveContext {
 
 	public async unshareFile(token: string, fileId: string): Promise<boolean> {
 		return this.strategy.unshareFile(token, fileId);
+	}
+
+	public async subscribeForChanges(
+		token: string,
+		driveEmail: string
+	): Promise<WatchChangesChannel | undefined> {
+		return this.strategy.subscribeForChanges(token, driveEmail);
+	}
+
+	public async unsubscribeForChanges(
+		token: string,
+		id: string,
+		resourceId: string
+	): Promise<void> {
+		return this.strategy.unsubscribeForChanges(token, id, resourceId);
+	}
+
+	public async fetchDriveChanges(
+		token: string,
+		startPageToken: string
+	): Promise<DriveChanges | undefined> {
+		return this.strategy.fetchDriveChanges(token, startPageToken);
 	}
 }
