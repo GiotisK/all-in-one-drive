@@ -8,7 +8,12 @@ import { LoadingBar } from '../components/LoadingBar';
 import { styled } from 'styled-components';
 
 import { ModalContainer } from '../components/Modals/ModalContainer';
-import { useCheckAuth, useHandleAuthCodeFromUrl } from '../hooks';
+import {
+	useCheckAuth,
+	useHandleAuthCodeFromUrl,
+	useServerSideEvents,
+	useSubscribeForDriveChanges,
+} from '../hooks';
 import { useFetchInitialData } from '../hooks/useFetchInitialData';
 import { Navigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
@@ -37,10 +42,14 @@ const RowsScrollview = styled.div`
 export const DrivePage = (): JSX.Element => {
 	const [sideMenuVisible, setSideMenuVisible] = useState(true);
 	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
+
 	useCheckAuth();
 	useHandleAuthCodeFromUrl();
 	useFetchInitialData();
 	useFetchFolderContents();
+
+	useServerSideEvents();
+	useSubscribeForDriveChanges();
 
 	return isUserAuthenticated ? (
 		<OuterContainer>

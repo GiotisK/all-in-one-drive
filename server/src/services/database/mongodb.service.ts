@@ -1,6 +1,6 @@
+import { generateUUID } from '../../helpers/helpers';
 import User, { DriveSchema } from '../../models/user.model';
 import { DriveType, Nullable } from '../../types/global.types';
-import { v4 as generateUuid } from 'uuid';
 
 export class DatabaseService {
 	async saveUser(email: string, password: string): Promise<boolean> {
@@ -25,7 +25,7 @@ export class DatabaseService {
 	): Promise<boolean> {
 		try {
 			const driveProperties: DriveSchema = {
-				id: generateUuid(),
+				id: generateUUID(),
 				email: driveEmail,
 				token: encryptedTokenData,
 				driveType: drive,

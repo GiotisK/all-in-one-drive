@@ -18,6 +18,16 @@ export interface AuthUserResponse {
 	email: string;
 }
 
+export interface SubscribeForChangesRequestBody {
+	drive: string;
+	email: string;
+}
+
+export interface UnsubscribeForChangesRequestBody {
+	drive: string;
+	email: string;
+}
+
 export interface PatchFileRequestBody {
 	name?: string;
 	share?: boolean;
@@ -63,6 +73,7 @@ export type DriveEntity = {
 	email: string;
 	quota: DriveQuota;
 	active: boolean;
+	watchChangesChannel?: WatchChangesChannel; // TODO: Fix name
 };
 
 export type FileEntity = {
@@ -75,6 +86,27 @@ export type FileEntity = {
 	date: string;
 	extension: string;
 	sharedLink?: Nullable<string>;
+};
+
+export type ChangedFileEntity = {
+	id: string;
+	removed: boolean;
+	name: string;
+	date: string;
+	type: FileType;
+	sharedLink: Nullable<string>;
+};
+
+export type DriveChanges = {
+	changes: ChangedFileEntity[];
+	startPageToken: string;
+};
+
+//TODO: Fix name
+export type WatchChangesChannel = {
+	id: string;
+	resourceId: string;
+	startPageToken: string;
 };
 
 export enum FileType {

@@ -1,7 +1,7 @@
 import styled, { useTheme } from 'styled-components';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 import { CreateDriveSvg } from '../shared/utils/utils';
-import { DriveEntity, DriveQuota, DriveType } from '../shared/types/global.types';
+import { DriveEntity, DriveQuota } from '../shared/types/global.types';
 import { ModalKind } from '../redux/slices/modal/types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { useAppDispatch } from '../redux/store/store';

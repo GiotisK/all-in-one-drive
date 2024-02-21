@@ -15,7 +15,8 @@ import {
 	unshareFile,
 } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
-import { deleteDrive } from '../../async-actions/drives.async.actions';
+import { getChanges } from '../../async-actions/drives.async.actions';
+import { FileType } from '../../../shared/types/global.types';
 
 const initialState: FilesState = {
 	files: [],
@@ -124,14 +125,35 @@ const filesSlice = createSlice({
 			});
 
 		// deleteDrive
-		builder.addCase(deleteDrive.fulfilled, (state, { payload }) => {
-			const { type, email } = payload;
-			state.files = state.files.filter(file => file.email !== email && file.drive !== type);
-		});
+		// builder.addCase(deleteDrive.fulfilled, (state, { payload }) => {
+		// 	const { type, email } = payload;
+		// 	state.files = state.files.filter(file => file.email !== email && file.drive !== type);
+		// });
 
 		// logout
 		builder.addCase(logoutUser.fulfilled, () => {
 			return initialState;
+		});
+
+		// changes
+		builder.addCase(getChanges.fulfilled, (state, { payload }) => {
+			const { changes } = payload;
+			changes.changes.forEach(change => {
+				if (change.type === FileType.File) {
+					const fileToUpdateIndex = state.files.findIndex(file => file.id === change.id);
+					if (fileToUpdateIndex !== -1) {
+						if (change.removed) {
+							state.files.splice(fileToUpdateIndex, 1);
+						} else {
+							state.files[fileToUpdateIndex].date = change.date;
+							state.files[fileToUpdateIndex].name = change.name;
+							state.files[fileToUpdateIndex].sharedLink = change.sharedLink;
+						}
+					} else {
+						console.error(`File with ID ${change.id} not found in state.`);
+					}
+				}
+			});
 		});
 	},
 });

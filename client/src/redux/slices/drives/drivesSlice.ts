@@ -1,6 +1,11 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DrivesState } from './types';
-import { getDrives, deleteDrive } from '../../async-actions/drives.async.actions';
+import {
+	getDrives,
+	deleteDrive,
+	subscribeForChanges,
+	getChanges,
+} from '../../async-actions/drives.async.actions';
 import {
 	requestErrorState,
 	requestInitialState,
@@ -64,12 +69,52 @@ const drivesSlice = createSlice({
 				state.requests.deleteDrive = requestErrorState;
 			});
 
-		// logout
+		// logoutUser
 		builder.addCase(logoutUser.fulfilled, () => {
 			return initialState;
+		});
+
+		// subscribeForChanges
+		builder.addCase(subscribeForChanges.fulfilled, (state, { payload }) => {
+			const { email, drive: driveType, watchChangesChannel } = payload;
+
+			const driveEntity = state.drives.find(
+				drive => drive.email === email && drive.type === driveType
+			);
+
+			if (!driveEntity) {
+				console.log(`Could not find drive with email: ${email} and type ${driveType}`);
+				return;
+			}
+
+			driveEntity.watchChangesChannel = watchChangesChannel;
+		});
+
+		// getChanges
+		builder.addCase(getChanges.fulfilled, (state, { payload }) => {
+			const {
+				changes: { startPageToken },
+				email,
+				driveType,
+			} = payload;
+
+			// TODO: Probably return the driveId as-well as with the file id?
+			const driveToUpdate = state.drives.find(
+				drive => drive.type === driveType && drive.email === email
+			);
+
+			if (!driveToUpdate) {
+				console.log(`Could not find drive with email: ${email} and type ${driveType}`);
+				return;
+			}
+
+			if (driveToUpdate.watchChangesChannel) {
+				driveToUpdate.watchChangesChannel.startPageToken = startPageToken;
+			}
 		});
 	},
 });
 
-export default drivesSlice.reducer;
 export const { toggleDriveSelection, toggleAllDrivesSelection } = drivesSlice.actions;
+
+export default drivesSlice.reducer;

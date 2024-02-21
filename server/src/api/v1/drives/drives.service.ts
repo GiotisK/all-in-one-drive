@@ -1,6 +1,12 @@
 import DatabaseService from '../../../services/database/mongodb.service';
 import EncryptionService from '../../../services/encryption/encryption.service';
-import { DriveEntity, DriveQuota, DriveType, Nullable } from '../../../types/global.types';
+import {
+	DriveEntity,
+	DriveQuota,
+	DriveType,
+	Nullable,
+	WatchChangesChannel,
+} from '../../../types/global.types';
 import { getDriveContextAndToken } from './drives.helpers';
 
 export class DrivesService {
@@ -102,12 +108,89 @@ export class DrivesService {
 		return null;
 	}
 
-	deleteDrive(
+	public async deleteDrive(
 		userEmail: string,
 		driveEmail: string,
 		drive: DriveType
 	): Promise<Nullable<boolean>> {
 		return DatabaseService.deleteDrive(userEmail, driveEmail, drive);
+	}
+
+	// TODO: These all use the same logic to get the token
+	// Maybe extract it to a common
+	public async subscribeForDriveChanges(
+		userEmail: string,
+		driveEmail: string,
+		drive: DriveType
+	): Promise<WatchChangesChannel | undefined> {
+		const encryptedToken = await DatabaseService.getEncryptedTokenAsString(
+			userEmail,
+			driveEmail,
+			drive
+		);
+		if (!encryptedToken) {
+			return;
+		}
+
+		const ctxAndToken = getDriveContextAndToken(drive, encryptedToken);
+		if (!ctxAndToken) {
+			return;
+		}
+
+		const { ctx, token } = ctxAndToken;
+		const watchChangesChannel = await ctx.subscribeForChanges(token, driveEmail);
+		return watchChangesChannel;
+	}
+
+	public async unsubscribeForDriveChanges(
+		userEmail: string,
+		driveEmail: string,
+		drive: DriveType,
+		id: string,
+		resourceId: string
+	): Promise<void> {
+		const encryptedToken = await DatabaseService.getEncryptedTokenAsString(
+			userEmail,
+			driveEmail,
+			drive
+		);
+		if (!encryptedToken) {
+			return;
+		}
+
+		const ctxAndToken = getDriveContextAndToken(drive, encryptedToken);
+		if (!ctxAndToken) {
+			return;
+		}
+
+		const { ctx, token } = ctxAndToken;
+		const watchChangesChannel = await ctx.unsubscribeForChanges(token, id, resourceId);
+		return watchChangesChannel;
+	}
+
+	public async fetchDriveChanges(
+		drive: DriveType,
+		userEmail: string,
+		driveEmail: string,
+		startPageToken: string
+	): Promise<any> {
+		const encryptedToken = await DatabaseService.getEncryptedTokenAsString(
+			userEmail,
+			driveEmail,
+			drive
+		);
+		if (!encryptedToken) {
+			return;
+		}
+
+		const ctxAndToken = getDriveContextAndToken(drive, encryptedToken);
+		if (!ctxAndToken) {
+			return;
+		}
+
+		const { ctx, token } = ctxAndToken;
+		const changes = await ctx.fetchDriveChanges(token, startPageToken);
+		return changes;
 	}
 }
 

@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export const bytesToGigabytes = (bytesStr: string): string => {
 	const bytes = parseFloat(bytesStr);
 
@@ -16,4 +18,8 @@ export const normalizeBytes = (bytesStr: string) => {
 	const value = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
 
 	return value ? value + ' ' + sizes[i] : '-';
+};
+
+export const generateUUID = (): string => {
+	return uuidv4();
 };
