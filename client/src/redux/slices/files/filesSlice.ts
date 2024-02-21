@@ -15,7 +15,7 @@ import {
 	unshareFile,
 } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
-import { getChanges } from '../../async-actions/drives.async.actions';
+import { deleteDrive, getChanges } from '../../async-actions/drives.async.actions';
 import { FileType } from '../../../shared/types/global.types';
 
 const initialState: FilesState = {
@@ -125,10 +125,10 @@ const filesSlice = createSlice({
 			});
 
 		// deleteDrive
-		// builder.addCase(deleteDrive.fulfilled, (state, { payload }) => {
-		// 	const { type, email } = payload;
-		// 	state.files = state.files.filter(file => file.email !== email && file.drive !== type);
-		// });
+		builder.addCase(deleteDrive.fulfilled, (state, { payload }) => {
+			const { type, email } = payload;
+			state.files = state.files.filter(file => file.email !== email && file.drive !== type);
+		});
 
 		// logout
 		builder.addCase(logoutUser.fulfilled, () => {
