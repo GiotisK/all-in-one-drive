@@ -62,13 +62,13 @@ const Footer = styled.div`
 	display: flex;
 	justify-content: space-between;
 	width: 90%;
-	border-top: 1px solid ${props => props.theme.colors.border};
 `;
 
 const ButtonsContainer = styled.div`
 	display: flex;
 	flex: 1;
 	justify-content: flex-end;
+	min-height: 30px;
 `;
 
 type ButtonProps = {

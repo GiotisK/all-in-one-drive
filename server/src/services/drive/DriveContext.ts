@@ -2,6 +2,7 @@ import {
 	DriveChanges,
 	DriveQuota,
 	FileEntity,
+	FileType,
 	Nullable,
 	WatchChangesChannel,
 } from '../../types/global.types';
@@ -52,6 +53,14 @@ export default class DriveContext {
 
 	public async unshareFile(token: string, fileId: string): Promise<boolean> {
 		return this.strategy.unshareFile(token, fileId);
+	}
+
+	public async createFile(
+		token: string,
+		fileType: FileType,
+		parentFolderId?: string
+	): Promise<Nullable<FileEntity>> {
+		return this.strategy.createFile(token, fileType, parentFolderId);
 	}
 
 	public async subscribeForChanges(

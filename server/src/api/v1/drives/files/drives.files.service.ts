@@ -1,5 +1,5 @@
 import DatabaseService from '../../../../services/database/mongodb.service';
-import { DriveType, FileEntity, Nullable } from '../../../../types/global.types';
+import { DriveType, FileEntity, FileType, Nullable } from '../../../../types/global.types';
 import { getDriveContextAndToken } from '../drives.helpers';
 
 export class FilesService {
@@ -26,11 +26,13 @@ export class FilesService {
 						fileEntities.push(list);
 					}
 				});
+
 				return fileEntities.flat() ?? null;
 			} catch {
 				return null;
 			}
 		}
+
 		return null;
 	}
 
@@ -45,6 +47,7 @@ export class FilesService {
 			driveEmail,
 			drive
 		);
+
 		if (encryptedTokenStr) {
 			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
 			if (ctxAndToken) {
@@ -52,6 +55,7 @@ export class FilesService {
 				return ctx.getDriveFiles(token, folderId);
 			}
 		}
+
 		return null;
 	}
 
@@ -66,6 +70,7 @@ export class FilesService {
 			driveEmail,
 			drive
 		);
+
 		if (encryptedTokenStr) {
 			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
 			if (ctxAndToken) {
@@ -73,6 +78,7 @@ export class FilesService {
 				return ctx.deleteFile(token, fileId);
 			}
 		}
+
 		return false;
 	}
 
@@ -88,6 +94,7 @@ export class FilesService {
 			driveEmail,
 			drive
 		);
+
 		if (encryptedTokenStr) {
 			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
 			if (ctxAndToken) {
@@ -95,6 +102,7 @@ export class FilesService {
 				return ctx.renameFile(token, fileId, name);
 			}
 		}
+
 		return false;
 	}
 
@@ -109,6 +117,7 @@ export class FilesService {
 			driveEmail,
 			drive
 		);
+
 		if (encryptedTokenStr) {
 			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
 			if (ctxAndToken) {
@@ -116,6 +125,7 @@ export class FilesService {
 				return ctx.shareFile(token, fileId);
 			}
 		}
+
 		return null;
 	}
 
@@ -130,6 +140,7 @@ export class FilesService {
 			driveEmail,
 			drive
 		);
+
 		if (encryptedTokenStr) {
 			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
 			if (ctxAndToken) {
@@ -137,7 +148,32 @@ export class FilesService {
 				return ctx.unshareFile(token, fileId);
 			}
 		}
+
 		return false;
+	}
+
+	async createFile(
+		drive: DriveType,
+		userEmail: string,
+		driveEmail: string,
+		fileType: FileType,
+		parentFolderId?: string
+	): Promise<Nullable<FileEntity>> {
+		const encryptedTokenStr = await DatabaseService.getEncryptedTokenAsString(
+			userEmail,
+			driveEmail,
+			drive
+		);
+
+		if (encryptedTokenStr) {
+			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.createFile(token, fileType, parentFolderId);
+			}
+		}
+
+		return null;
 	}
 }
 

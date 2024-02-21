@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { DriveType } from '../../shared/types/global.types';
+import { DriveType, FileType } from '../../shared/types/global.types';
 import FilesService from '../../services/drives/files/drives.files.service';
 
 export const getRootFiles = createAsyncThunk('files/getRootFiles', async () => {
@@ -49,5 +49,14 @@ export const unshareFile = createAsyncThunk(
 	async ({ drive, email, id }: UnshareFileParams) => {
 		await FilesService.unshareDriveFile(drive, email, id);
 		return id;
+	}
+);
+
+type CreateFolderParams = { drive: DriveType; email: string; parentFolderId?: string };
+export const createFolder = createAsyncThunk(
+	'files/createFolder',
+	async ({ drive, email, parentFolderId }: CreateFolderParams) => {
+		const folder = await FilesService.createFile(drive, email, FileType.Folder, parentFolderId);
+		return folder;
 	}
 );

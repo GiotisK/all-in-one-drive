@@ -18,12 +18,13 @@ const LoaderContainer = styled.div<LoaderContainerProps>`
 
 interface LoaderElementProps {
 	size: number;
+	$backgroundColor?: string;
+	$borderColor?: string;
 }
 const LoaderElement = styled.div<LoaderElementProps>`
-	border: 5px solid ${({ theme }) => theme.colors.border};
-	border-top: 5px solid ${({ theme }) => theme.colors.bluePrimary};
+	border: 5px solid ${({ theme, $backgroundColor }) => $backgroundColor ?? theme.colors.border};
+	border-top: 5px solid ${({ theme, $borderColor }) => $borderColor ?? theme.colors.bluePrimary};
 	border-radius: 50%;
-	margin-bottom: 10px;
 	animation: ${spinAnimation} 1s linear infinite;
 	${({ size }) => `height: ${size}px; width: ${size}px;`}
 `;
@@ -37,12 +38,23 @@ const LoadingText = styled.p`
 interface LoaderProps {
 	size: number;
 	showLoadingText?: boolean;
+	backgroundColor?: string;
+	borderColor?: string;
 }
 
-export const Loader = ({ showLoadingText = false, size }: LoaderProps): JSX.Element => {
+export const Loader = ({
+	size,
+	showLoadingText = false,
+	backgroundColor,
+	borderColor,
+}: LoaderProps): JSX.Element => {
 	return (
 		<LoaderContainer $showLoadingText={showLoadingText}>
-			<LoaderElement size={size} />
+			<LoaderElement
+				size={size}
+				$backgroundColor={backgroundColor}
+				$borderColor={borderColor}
+			/>
 			{showLoadingText && <LoadingText>Loading...</LoadingText>}
 		</LoaderContainer>
 	);

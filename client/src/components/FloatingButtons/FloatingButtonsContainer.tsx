@@ -9,7 +9,13 @@ import {
 	slideUp40pxAnimation,
 	slideUp70pxAnimation,
 } from './animation-keyframes';
-import { Nullable } from '../../shared/types/global.types';
+import { FileType, Nullable } from '../../shared/types/global.types';
+import { useAppDispatch } from '../../redux/store/store';
+import { openModal } from '../../redux/slices/modal/modalSlice';
+import { ModalKind } from '../../redux/slices/modal/types';
+import { useParams } from 'react-router-dom';
+import { createFolder } from '../../redux/async-actions/files.async.actions';
+import { getDriveTypeFromString } from '../../shared/utils/utils';
 
 const Container = styled.div`
 	position: absolute;
@@ -22,7 +28,10 @@ const FileOpenerInput = styled.input`
 `;
 
 export const FloatingButtonsContainer = (): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const { folderId, email, drive: driveStr } = useParams();
 	const [menuOpen, setMenuOpen] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [plusButtonAnimation, setPlusButtonAnimation] = useState<Keyframes>();
 	const theme = useTheme();
 
@@ -40,6 +49,27 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 	const uploadFile = (): void => {
 		//TODO: upload file here
 		console.log('upload file');
+	};
+
+	const onAddFolderClick = async () => {
+		const drive = getDriveTypeFromString(driveStr ?? '');
+		if (folderId && drive && email) {
+			try {
+				setIsLoading(true);
+				await dispatch(createFolder({ drive, email, parentFolderId: folderId }));
+				setIsLoading(false);
+			} catch {
+				setIsLoading(false);
+				//TODO: show toast
+			}
+		} else {
+			dispatch(
+				openModal({
+					kind: ModalKind.Upload,
+					state: { fileType: FileType.Folder },
+				})
+			);
+		}
 	};
 
 	return (
@@ -63,6 +93,8 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 						icon={SvgNames.AddFolder}
 						color={theme?.colors.red ?? ''}
 						animation={slideUp40pxAnimation}
+						onClick={onAddFolderClick}
+						isLoading={isLoading}
 					/>
 				</>
 			)}

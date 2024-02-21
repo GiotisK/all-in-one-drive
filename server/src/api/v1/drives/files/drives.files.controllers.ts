@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { AuthLocals } from '../../../../types/types';
 import FilesService from './drives.files.service';
 import {
+	CreateFileRequestBody,
 	DriveType,
 	FileEntity,
 	PatchFileRequestBody,
@@ -10,7 +11,10 @@ import {
 } from '../../../../types/global.types';
 
 class FilesController {
-	async getRootFiles(req: Request, res: Response<FileEntity[], AuthLocals>): Promise<void> {
+	public async getRootFiles(
+		_req: Request,
+		res: Response<FileEntity[], AuthLocals>
+	): Promise<void> {
 		const { email } = res.locals;
 		const files = await FilesService.getRootFiles(email);
 
@@ -21,7 +25,7 @@ class FilesController {
 		}
 	}
 
-	async getFolderFiles(
+	public async getFolderFiles(
 		req: Request<{ drive: DriveType; email: string; folderId: string }>,
 		res: Response<FileEntity[], AuthLocals>
 	): Promise<void> {
@@ -36,7 +40,7 @@ class FilesController {
 		}
 	}
 
-	async deleteFile(
+	public async deleteFile(
 		req: Request<{ drive: DriveType; email: string; fileId: string }>,
 		res: Response<void, AuthLocals>
 	): Promise<void> {
@@ -48,7 +52,7 @@ class FilesController {
 		res.status(statusId).send();
 	}
 
-	async editFile(
+	public async editFile(
 		req: Request<
 			{ drive: DriveType; email: string; fileId: string },
 			void,
@@ -109,6 +113,29 @@ class FilesController {
 
 		if (renameSuccess || shareSuccess || unshareSuccess) {
 			res.status(Status.OK).send(responseBody);
+		} else {
+			res.status(Status.INTERNAL_SERVER_ERROR).send();
+		}
+	}
+
+	public async createFile(
+		req: Request<{ drive: DriveType; email: string }, void, CreateFileRequestBody>,
+		res: Response<FileEntity, AuthLocals>
+	): Promise<void> {
+		const { email: userEmail } = res.locals;
+		const { drive, email: driveEmail } = req.params;
+		const { type, parentFolderId } = req.body;
+
+		const file = await FilesService.createFile(
+			drive,
+			userEmail,
+			driveEmail,
+			type,
+			parentFolderId
+		);
+
+		if (file) {
+			res.status(Status.OK).send(file);
 		} else {
 			res.status(Status.INTERNAL_SERVER_ERROR).send();
 		}

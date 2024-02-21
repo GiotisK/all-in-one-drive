@@ -10,5 +10,6 @@ export interface FilesState {
 		renameFile: RequestState;
 		shareFile: RequestState;
 		unshareFile: RequestState;
+		createFolder: RequestState;
 	};
 }

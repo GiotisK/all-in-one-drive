@@ -7,7 +7,6 @@ import { DeleteModalState } from '../../redux/slices/modal/types';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/store/store';
 import { deleteDrive } from '../../redux/async-actions/drives.async.actions';
-import { useEffect } from 'react';
 import { deleteFile } from '../../redux/async-actions/files.async.actions';
 
 interface DeleteFileProps {
@@ -75,12 +74,11 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 			if (isDriveEntity(entity)) {
 				const { email, type, id } = entity;
 				await dispatch(deleteDrive({ email, type, id }));
-				dispatch(closeModals());
 			} else if (isFileEntity(entity)) {
 				const { email, drive, id } = entity;
 				await dispatch(deleteFile({ email, drive, id }));
-				dispatch(closeModals());
 			}
+			dispatch(closeModals());
 		} catch {
 			//TODO: show toast
 		}

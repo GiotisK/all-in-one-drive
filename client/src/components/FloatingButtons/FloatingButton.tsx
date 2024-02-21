@@ -2,6 +2,7 @@ import { PropsWithChildren } from 'react';
 import { SvgNames, createSvg } from '../../shared/utils/svg-utils';
 import { styled, css } from 'styled-components';
 import { Keyframes } from 'styled-components/dist/types';
+import { Loader } from '../Loader';
 
 const Container = styled.div<{
 	$backgroundColor: string;
@@ -34,6 +35,7 @@ interface IProps {
 	icon: SvgNames;
 	animation?: Keyframes;
 	onClick?: () => void;
+	isLoading?: boolean;
 }
 
 const FloatingAddButton = ({
@@ -42,11 +44,16 @@ const FloatingAddButton = ({
 	onClick = undefined,
 	animation = undefined,
 	children,
+	isLoading = false,
 }: PropsWithChildren<IProps>): JSX.Element => {
 	return (
 		<Container $backgroundColor={color} $animation={animation} onClick={onClick}>
 			{children}
-			{createSvg(icon, 35, 'white')}
+			{isLoading ? (
+				<Loader size={20} backgroundColor='transparent' borderColor='white' />
+			) : (
+				createSvg(icon, 35, 'white')
+			)}
 		</Container>
 	);
 };

@@ -1,5 +1,5 @@
-import { FileEntity, Nullable } from '../../../shared/types/global.types';
-import { Entity, FileType, MultiMediaType } from '../../../shared/types/types';
+import { FileEntity, FileType, Nullable } from '../../../shared/types/global.types';
+import { Entity, MultiMediaType } from '../../../shared/types/types';
 
 export type DeleteModalState = {
 	entity: Nullable<Entity>;
