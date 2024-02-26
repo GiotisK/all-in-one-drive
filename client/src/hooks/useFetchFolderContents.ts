@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { getRootFiles, getFolderDriveFiles } from '../redux/async-actions/files.async.actions';
 import { useAppDispatch } from '../redux/store/store';
 import { DriveType, Nullable } from '../shared/types/global.types';
+import { getDriveTypeFromString } from '../shared/utils/utils';
 
 export const useFetchFolderContents = () => {
 	const dispatch = useAppDispatch();
@@ -22,18 +23,4 @@ export const useFetchFolderContents = () => {
 			dispatch(getRootFiles());
 		}
 	}, [dispatch, pathParams]);
-};
-
-// Helpers
-const getDriveTypeFromString = (driveTypeAsString: string): Nullable<DriveType> => {
-	switch (driveTypeAsString) {
-		case DriveType.Dropbox:
-			return DriveType.Dropbox;
-		case DriveType.GoogleDrive:
-			return DriveType.GoogleDrive;
-		case DriveType.OneDrive:
-			return DriveType.OneDrive;
-		default:
-			return null;
-	}
 };

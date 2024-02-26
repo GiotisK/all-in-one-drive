@@ -7,7 +7,6 @@ import { DeleteModalState } from '../../redux/slices/modal/types';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/store/store';
 import { deleteDrive } from '../../redux/async-actions/drives.async.actions';
-import { useEffect } from 'react';
 import { deleteFile } from '../../redux/async-actions/files.async.actions';
 
 interface DeleteFileProps {
@@ -71,30 +70,19 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 
 	const sendDeleteEntityRequest = async () => {
 		if (!entity) return;
-
-		if (isDriveEntity(entity)) {
-			const { email, type, id } = entity;
-			dispatch(deleteDrive({ email, type, id }));
-		} else if (isFileEntity(entity)) {
-			const { email, drive, id } = entity;
-			dispatch(deleteFile({ email, drive, id }));
+		try {
+			if (isDriveEntity(entity)) {
+				const { email, type, id } = entity;
+				await dispatch(deleteDrive({ email, type, id }));
+			} else if (isFileEntity(entity)) {
+				const { email, drive, id } = entity;
+				await dispatch(deleteFile({ email, drive, id }));
+			}
+			dispatch(closeModals());
+		} catch {
+			//TODO: show toast
 		}
 	};
-
-	useEffect(() => {
-		const isDeleteDriveSuccessful = deleteDriveReq.done;
-		const isDeleteFileSuccessful = deleteFileReq.done;
-
-		if (isDeleteDriveSuccessful || isDeleteFileSuccessful) {
-			dispatch(closeModals());
-		}
-	}, [
-		deleteDriveReq.done,
-		deleteDriveReq.error,
-		deleteFileReq.done,
-		deleteFileReq.error,
-		dispatch,
-	]);
 
 	return (
 		<BaseModal

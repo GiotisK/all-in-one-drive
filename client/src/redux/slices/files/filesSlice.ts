@@ -13,6 +13,7 @@ import {
 	renameFile,
 	shareFile,
 	unshareFile,
+	createFolder,
 } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
 import { deleteDrive, getChanges } from '../../async-actions/drives.async.actions';
@@ -27,6 +28,7 @@ const initialState: FilesState = {
 		renameFile: requestInitialState,
 		shareFile: requestInitialState,
 		unshareFile: requestInitialState,
+		createFolder: requestInitialState,
 	},
 };
 
@@ -79,6 +81,7 @@ const filesSlice = createSlice({
 			.addCase(renameFile.pending, state => {
 				state.requests.renameFile = requestPendingState;
 			})
+			//TODO: utilize immer instead of temp shit
 			.addCase(renameFile.fulfilled, (state, { payload }) => {
 				const { name, id } = payload;
 				const fileForUpdateIndex = state.files.findIndex(file => file.id === id);
@@ -113,6 +116,7 @@ const filesSlice = createSlice({
 			.addCase(unshareFile.pending, state => {
 				state.requests.unshareFile = requestPendingState;
 			})
+			//TODO: utilize immer instead of temp shit
 			.addCase(unshareFile.fulfilled, (state, { payload: id }) => {
 				const fileForUpdateIndex = state.files.findIndex(file => file.id === id);
 				const tempFiles = [...state.files];
@@ -124,9 +128,23 @@ const filesSlice = createSlice({
 				state.requests.unshareFile = requestErrorState;
 			});
 
+		// createFolder
+		builder
+			.addCase(createFolder.pending, state => {
+				state.requests.createFolder = requestPendingState;
+			})
+			//TODO: utilize immer instead of temp shit
+			.addCase(createFolder.fulfilled, (state, { payload: folder }) => {
+				state.files.unshift(folder);
+				state.requests.createFolder = requestSuccessState;
+			})
+			.addCase(createFolder.rejected, state => {
+				state.requests.createFolder = requestErrorState;
+			});
+
 		// deleteDrive
 		builder.addCase(deleteDrive.fulfilled, (state, { payload }) => {
-			const { type, email } = payload;
+			const { type, email } = payload; //TODO: Fix issue
 			state.files = state.files.filter(file => file.email !== email && file.drive !== type);
 		});
 

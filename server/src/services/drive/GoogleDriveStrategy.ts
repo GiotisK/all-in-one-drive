@@ -105,6 +105,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			});
 			const files = res.data.files;
 			const driveEmail = await this.getUserDriveEmail(token);
+
 			return files ? this.mapToUniversalFileEntityFormat(files, driveEmail) : null;
 		} catch {
 			return null;
@@ -135,6 +136,34 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			return true;
 		} catch {
 			return false;
+		}
+	}
+
+	public async createFile(
+		token: string,
+		fileType: FileType,
+		parentFolderId?: string
+	): Promise<Nullable<FileEntity>> {
+		try {
+			this.setToken(token);
+			const mimeType =
+				fileType === FileType.Folder
+					? 'application/vnd.google-apps.folder'
+					: 'application/octet-stream';
+
+			const res = await this.drive.files.create({
+				requestBody: {
+					name: 'New Folder',
+					mimeType,
+					parents: parentFolderId ? [parentFolderId] : [],
+				},
+				fields: 'id, name, mimeType, createdTime',
+			});
+			const driveEmail = await this.getUserDriveEmail(token);
+
+			return this.mapToUniversalFileEntityFormat(res.data, driveEmail);
+		} catch {
+			return null;
 		}
 	}
 
@@ -321,10 +350,18 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		return folderId ? folderFilesQuery : rootFilesQuery;
 	}
 
+	//TODO: make it better check samo comment
 	private mapToUniversalFileEntityFormat(
 		files: GoogleDriveFile[],
 		driveEmail: string
-	): FileEntity[] {
+	): FileEntity[];
+	private mapToUniversalFileEntityFormat(file: GoogleDriveFile, driveEmail: string): FileEntity;
+	private mapToUniversalFileEntityFormat(
+		fileOrFiles: GoogleDriveFile[] | GoogleDriveFile,
+		driveEmail: string
+	): FileEntity[] | FileEntity {
+		const isArrayOfFiles = Array.isArray(fileOrFiles);
+		const files = isArrayOfFiles ? fileOrFiles : [fileOrFiles];
 		const driveEntities: FileEntity[] = files.map(file => {
 			const fileType = this.determineEntityType(file.mimeType ?? '');
 			const size = fileType === FileType.File ? normalizeBytes(file.size ?? '') : '';
@@ -345,7 +382,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			};
 		});
 
-		return driveEntities;
+		return isArrayOfFiles ? driveEntities : driveEntities[0];
 	}
 
 	private determineEntityType(mimeType?: string): FileType {

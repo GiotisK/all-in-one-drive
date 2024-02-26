@@ -3,12 +3,14 @@ import { CreateDriveSvg } from '../../shared/utils/utils';
 import { BaseModal } from './BaseModal';
 import { DriveEntity, FileType } from '../../shared/types/global.types';
 import { UploadModalState } from '../../redux/slices/modal/types';
+import { useAppDispatch, useAppSelector } from '../../redux/store/store';
+import { createFolder } from '../../redux/async-actions/files.async.actions';
+import { closeModals } from '../../redux/slices/modal/modalSlice';
 
 const Content = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	height: 200px;
 	width: 500px;
 `;
 
@@ -24,7 +26,8 @@ const DriveRowScrollView = styled.div`
 	display: flex;
 	flex: 1;
 	width: 90%;
-	height: 300px;
+	min-height: 30px;
+	max-height: 200px;
 	flex-direction: column;
 	overflow-y: auto;
 	margin-bottom: 20px;
@@ -34,7 +37,7 @@ const DriveRow = styled.div`
 	display: flex;
 	align-self: center;
 	margin-top: 10px;
-	height: 80px;
+	height: 30px;
 	width: 100%;
 	flex-direction: row;
 	align-items: center;
@@ -64,28 +67,38 @@ interface IProps {
 }
 
 export const UploadModal = ({ state }: IProps): JSX.Element => {
+	const dispatch = useAppDispatch();
+	const drives = useAppSelector(state => state.drives.drives);
+	const createFolderReq = useAppSelector(state => state.files.requests.createFolder);
 	const { fileType } = state;
 
-	const drives: DriveEntity[] = [
-		/* { email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
-		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
-		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
-		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive },
-		{ email: 'malaris@polaris.kek', type: DriveType.GoogleDrive }, */
-	];
+	const getTitle = (): string => {
+		switch (fileType) {
+			case FileType.File:
+				return 'Select a drive to upload the file';
+			case FileType.Folder:
+				return 'Select a drive to create the folder';
+			default:
+				console.log('Wrong fileType supplied with value: ', fileType);
+				return '';
+		}
+	};
 
-	let title = '';
-	switch (fileType) {
-		case FileType.File:
-			title = 'Selected a drive to upload the file';
-			break;
-		case FileType.Folder:
-			title = 'Selected a drive to create the folder';
-			break;
-	}
+	const onDriveClick = async (drive: DriveEntity) => {
+		const { type, email } = drive;
+		try {
+			await dispatch(createFolder({ drive: type, email }));
+			dispatch(closeModals());
+		} catch {
+			//TODO: show modal
+		}
+	};
 
 	return (
-		<BaseModal headerProps={{ title }}>
+		<BaseModal
+			footerProps={{ showLoader: createFolderReq.loading }}
+			headerProps={{ title: getTitle() }}
+		>
 			<Content>
 				{drives.length === 0 ? (
 					<NoDrivesText>No drives found...</NoDrivesText>
@@ -94,16 +107,12 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 						{drives.map((drive, index) => (
 							<DriveRow
 								key={index}
-								className='drive-row'
 								onClick={() => {
-									console.log('drivw row clicked');
-									/* props.onSpecificRowClick(drive); */
+									onDriveClick(drive);
 								}}
 							>
 								{CreateDriveSvg(drive.type, 25)}
-								<DriveRowText className='drive-row-email-text'>
-									{drive.email}
-								</DriveRowText>
+								<DriveRowText>{drive.email}</DriveRowText>
 							</DriveRow>
 						))}
 					</DriveRowScrollView>

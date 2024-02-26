@@ -4,6 +4,7 @@ import {
 	Nullable,
 	WatchChangesChannel,
 	DriveChanges,
+	FileType,
 } from '../../types/global.types';
 
 export interface IDriveStrategy {
@@ -16,6 +17,11 @@ export interface IDriveStrategy {
 	renameFile(token: string, fileId: string, name: string): Promise<boolean>;
 	shareFile(token: string, fileId: string): Promise<Nullable<string>>;
 	unshareFile(token: string, fileId: string): Promise<boolean>;
+	createFile(
+		token: string,
+		fileType: FileType,
+		parentFolderId?: string
+	): Promise<Nullable<FileEntity>>;
 	subscribeForChanges(
 		token: string,
 		driveEmail: string

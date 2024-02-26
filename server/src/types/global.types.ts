@@ -49,6 +49,11 @@ export interface PatchFileResponse {
 	};
 }
 
+export interface CreateFileRequestBody {
+	type: FileType;
+	parentFolderId?: string;
+}
+
 export enum Status {
 	OK = 200,
 	BAD_REQUEST = 400,
