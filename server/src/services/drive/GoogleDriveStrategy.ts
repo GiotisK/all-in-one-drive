@@ -350,6 +350,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		return folderId ? folderFilesQuery : rootFilesQuery;
 	}
 
+	//TODO: make it better check samo comment
 	private mapToUniversalFileEntityFormat(
 		files: GoogleDriveFile[],
 		driveEmail: string
