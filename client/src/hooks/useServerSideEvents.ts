@@ -35,7 +35,7 @@ export const useServerSideEvents = () => {
 
 				dispatch(
 					getChanges({
-						email: drive.email,
+						driveId: drive.id,
 						startPageToken: drive.watchChangesChannel?.startPageToken ?? '-',
 					})
 				);

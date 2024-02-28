@@ -14,8 +14,8 @@ export const useSubscribeForDriveChanges = () => {
 		}
 
 		if (isAuthenticated && drives.length > 0) {
-			drives.forEach(({ email, type }) => {
-				dispatch(subscribeForChanges({ email, drive: type }));
+			drives.forEach(({ id: driveId }) => {
+				dispatch(subscribeForChanges({ driveId }));
 			});
 
 			subscriptionDone.current = true;

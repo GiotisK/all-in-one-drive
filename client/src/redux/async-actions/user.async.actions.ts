@@ -17,17 +17,16 @@ export const logoutUser = createAsyncThunk<void, undefined, { state: RootState }
 		const { drives } = getState().drives;
 
 		await Promise.all(
-			drives.map(async ({ email, type, watchChangesChannel }) => {
+			drives.map(async ({ id: driveId, watchChangesChannel }) => {
 				if (!watchChangesChannel) {
 					return;
 				}
-
+				//TODO: improve "id" var name to something more descriptive
 				const { id, resourceId } = watchChangesChannel;
-				await dispatch(unsubscribeForChanges({ email, drive: type, id, resourceId }));
+				await dispatch(unsubscribeForChanges({ driveId, id, resourceId }));
 			})
 		);
 
-		console.log('Sending logout request');
 		await UserService.logoutUser();
 	}
 );

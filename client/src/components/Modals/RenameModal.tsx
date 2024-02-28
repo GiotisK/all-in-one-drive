@@ -4,7 +4,7 @@ import { BaseModal } from './BaseModal';
 import { RenameModalState } from '../../redux/slices/modal/types';
 import { useAppDispatch, useAppSelector } from '../../redux/store/store';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, ChangeEvent } from 'react';
 import { renameFile } from '../../redux/async-actions/files.async.actions';
 
 const Content = styled.div`
@@ -30,9 +30,9 @@ export const RenameModal = ({ state }: IProps): JSX.Element => {
 
 	const sendRenameFileRequest = async () => {
 		if (!entity) return;
-		const { drive, email, id } = entity;
+		const { driveId, id } = entity;
 		try {
-			await dispatch(renameFile({ drive, email, id, newName: inputValue }));
+			await dispatch(renameFile({ driveId, fileId: id, newName: inputValue }));
 			dispatch(closeModals());
 		} catch {
 			//TODO: show toast

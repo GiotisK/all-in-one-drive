@@ -8,13 +8,13 @@ export const useFilterFilesByDrive = () => {
 	const [filteredFiles, setFilteredFiles] = useState<FileEntity[]>([]);
 
 	useEffect(() => {
-		const filteredFiles2 = files.filter(file =>
+		const nextFilteredFiles = files.filter(file =>
 			drives.some(
 				drive => drive.email === file.email && drive.type === file.drive && drive.active
 			)
 		);
 
-		setFilteredFiles(filteredFiles2);
+		setFilteredFiles(nextFilteredFiles);
 	}, [drives, files]);
 
 	return filteredFiles;

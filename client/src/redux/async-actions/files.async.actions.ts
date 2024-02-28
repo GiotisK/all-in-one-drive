@@ -1,5 +1,5 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { DriveType, FileType } from '../../shared/types/global.types';
+import { FileType } from '../../shared/types/global.types';
 import FilesService from '../../services/drives/files/drives.files.service';
 
 export const getRootFiles = createAsyncThunk('files/getRootFiles', async () => {
@@ -7,56 +7,56 @@ export const getRootFiles = createAsyncThunk('files/getRootFiles', async () => {
 	return files;
 });
 
-type GetFolderFilesParams = { drive: DriveType; email: string; id: string };
+type GetFolderFilesParams = { driveId: string; folderId: string };
 export const getFolderDriveFiles = createAsyncThunk(
 	'files/getFolderDriveFiles',
-	async ({ drive, email, id }: GetFolderFilesParams) => {
-		const files = await FilesService.getFolderFiles(drive, email, id);
+	async ({ driveId, folderId }: GetFolderFilesParams) => {
+		const files = await FilesService.getFolderFiles(driveId, folderId);
 		return files;
 	}
 );
 
-type DeleteFileParams = { drive: DriveType; email: string; id: string };
+type DeleteFileParams = { driveId: string; fileId: string };
 export const deleteFile = createAsyncThunk(
 	'files/deleteFile',
-	async ({ drive, email, id }: DeleteFileParams) => {
-		await FilesService.deleteDriveFile(drive, email, id);
-		return id;
+	async ({ driveId, fileId }: DeleteFileParams) => {
+		await FilesService.deleteDriveFile(driveId, fileId);
+		return fileId;
 	}
 );
 
-type RenameFileParams = { drive: DriveType; email: string; id: string; newName: string };
+type RenameFileParams = { driveId: string; fileId: string; newName: string };
 export const renameFile = createAsyncThunk(
 	'files/renameFile',
-	async ({ drive, email, id, newName }: RenameFileParams) => {
-		const name = await FilesService.renameDriveFile(drive, email, id, newName);
-		return { name, id };
+	async ({ driveId, fileId, newName }: RenameFileParams) => {
+		const name = await FilesService.renameDriveFile(driveId, fileId, newName);
+		return { name, fileId };
 	}
 );
 
-type ShareFileParams = { drive: DriveType; email: string; id: string };
+type ShareFileParams = { driveId: string; fileId: string };
 export const shareFile = createAsyncThunk(
 	'files/shareFile',
-	async ({ drive, email, id }: ShareFileParams) => {
-		const sharedLink = await FilesService.shareDriveFile(drive, email, id);
-		return { sharedLink, id };
+	async ({ driveId, fileId }: ShareFileParams) => {
+		const sharedLink = await FilesService.shareDriveFile(driveId, fileId);
+		return { sharedLink, fileId };
 	}
 );
 
-type UnshareFileParams = { drive: DriveType; email: string; id: string };
+type UnshareFileParams = { driveId: string; fileId: string };
 export const unshareFile = createAsyncThunk(
 	'files/unshareFile',
-	async ({ drive, email, id }: UnshareFileParams) => {
-		await FilesService.unshareDriveFile(drive, email, id);
-		return id;
+	async ({ driveId, fileId }: UnshareFileParams) => {
+		await FilesService.unshareDriveFile(driveId, fileId);
+		return fileId;
 	}
 );
 
-type CreateFolderParams = { drive: DriveType; email: string; parentFolderId?: string };
+type CreateFolderParams = { driveId: string; parentFolderId?: string };
 export const createFolder = createAsyncThunk(
 	'files/createFolder',
-	async ({ drive, email, parentFolderId }: CreateFolderParams) => {
-		const folder = await FilesService.createFile(drive, email, FileType.Folder, parentFolderId);
+	async ({ driveId, parentFolderId }: CreateFolderParams) => {
+		const folder = await FilesService.createFile(driveId, FileType.Folder, parentFolderId);
 		return folder;
 	}
 );

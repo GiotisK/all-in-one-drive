@@ -19,13 +19,13 @@ export interface AuthUserResponse {
 }
 
 export interface SubscribeForChangesRequestBody {
-	drive: string;
-	email: string;
+	driveId: string;
 }
 
 export interface UnsubscribeForChangesRequestBody {
-	drive: string;
-	email: string;
+	driveId: string;
+	id: string;
+	resourceId: string;
 }
 
 export interface PatchFileRequestBody {
@@ -87,10 +87,11 @@ export type FileEntity = {
 	type: FileType;
 	email: string;
 	drive: DriveType;
+	driveId: string;
 	size: string;
 	date: string;
 	extension: string;
-	sharedLink?: Nullable<string>;
+	sharedLink?: Nullable<string>; //TODO: check if nullable is needed. probably not
 };
 
 export type ChangedFileEntity = {

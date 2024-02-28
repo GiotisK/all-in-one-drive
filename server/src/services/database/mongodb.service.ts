@@ -45,19 +45,13 @@ export class DatabaseService {
 		}
 	}
 
-	async getEncryptedTokenAsString(
-		userEmail: string,
-		driveEmail: string,
-		drive: DriveType
-	): Promise<Nullable<string>> {
+	async getEncryptedTokenAsString(userEmail: string, driveId: string): Promise<Nullable<string>> {
 		try {
 			const user = await User.findOne({ email: userEmail }).exec();
-			const driveProperties: DriveSchema[] | undefined = user?.drives;
+			const drives: DriveSchema[] | undefined = user?.drives;
 
-			if (user && driveProperties) {
-				const tokenData = driveProperties.find(
-					properties => properties.email === driveEmail && properties.driveType === drive
-				);
+			if (user && drives) {
+				const tokenData = drives.find(drive => drive.id === driveId);
 				return tokenData?.token ?? null;
 			}
 			return null;
@@ -75,19 +69,13 @@ export class DatabaseService {
 		}
 	}
 
-	async getDrive(
-		userEmail: string,
-		driveEmail: string,
-		driveType: DriveType
-	): Promise<Nullable<DriveSchema>> {
+	async getDrive(userEmail: string, driveId: string): Promise<Nullable<DriveSchema>> {
 		try {
 			const user = await User.findOne({
 				email: userEmail,
 			}).exec();
 
-			const foundDrive = user?.drives.find(
-				drive => drive.email === driveEmail && drive.driveType === driveType
-			);
+			const foundDrive = user?.drives.find(drive => drive.id === driveId);
 
 			return foundDrive ?? null;
 		} catch (e) {
@@ -95,11 +83,11 @@ export class DatabaseService {
 		}
 	}
 
-	async deleteDrive(userEmail: string, driveEmail: string, drive: DriveType) {
+	async deleteDrive(userEmail: string, driveId: string) {
 		try {
 			const result = await User.updateOne(
 				{ email: userEmail },
-				{ $pull: { drives: { email: driveEmail, driveType: drive } } }
+				{ $pull: { drives: { id: driveId } } }
 			).exec();
 
 			return result.modifiedCount > 0;

@@ -45,18 +45,11 @@ export class DrivesService {
 		return false;
 	}
 
-	async getDriveQuota(
-		userEmail: string,
-		driveEmail: string,
-		drive: DriveType
-	): Promise<Nullable<DriveQuota>> {
-		const encryptedTokenStr = await DatabaseService.getEncryptedTokenAsString(
-			userEmail,
-			driveEmail,
-			drive
-		);
-		if (encryptedTokenStr) {
-			const ctxAndToken = getDriveContextAndToken(drive, encryptedTokenStr);
+	async getDriveQuota(userEmail: string, driveId: string): Promise<Nullable<DriveQuota>> {
+		const drive = await DatabaseService.getDrive(userEmail, driveId);
+		if (drive) {
+			const { driveType, token: encryptedTokenAsString } = drive;
+			const ctxAndToken = getDriveContextAndToken(driveType, encryptedTokenAsString);
 			if (ctxAndToken) {
 				const { ctx, token } = ctxAndToken;
 				const quota = await ctx.getDriveQuota(token);
@@ -108,31 +101,23 @@ export class DrivesService {
 		return null;
 	}
 
-	public async deleteDrive(
-		userEmail: string,
-		driveEmail: string,
-		drive: DriveType
-	): Promise<Nullable<boolean>> {
-		return DatabaseService.deleteDrive(userEmail, driveEmail, drive);
+	public async deleteDrive(userEmail: string, driveId: string): Promise<Nullable<boolean>> {
+		return DatabaseService.deleteDrive(userEmail, driveId);
 	}
 
 	// TODO: These all use the same logic to get the token
 	// Maybe extract it to a common
 	public async subscribeForDriveChanges(
 		userEmail: string,
-		driveEmail: string,
-		drive: DriveType
+		driveId: string
 	): Promise<WatchChangesChannel | undefined> {
-		const encryptedToken = await DatabaseService.getEncryptedTokenAsString(
-			userEmail,
-			driveEmail,
-			drive
-		);
-		if (!encryptedToken) {
+		const drive = await DatabaseService.getDrive(userEmail, driveId);
+		if (!drive) {
 			return;
 		}
 
-		const ctxAndToken = getDriveContextAndToken(drive, encryptedToken);
+		const { driveType, token: encryptedToken, email: driveEmail } = drive;
+		const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
 		if (!ctxAndToken) {
 			return;
 		}
@@ -144,21 +129,17 @@ export class DrivesService {
 
 	public async unsubscribeForDriveChanges(
 		userEmail: string,
-		driveEmail: string,
-		drive: DriveType,
+		driveId: string,
 		id: string,
 		resourceId: string
 	): Promise<void> {
-		const encryptedToken = await DatabaseService.getEncryptedTokenAsString(
-			userEmail,
-			driveEmail,
-			drive
-		);
-		if (!encryptedToken) {
+		const drive = await DatabaseService.getDrive(userEmail, driveId);
+		if (!drive) {
 			return;
 		}
 
-		const ctxAndToken = getDriveContextAndToken(drive, encryptedToken);
+		const { driveType, token: encryptedToken } = drive;
+		const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
 		if (!ctxAndToken) {
 			return;
 		}
@@ -169,21 +150,17 @@ export class DrivesService {
 	}
 
 	public async fetchDriveChanges(
-		drive: DriveType,
+		driveId: string,
 		userEmail: string,
-		driveEmail: string,
 		startPageToken: string
 	): Promise<any> {
-		const encryptedToken = await DatabaseService.getEncryptedTokenAsString(
-			userEmail,
-			driveEmail,
-			drive
-		);
-		if (!encryptedToken) {
+		const drive = await DatabaseService.getDrive(userEmail, driveId);
+		if (!drive) {
 			return;
 		}
 
-		const ctxAndToken = getDriveContextAndToken(drive, encryptedToken);
+		const { driveType, token: encryptedToken } = drive;
+		const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
 		if (!ctxAndToken) {
 			return;
 		}

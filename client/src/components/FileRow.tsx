@@ -117,7 +117,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
-	const { drive, email, id } = file;
+	const { driveId, id } = file;
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
 
@@ -131,19 +131,19 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 
 	const onShareClick = async () => {
 		setShareOrUnshareClicked(true);
-		await dispatch(shareFile({ drive, email, id }));
+		await dispatch(shareFile({ driveId, fileId: id }));
 		setShareOrUnshareClicked(false);
 	};
 
 	const onUnshareClick = async () => {
 		setShareOrUnshareClicked(true);
-		await dispatch(unshareFile({ drive, email, id }));
+		await dispatch(unshareFile({ driveId, fileId: id }));
 		setShareOrUnshareClicked(false);
 	};
 
 	const onFileClick = () => {
 		if (file.type === FileType.Folder) {
-			navigate(`${routes.drive}/${file.drive}/${file.email}/${file.id}`);
+			navigate(`${file.driveId}/${file.id}`);
 		}
 	};
 
