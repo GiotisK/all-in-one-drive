@@ -116,7 +116,7 @@ const filesSlice = createSlice({
 			.addCase(unshareFile.fulfilled, (state, { payload: id }) => {
 				const fileForUpdateIndex = state.files.findIndex(file => file.id === id);
 
-				delete state.files[fileForUpdateIndex].sharedLink;
+				state.files[fileForUpdateIndex].sharedLink = null;
 				state.requests.unshareFile = requestSuccessState;
 			})
 			.addCase(unshareFile.rejected, state => {

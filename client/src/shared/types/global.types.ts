@@ -91,7 +91,7 @@ export type FileEntity = {
 	size: string;
 	date: string;
 	extension: string;
-	sharedLink?: Nullable<string>; //TODO: check if nullable is needed. probably not
+	sharedLink: Nullable<string>;
 };
 
 export type ChangedFileEntity = {
