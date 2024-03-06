@@ -67,7 +67,6 @@ export class FilesService {
 				parentFolderId,
 			}
 		);
-
 		return res.data;
 	}
 }

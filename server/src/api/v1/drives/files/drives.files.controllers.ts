@@ -59,14 +59,12 @@ class FilesController {
 		const { driveId, fileId } = req.params;
 		const { email: userEmail } = res.locals;
 		const responseBody: PatchFileResponse = { operation: {} };
-		let renameSuccess = false;
-		let shareSuccess = false;
-		let unshareSuccess = false;
+		let isRequestSuccessful = false;
 
 		//TODO: refactor to separate functions?
 		if (name) {
-			renameSuccess = await FilesService.renameFile(driveId, userEmail, fileId, name);
-			if (renameSuccess) {
+			isRequestSuccessful = await FilesService.renameFile(driveId, userEmail, fileId, name);
+			if (isRequestSuccessful) {
 				responseBody.operation = {
 					rename: {
 						success: true,
@@ -76,11 +74,10 @@ class FilesController {
 			}
 		}
 
-		if (share === true) {
+		if (share) {
 			const sharedLink = await FilesService.shareFile(userEmail, driveId, fileId);
-
 			if (sharedLink) {
-				shareSuccess = true;
+				isRequestSuccessful = true;
 				responseBody.operation = {
 					share: {
 						sharedLink,
@@ -91,8 +88,8 @@ class FilesController {
 		}
 
 		if (share === false) {
-			unshareSuccess = await FilesService.unshareFile(driveId, userEmail, fileId);
-			if (unshareSuccess) {
+			isRequestSuccessful = await FilesService.unshareFile(driveId, userEmail, fileId);
+			if (isRequestSuccessful) {
 				responseBody.operation = {
 					unshare: {
 						success: true,
@@ -101,7 +98,7 @@ class FilesController {
 			}
 		}
 
-		if (renameSuccess || shareSuccess || unshareSuccess) {
+		if (isRequestSuccessful) {
 			res.status(Status.OK).send(responseBody);
 		} else {
 			res.status(Status.INTERNAL_SERVER_ERROR).send();

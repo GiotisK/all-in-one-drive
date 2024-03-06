@@ -141,7 +141,6 @@ export class FilesService {
 			const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
 			if (ctxAndToken) {
 				const { ctx, token } = ctxAndToken;
-				const file = await ctx.createFile(token, fileType, driveId, parentFolderId);
 				return ctx.createFile(token, fileType, driveId, parentFolderId);
 			}
 		}

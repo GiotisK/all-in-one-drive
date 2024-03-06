@@ -95,7 +95,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 	public async getDriveFiles(
 		token: string,
-		dbEntityDriveId: string,
+		driveId: string,
 		folderId?: string
 	): Promise<Nullable<FileEntity[]>> {
 		try {
@@ -110,9 +110,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const files = res.data.files;
 			const driveEmail = await this.getUserDriveEmail(token);
 
-			return files
-				? this.mapToUniversalFileEntityFormat(files, driveEmail, dbEntityDriveId)
-				: null;
+			return files ? this.mapToUniversalFileEntityFormat(files, driveEmail, driveId) : null;
 		} catch {
 			return null;
 		}
@@ -148,7 +146,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 	public async createFile(
 		token: string,
 		fileType: FileType,
-		dbEntityDriveId: string,
+		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>> {
 		try {
@@ -168,7 +166,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			});
 			const driveEmail = await this.getUserDriveEmail(token);
 
-			return this.mapToUniversalFileEntityFormat(res.data, driveEmail, dbEntityDriveId);
+			return this.mapToUniversalFileEntityFormat(res.data, driveEmail, driveId);
 		} catch {
 			return null;
 		}
@@ -361,17 +359,17 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 	private mapToUniversalFileEntityFormat(
 		files: GoogleDriveFile[],
 		driveEmail: string,
-		dbEntityDriveId: string
+		driveId: string
 	): FileEntity[];
 	private mapToUniversalFileEntityFormat(
 		file: GoogleDriveFile,
 		driveEmail: string,
-		dbEntityDriveId: string
+		driveId: string
 	): FileEntity;
 	private mapToUniversalFileEntityFormat(
 		fileOrFiles: GoogleDriveFile[] | GoogleDriveFile,
 		driveEmail: string,
-		dbEntityDriveId: string
+		driveId: string
 	): FileEntity[] | FileEntity {
 		const isArrayOfFiles = Array.isArray(fileOrFiles);
 		const files = isArrayOfFiles ? fileOrFiles : [fileOrFiles];
@@ -386,7 +384,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				id: file.id ?? '',
 				name: file.name ?? '-',
 				drive: DriveType.GoogleDrive,
-				driveId: dbEntityDriveId,
+				driveId: driveId,
 				email: driveEmail,
 				type: fileType,
 				size: size,

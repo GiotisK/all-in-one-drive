@@ -10,9 +10,8 @@ export const useFetchFolderContents = () => {
 
 	useEffect(() => {
 		const { folderId, driveId } = pathParams;
-		const hasPathParams = folderId && driveId;
 
-		if (hasPathParams) {
+		if (folderId && driveId) {
 			folderDepth.current++;
 			dispatch(getFolderDriveFiles({ driveId, folderId }));
 		} else if (folderDepth.current > 0) {

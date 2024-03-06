@@ -83,8 +83,6 @@ class DrivesController {
 		req: Request<{}, void, SubscribeForChangesRequestBody>,
 		res: Response<WatchChangesChannel, AuthLocals>
 	): Promise<void> {
-		console.log('[watchdrive]');
-
 		const { email } = res.locals;
 		const { driveId } = req.body;
 
@@ -103,8 +101,6 @@ class DrivesController {
 		req: Request<any, any, UnsubscribeForChangesRequestBody>,
 		res: Response<any, AuthLocals>
 	) {
-		console.log('[stopWatchDrive]');
-
 		const { email } = res.locals;
 		const { driveId, resourceId, id } = req.body;
 
@@ -129,10 +125,6 @@ class DrivesController {
 		const { driveId } = req.params;
 		const { startPageToken } = req.query;
 
-		console.log('[getChangesDriveController]');
-		console.log({ params: req.params, query: req.query });
-		console.log({ userEmail, driveId, startPageToken });
-
 		if (!startPageToken) {
 			res.status(Status.BAD_REQUEST).send('StartPageToken was not provided.');
 			return;
@@ -154,7 +146,6 @@ class DrivesController {
 	//TODO: Fix name
 	//TODO: Maybe refactor move to another controller?
 	public driveSubscription = (req: Request, res: Response) => {
-		console.log('[driveSubscriptionController]');
 		this.sseManager.addClient(req, res);
 	};
 
@@ -164,8 +155,6 @@ class DrivesController {
 			driveEmail: req.headers['x-goog-channel-token'],
 			change: req.headers['x-goog-resource-state'],
 		};
-
-		console.log({ notificationDetails });
 
 		this.sseManager.sendNotification('update-event', notificationDetails);
 
