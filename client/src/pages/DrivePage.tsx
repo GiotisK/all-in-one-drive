@@ -20,6 +20,7 @@ import { routes } from '../shared/constants/routes';
 import { useAppSelector } from '../redux/store/store';
 import { FilesList } from '../components/FilesList';
 import { useFetchFolderContents } from '../hooks/useFetchFolderContents';
+import { useIsInsideFolder } from '../hooks/useIsInsideFolder';
 
 const OuterContainer = styled.div`
 	display: flex;
@@ -42,6 +43,7 @@ const RowsScrollview = styled.div`
 export const DrivePage = (): JSX.Element => {
 	const [sideMenuVisible, setSideMenuVisible] = useState(true);
 	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
+	const isInsideFolder = useIsInsideFolder();
 
 	useCheckAuth();
 	useHandleAuthCodeFromUrl();
@@ -54,7 +56,7 @@ export const DrivePage = (): JSX.Element => {
 	return isUserAuthenticated ? (
 		<OuterContainer>
 			<InnerContainer>
-				{sideMenuVisible && <SideMenu />}
+				{sideMenuVisible && !isInsideFolder && <SideMenu />}
 				<RowsScrollview>
 					<TitleBanner
 						onBurgerMenuClick={() => {

@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../redux/store/store';
 import { FileEntity } from '../shared/types/global.types';
+import { useIsInsideFolder } from './useIsInsideFolder';
 
 export const useActiveDriveFiles = () => {
 	const drives = useAppSelector(state => state.drives.drives);
 	const files = useAppSelector(state => state.files.files);
 	const [filteredFiles, setFilteredFiles] = useState<FileEntity[]>([]);
+	const isInsideFolder = useIsInsideFolder();
 
 	useEffect(() => {
 		const nextFilteredFiles = files.filter(file =>
@@ -17,5 +19,5 @@ export const useActiveDriveFiles = () => {
 		setFilteredFiles(nextFilteredFiles);
 	}, [drives, files]);
 
-	return filteredFiles;
+	return isInsideFolder ? files : filteredFiles;
 };

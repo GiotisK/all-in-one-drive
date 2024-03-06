@@ -7,6 +7,7 @@ import { Nullable } from '../shared/types/global.types';
 import { useAppSelector } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
+import { useIsInsideFolder } from '../hooks/useIsInsideFolder';
 
 const BannerContainer = styled.div`
 	display: flex;
@@ -98,6 +99,8 @@ interface TitleBannerProps {
 export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 	const navigate = useNavigate();
 	const isAuthenticated = useAppSelector(state => state.user.isAuthenticated);
+	const isInsideFolder = useIsInsideFolder();
+
 	const virtualQuotaLoading = false;
 	const virtualQuotaStr = '5 / 5 GB';
 	const virtualDriveEnabled = false;
@@ -109,9 +112,11 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 	return (
 		<BannerContainer>
 			<LogoMenuContainer>
-				<BurgerMenuButton onClick={props.onBurgerMenuClick}>
-					{createSvg(SvgNames.Burger, 30, 'white')}
-				</BurgerMenuButton>
+				{!isInsideFolder && (
+					<BurgerMenuButton onClick={props.onBurgerMenuClick}>
+						{createSvg(SvgNames.Burger, 30, 'white')}
+					</BurgerMenuButton>
+				)}
 				<LogoTitle onClick={navigateToDrivePath}>aio drive</LogoTitle>
 			</LogoMenuContainer>
 			{virtualDriveEnabled && (

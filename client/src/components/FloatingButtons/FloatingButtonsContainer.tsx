@@ -15,7 +15,6 @@ import { openModal } from '../../redux/slices/modal/modalSlice';
 import { ModalKind } from '../../redux/slices/modal/types';
 import { useParams } from 'react-router-dom';
 import { createFolder } from '../../redux/async-actions/files.async.actions';
-import { getDriveTypeFromString } from '../../shared/utils/utils';
 
 const Container = styled.div`
 	position: absolute;
