@@ -27,18 +27,14 @@ const drivesSlice = createSlice({
 	initialState,
 	reducers: {
 		toggleDriveSelection(state, action: PayloadAction<string>) {
-			const tempDrives = [...state.drives];
-			const index = tempDrives.findIndex(drive => drive.id === action.payload);
+			const index = state.drives.findIndex(drive => drive.id === action.payload);
 
 			if (index >= 0) {
-				tempDrives[index].active = !tempDrives[index].active;
-				state.drives = tempDrives;
+				state.drives[index].active = !state.drives[index].active;
 			}
 		},
 		toggleAllDrivesSelection(state, action: PayloadAction<boolean>) {
-			const tempDrives = [...state.drives];
-			tempDrives.forEach(drive => (drive.active = action.payload));
-			state.drives = tempDrives;
+			state.drives.forEach(drive => (drive.active = action.payload));
 		},
 	},
 	extraReducers: builder => {

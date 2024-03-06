@@ -81,13 +81,11 @@ const filesSlice = createSlice({
 			.addCase(renameFile.pending, state => {
 				state.requests.renameFile = requestPendingState;
 			})
-			//TODO: utilize immer instead of temp shit
 			.addCase(renameFile.fulfilled, (state, { payload }) => {
 				const { name, fileId } = payload;
 				const fileForUpdateIndex = state.files.findIndex(file => file.id === fileId);
-				const tempFiles = [...state.files];
-				tempFiles[fileForUpdateIndex].name = name;
-				state.files = tempFiles;
+
+				state.files[fileForUpdateIndex].name = name;
 				state.requests.renameFile = requestSuccessState;
 			})
 			.addCase(renameFile.rejected, state => {
@@ -102,9 +100,8 @@ const filesSlice = createSlice({
 			.addCase(shareFile.fulfilled, (state, { payload }) => {
 				const { sharedLink, fileId } = payload;
 				const fileForUpdateIndex = state.files.findIndex(file => file.id === fileId);
-				const tempFiles = [...state.files];
-				tempFiles[fileForUpdateIndex].sharedLink = sharedLink;
-				state.files = tempFiles;
+
+				state.files[fileForUpdateIndex].sharedLink = sharedLink;
 				state.requests.shareFile = requestSuccessState;
 			})
 			.addCase(shareFile.rejected, state => {
@@ -116,12 +113,10 @@ const filesSlice = createSlice({
 			.addCase(unshareFile.pending, state => {
 				state.requests.unshareFile = requestPendingState;
 			})
-			//TODO: utilize immer instead of temp shit
 			.addCase(unshareFile.fulfilled, (state, { payload: id }) => {
 				const fileForUpdateIndex = state.files.findIndex(file => file.id === id);
-				const tempFiles = [...state.files];
-				delete tempFiles[fileForUpdateIndex].sharedLink;
-				state.files = tempFiles;
+
+				delete state.files[fileForUpdateIndex].sharedLink;
 				state.requests.unshareFile = requestSuccessState;
 			})
 			.addCase(unshareFile.rejected, state => {
@@ -133,7 +128,6 @@ const filesSlice = createSlice({
 			.addCase(createFolder.pending, state => {
 				state.requests.createFolder = requestPendingState;
 			})
-			//TODO: utilize immer instead of temp shit
 			.addCase(createFolder.fulfilled, (state, { payload: folder }) => {
 				state.files.unshift(folder);
 				state.requests.createFolder = requestSuccessState;
