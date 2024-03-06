@@ -367,6 +367,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const normalizedDate = file.createdTime?.substring(0, 10) ?? '-';
 			const extension = file.mimeType ? mime.getExtension(file.mimeType) : '-';
 			const isPubliclyShared = this.isFilePubliclyShared(file);
+			const sharedLink = isPubliclyShared && file.webViewLink ? file.webViewLink : null;
 
 			return {
 				id: file.id ?? '',
@@ -378,7 +379,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				size: size,
 				date: normalizedDate,
 				extension: extension || '-',
-				sharedLink: isPubliclyShared ? file.webViewLink : null,
+				sharedLink,
 			};
 		});
 

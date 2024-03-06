@@ -11,7 +11,6 @@ import { ModalKind } from '../redux/slices/modal/types';
 import { shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
-import { routes } from '../shared/constants/routes';
 import { Loader } from './Loader';
 
 const Container = styled.div`
@@ -159,8 +158,8 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 			onClick: onRenameClick,
 		},
 		{
-			text: file.sharedLink ? 'Unshare' : 'Share Publicly',
-			onClick: file.sharedLink ? onUnshareClick : onShareClick,
+			text: sharedLink ? 'Unshare' : 'Share Publicly',
+			onClick: sharedLink ? onUnshareClick : onShareClick,
 		},
 		{
 			text: 'Delete',
@@ -209,12 +208,12 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 				{filemenu}
 			</FourthColumn>
 
-			{file.sharedLink && (
+			{sharedLink && (
 				<IconButton
 					icon={SvgNames.Link}
 					color={theme?.colors.green}
 					size={20}
-					onClick={() => navigator.clipboard.writeText(sharedLink ?? '')}
+					onClick={() => navigator.clipboard.writeText(sharedLink)}
 				/>
 			)}
 			{(shareFileReq.loading || unshareFileReq.loading) && shareOrUnshareClicked && (
