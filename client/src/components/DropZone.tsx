@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { styled } from 'styled-components';
+import { styled, useTheme } from 'styled-components';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 
 const Container = styled.div`
@@ -24,7 +24,7 @@ const SvgContainer = styled.div`
 
 const TextContainer = styled.div`
 	margin-top: 2px;
-	background-color: ${({ theme }) => theme.colors.background}};
+	background-color: ${({ theme }) => theme.colors.background};
 	border: 1px solid ${({ theme }) => theme.colors.border};
 	border-radius: 5px;
 	box-shadow: ${({ theme }) => theme.colors.boxShadow};
@@ -43,7 +43,7 @@ const DropZoneBackdrop = styled.div`
 	z-index: 1;
 	height: 100%;
 	width: 100%;
-	background-color: rgba(0, 0, 0, 0.1); //TODO: adapt to theme
+	background-color: rgba(0, 0, 0, 0.5);
 	pointer-events: none;
 `;
 
@@ -74,7 +74,7 @@ export const DropZone = ({
 				<>
 					<DropZoneBackdrop />
 					<DropIndicator>
-						<SvgContainer>{createSvg(SvgNames.HandDown, 50)}</SvgContainer>
+						<SvgContainer>{createSvg(SvgNames.HandDown, 50, 'white')}</SvgContainer>
 						<TextContainer>
 							<Text>Drop file(s)</Text>
 						</TextContainer>
