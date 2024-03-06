@@ -164,9 +164,10 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				},
 				fields: 'id, name, mimeType, createdTime',
 			});
+
 			const driveEmail = await this.getUserDriveEmail(token);
 
-			return this.mapToUniversalFileEntityFormat(res.data, driveEmail, driveId);
+			return this.mapToUniversalFileEntityFormat([res.data], driveEmail, driveId)[0];
 		} catch {
 			return null;
 		}
@@ -355,24 +356,11 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		return folderId ? folderFilesQuery : rootFilesQuery;
 	}
 
-	//TODO: make it better check samo comment
 	private mapToUniversalFileEntityFormat(
 		files: GoogleDriveFile[],
 		driveEmail: string,
 		driveId: string
-	): FileEntity[];
-	private mapToUniversalFileEntityFormat(
-		file: GoogleDriveFile,
-		driveEmail: string,
-		driveId: string
-	): FileEntity;
-	private mapToUniversalFileEntityFormat(
-		fileOrFiles: GoogleDriveFile[] | GoogleDriveFile,
-		driveEmail: string,
-		driveId: string
-	): FileEntity[] | FileEntity {
-		const isArrayOfFiles = Array.isArray(fileOrFiles);
-		const files = isArrayOfFiles ? fileOrFiles : [fileOrFiles];
+	): FileEntity[] {
 		const driveEntities: FileEntity[] = files.map(file => {
 			const fileType = this.determineEntityType(file.mimeType ?? '');
 			const size = fileType === FileType.File ? normalizeBytes(file.size ?? '') : '';
@@ -394,7 +382,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			};
 		});
 
-		return isArrayOfFiles ? driveEntities : driveEntities[0];
+		return driveEntities;
 	}
 
 	private determineEntityType(mimeType?: string): FileType {
