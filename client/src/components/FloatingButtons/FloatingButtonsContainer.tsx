@@ -29,7 +29,7 @@ const FileOpenerInput = styled.input`
 
 export const FloatingButtonsContainer = (): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const { folderId, email, drive: driveStr } = useParams();
+	const { folderId, driveId } = useParams();
 	const [menuOpen, setMenuOpen] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [plusButtonAnimation, setPlusButtonAnimation] = useState<Keyframes>();
@@ -52,11 +52,10 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 	};
 
 	const onAddFolderClick = async () => {
-		const drive = getDriveTypeFromString(driveStr ?? '');
-		if (folderId && drive && email) {
+		if (folderId && driveId) {
 			try {
 				setIsLoading(true);
-				await dispatch(createFolder({ drive, email, parentFolderId: folderId }));
+				await dispatch(createFolder({ driveId, parentFolderId: folderId }));
 				setIsLoading(false);
 			} catch {
 				setIsLoading(false);

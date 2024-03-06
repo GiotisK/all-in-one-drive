@@ -61,8 +61,8 @@ const drivesSlice = createSlice({
 				state.requests.deleteDrive = requestPendingState;
 			})
 			.addCase(deleteDrive.fulfilled, (state, { payload }) => {
-				const { id } = payload;
-				state.drives = state.drives.filter(drive => drive.id !== id);
+				const { driveId } = payload;
+				state.drives = state.drives.filter(drive => drive.id !== driveId);
 				state.requests.deleteDrive = requestSuccessState;
 			})
 			.addCase(deleteDrive.rejected, state => {
@@ -76,14 +76,12 @@ const drivesSlice = createSlice({
 
 		// subscribeForChanges
 		builder.addCase(subscribeForChanges.fulfilled, (state, { payload }) => {
-			const { email, drive: driveType, watchChangesChannel } = payload;
+			const { driveId, watchChangesChannel } = payload;
 
-			const driveEntity = state.drives.find(
-				drive => drive.email === email && drive.type === driveType
-			);
+			const driveEntity = state.drives.find(drive => drive.id === driveId);
 
 			if (!driveEntity) {
-				console.log(`Could not find drive with email: ${email} and type ${driveType}`);
+				console.log(`Could not find drive with id: ${driveId}`);
 				return;
 			}
 
@@ -94,17 +92,14 @@ const drivesSlice = createSlice({
 		builder.addCase(getChanges.fulfilled, (state, { payload }) => {
 			const {
 				changes: { startPageToken },
-				email,
-				driveType,
+				driveId,
 			} = payload;
 
 			// TODO: Probably return the driveId as-well as with the file id?
-			const driveToUpdate = state.drives.find(
-				drive => drive.type === driveType && drive.email === email
-			);
+			const driveToUpdate = state.drives.find(drive => drive.id === driveId);
 
 			if (!driveToUpdate) {
-				console.log(`Could not find drive with email: ${email} and type ${driveType}`);
+				console.log(`Could not find drive with id : ${driveId}`);
 				return;
 			}
 

@@ -117,7 +117,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
-	const { drive, email, id } = file;
+	const { driveId, id, type, extension, date, drive, email, name, size, sharedLink } = file;
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
 
@@ -131,19 +131,19 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 
 	const onShareClick = async () => {
 		setShareOrUnshareClicked(true);
-		await dispatch(shareFile({ drive, email, id }));
+		await dispatch(shareFile({ driveId, fileId: id }));
 		setShareOrUnshareClicked(false);
 	};
 
 	const onUnshareClick = async () => {
 		setShareOrUnshareClicked(true);
-		await dispatch(unshareFile({ drive, email, id }));
+		await dispatch(unshareFile({ driveId, fileId: id }));
 		setShareOrUnshareClicked(false);
 	};
 
 	const onFileClick = () => {
-		if (file.type === FileType.Folder) {
-			navigate(`${routes.drive}/${file.drive}/${file.email}/${file.id}`);
+		if (type === FileType.Folder) {
+			navigate(`${driveId}/${id}`);
 		}
 	};
 
@@ -194,18 +194,18 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	return (
 		<Container>
 			<FirstColumn onClick={onFileClick}>
-				<FileElement type={file.type} extension={file.extension} />
-				<Text>{file.name}</Text>
+				<FileElement type={type} extension={extension} />
+				<Text>{name}</Text>
 			</FirstColumn>
 			<SecondColumn>
-				{CreateDriveSvg(file.drive)}
-				<Text>{file.email}</Text>
+				{CreateDriveSvg(drive)}
+				<Text>{email}</Text>
 			</SecondColumn>
 			<ThirdColumn>
-				<Text>{file.size}</Text>
+				<Text>{size}</Text>
 			</ThirdColumn>
 			<FourthColumn>
-				<Text>{file.date}</Text>
+				<Text>{date}</Text>
 				{filemenu}
 			</FourthColumn>
 
@@ -214,7 +214,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 					icon={SvgNames.Link}
 					color={theme?.colors.green}
 					size={20}
-					onClick={() => navigator.clipboard.writeText(file.sharedLink ?? '')}
+					onClick={() => navigator.clipboard.writeText(sharedLink ?? '')}
 				/>
 			)}
 			{(shareFileReq.loading || unshareFileReq.loading) && shareOrUnshareClicked && (

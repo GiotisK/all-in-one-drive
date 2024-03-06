@@ -93,20 +93,24 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	public async getDriveFiles(token: string, folderId?: string): Promise<Nullable<FileEntity[]>> {
+	public async getDriveFiles(
+		token: string,
+		driveId: string,
+		folderId?: string
+	): Promise<Nullable<FileEntity[]>> {
 		try {
 			this.setToken(token);
 			const filesQuery = this.createFilesQuery(folderId);
 			const res = await this.drive.files.list({
 				q: filesQuery,
 				pageSize: 1000,
-				//TODO: GIOTIS
+				//TODO: GIOTIS ola kathara
 				fields: 'nextPageToken, files(id, size, name, mimeType, createdTime, shared, webContentLink, webViewLink, exportLinks, parents, permissions, owners)',
 			});
 			const files = res.data.files;
 			const driveEmail = await this.getUserDriveEmail(token);
 
-			return files ? this.mapToUniversalFileEntityFormat(files, driveEmail) : null;
+			return files ? this.mapToUniversalFileEntityFormat(files, driveEmail, driveId) : null;
 		} catch {
 			return null;
 		}
@@ -142,6 +146,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 	public async createFile(
 		token: string,
 		fileType: FileType,
+		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>> {
 		try {
@@ -161,7 +166,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			});
 			const driveEmail = await this.getUserDriveEmail(token);
 
-			return this.mapToUniversalFileEntityFormat(res.data, driveEmail);
+			return this.mapToUniversalFileEntityFormat(res.data, driveEmail, driveId);
 		} catch {
 			return null;
 		}
@@ -353,12 +358,18 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 	//TODO: make it better check samo comment
 	private mapToUniversalFileEntityFormat(
 		files: GoogleDriveFile[],
-		driveEmail: string
+		driveEmail: string,
+		driveId: string
 	): FileEntity[];
-	private mapToUniversalFileEntityFormat(file: GoogleDriveFile, driveEmail: string): FileEntity;
+	private mapToUniversalFileEntityFormat(
+		file: GoogleDriveFile,
+		driveEmail: string,
+		driveId: string
+	): FileEntity;
 	private mapToUniversalFileEntityFormat(
 		fileOrFiles: GoogleDriveFile[] | GoogleDriveFile,
-		driveEmail: string
+		driveEmail: string,
+		driveId: string
 	): FileEntity[] | FileEntity {
 		const isArrayOfFiles = Array.isArray(fileOrFiles);
 		const files = isArrayOfFiles ? fileOrFiles : [fileOrFiles];
@@ -373,6 +384,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				id: file.id ?? '',
 				name: file.name ?? '-',
 				drive: DriveType.GoogleDrive,
+				driveId: driveId,
 				email: driveEmail,
 				type: fileType,
 				size: size,

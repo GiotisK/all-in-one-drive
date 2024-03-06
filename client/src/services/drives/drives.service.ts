@@ -32,52 +32,41 @@ export class DrivesService {
 		return data;
 	}
 
-	async deleteDrive(driveEmail: string, drive: DriveType): Promise<boolean> {
-		const res = await RequestService.delete(`/drives/${drive}/${driveEmail}`);
+	async deleteDrive(driveId: string): Promise<boolean> {
+		const res = await RequestService.delete(`/drives/${driveId}`);
 		return res.status === Status.OK;
 	}
 
-	public async subscribeForDriveChanges(
-		email: string,
-		drive: DriveType
-	): Promise<WatchChangesChannel> {
+	public async subscribeForDriveChanges(driveId: string): Promise<WatchChangesChannel> {
 		const { data: watchChangesChannel } = await RequestService.post<
 			SubscribeForChangesRequestBody,
 			WatchChangesChannel
-		>(`/drives/watch`, {
-			drive,
-			email,
+		>('/drives/watch', {
+			driveId,
 		});
 
 		return watchChangesChannel;
 	}
 
 	public async unsubscribeForDriveChanges(
-		email: string,
-		drive: DriveType,
+		driveId: string,
 		id: string,
 		resourceId: string
 	): Promise<void> {
-		await RequestService.post<UnsubscribeForChangesRequestBody, void>(`/drives/stopwatch`, {
-			email,
-			drive,
+		await RequestService.post<UnsubscribeForChangesRequestBody, void>('/drives/stopwatch', {
+			driveId,
 			id,
 			resourceId,
 		});
 	}
 
-	public async getDriveChanges(
-		email: string,
-		startPageToken: string,
-		driveType: DriveType = DriveType.GoogleDrive
-	) {
+	public async getDriveChanges(driveId: string, startPageToken: string) {
 		const { data: changes } = await RequestService.get<DriveChanges>(
-			`/drives/${driveType}/changes/${email}?startPageToken=${startPageToken}`
+			`/drives/${driveId}/changes?startPageToken=${startPageToken}`
 		);
 
 		return {
-			email,
-			driveType,
+			driveId,
 			changes,
 		};
 	}

@@ -12,7 +12,11 @@ export interface IDriveStrategy {
 	generateOAuth2token(authCode: string): Promise<string>;
 	getUserDriveEmail(token: string): Promise<string>;
 	getDriveQuota(token: string): Promise<Nullable<DriveQuota>>;
-	getDriveFiles(token: string, folderId?: string): Promise<Nullable<FileEntity[]>>;
+	getDriveFiles(
+		token: string,
+		dbEntityDriveId: string,
+		folderId?: string
+	): Promise<Nullable<FileEntity[]>>;
 	deleteFile(token: string, fileId: string): Promise<boolean>;
 	renameFile(token: string, fileId: string, name: string): Promise<boolean>;
 	shareFile(token: string, fileId: string): Promise<Nullable<string>>;
@@ -20,6 +24,7 @@ export interface IDriveStrategy {
 	createFile(
 		token: string,
 		fileType: FileType,
+		dbEntityDriveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>>;
 	subscribeForChanges(

@@ -83,8 +83,8 @@ const filesSlice = createSlice({
 			})
 			//TODO: utilize immer instead of temp shit
 			.addCase(renameFile.fulfilled, (state, { payload }) => {
-				const { name, id } = payload;
-				const fileForUpdateIndex = state.files.findIndex(file => file.id === id);
+				const { name, fileId } = payload;
+				const fileForUpdateIndex = state.files.findIndex(file => file.id === fileId);
 				const tempFiles = [...state.files];
 				tempFiles[fileForUpdateIndex].name = name;
 				state.files = tempFiles;
@@ -100,8 +100,8 @@ const filesSlice = createSlice({
 				state.requests.shareFile = requestPendingState;
 			})
 			.addCase(shareFile.fulfilled, (state, { payload }) => {
-				const { sharedLink, id } = payload;
-				const fileForUpdateIndex = state.files.findIndex(file => file.id === id);
+				const { sharedLink, fileId } = payload;
+				const fileForUpdateIndex = state.files.findIndex(file => file.id === fileId);
 				const tempFiles = [...state.files];
 				tempFiles[fileForUpdateIndex].sharedLink = sharedLink;
 				state.files = tempFiles;
@@ -144,16 +144,16 @@ const filesSlice = createSlice({
 
 		// deleteDrive
 		builder.addCase(deleteDrive.fulfilled, (state, { payload }) => {
-			const { type, email } = payload; //TODO: Fix issue
-			state.files = state.files.filter(file => file.email !== email && file.drive !== type);
+			const { driveId } = payload;
+			state.files = state.files.filter(file => file.driveId === driveId);
 		});
 
-		// logout
+		// logoutUser
 		builder.addCase(logoutUser.fulfilled, () => {
 			return initialState;
 		});
 
-		// changes
+		// getChanges
 		builder.addCase(getChanges.fulfilled, (state, { payload }) => {
 			const { changes } = payload;
 			changes.changes.forEach(change => {

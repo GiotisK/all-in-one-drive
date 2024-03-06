@@ -26,12 +26,12 @@ class FilesController {
 	}
 
 	public async getFolderFiles(
-		req: Request<{ drive: DriveType; email: string; folderId: string }>,
+		req: Request<{ driveId: string; folderId: string }>,
 		res: Response<FileEntity[], AuthLocals>
 	): Promise<void> {
 		const { email: userEmail } = res.locals;
-		const { drive, email: driveEmail, folderId } = req.params;
-		const files = await FilesService.getFolderFiles(drive, userEmail, driveEmail, folderId);
+		const { driveId, folderId } = req.params;
+		const files = await FilesService.getFolderFiles(driveId, userEmail, folderId);
 
 		if (files) {
 			res.status(Status.OK).send(files);
@@ -41,43 +41,30 @@ class FilesController {
 	}
 
 	public async deleteFile(
-		req: Request<{ drive: DriveType; email: string; fileId: string }>,
+		req: Request<{ driveId: string; fileId: string }>,
 		res: Response<void, AuthLocals>
 	): Promise<void> {
 		const { email: userEmail } = res.locals;
-		const { drive, email: driveEmail, fileId } = req.params;
-		const success = await FilesService.deleteFile(drive, userEmail, driveEmail, fileId);
-		const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
-
-		res.status(statusId).send();
+		const { driveId, fileId } = req.params;
+		const success = await FilesService.deleteFile(driveId, userEmail, fileId);
+		const status = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
+		res.status(status).end();
 	}
 
 	public async editFile(
-		req: Request<
-			{ drive: DriveType; email: string; fileId: string },
-			void,
-			PatchFileRequestBody
-		>,
+		req: Request<{ driveId: DriveType; fileId: string }, void, PatchFileRequestBody>,
 		res: Response<PatchFileResponse, AuthLocals>
 	): Promise<void> {
 		const { name, share } = req.body;
-		const { drive, email: driveEmail, fileId } = req.params;
+		const { driveId, fileId } = req.params;
 		const { email: userEmail } = res.locals;
 		const responseBody: PatchFileResponse = { operation: {} };
-		let renameSuccess = false;
-		let shareSuccess = false;
-		let unshareSuccess = false;
+		let isRequestSuccessful = false;
 
 		//TODO: refactor to separate functions?
 		if (name) {
-			renameSuccess = await FilesService.renameFile(
-				drive,
-				userEmail,
-				driveEmail,
-				fileId,
-				name
-			);
-			if (renameSuccess) {
+			isRequestSuccessful = await FilesService.renameFile(driveId, userEmail, fileId, name);
+			if (isRequestSuccessful) {
 				responseBody.operation = {
 					rename: {
 						success: true,
@@ -87,10 +74,10 @@ class FilesController {
 			}
 		}
 
-		if (share === true) {
-			const sharedLink = await FilesService.shareFile(drive, userEmail, driveEmail, fileId);
+		if (share) {
+			const sharedLink = await FilesService.shareFile(userEmail, driveId, fileId);
 			if (sharedLink) {
-				shareSuccess = true;
+				isRequestSuccessful = true;
 				responseBody.operation = {
 					share: {
 						sharedLink,
@@ -101,8 +88,8 @@ class FilesController {
 		}
 
 		if (share === false) {
-			unshareSuccess = await FilesService.unshareFile(drive, userEmail, driveEmail, fileId);
-			if (unshareSuccess) {
+			isRequestSuccessful = await FilesService.unshareFile(driveId, userEmail, fileId);
+			if (isRequestSuccessful) {
 				responseBody.operation = {
 					unshare: {
 						success: true,
@@ -111,7 +98,7 @@ class FilesController {
 			}
 		}
 
-		if (renameSuccess || shareSuccess || unshareSuccess) {
+		if (isRequestSuccessful) {
 			res.status(Status.OK).send(responseBody);
 		} else {
 			res.status(Status.INTERNAL_SERVER_ERROR).send();
@@ -119,20 +106,14 @@ class FilesController {
 	}
 
 	public async createFile(
-		req: Request<{ drive: DriveType; email: string }, void, CreateFileRequestBody>,
+		req: Request<{ driveId: string }, void, CreateFileRequestBody>,
 		res: Response<FileEntity, AuthLocals>
 	): Promise<void> {
 		const { email: userEmail } = res.locals;
-		const { drive, email: driveEmail } = req.params;
+		const { driveId } = req.params;
 		const { type, parentFolderId } = req.body;
 
-		const file = await FilesService.createFile(
-			drive,
-			userEmail,
-			driveEmail,
-			type,
-			parentFolderId
-		);
+		const file = await FilesService.createFile(driveId, userEmail, type, parentFolderId);
 
 		if (file) {
 			res.status(Status.OK).send(file);

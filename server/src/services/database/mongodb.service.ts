@@ -3,7 +3,7 @@ import User, { DriveSchema } from '../../models/user.model';
 import { DriveType, Nullable } from '../../types/global.types';
 
 export class DatabaseService {
-	async saveUser(email: string, password: string): Promise<boolean> {
+	public async saveUser(email: string, password: string): Promise<boolean> {
 		try {
 			const user = new User({ email, password });
 			const savedUserDocument = await user.save();
@@ -13,18 +13,18 @@ export class DatabaseService {
 		}
 	}
 
-	async getUser(email: string) {
+	public async getUser(email: string) {
 		return User.findOne({ email }).exec();
 	}
 
-	async saveDrive(
+	public async saveDrive(
 		encryptedTokenData: string,
 		driveEmail: string,
 		userEmail: string,
 		drive: DriveType
 	): Promise<boolean> {
 		try {
-			const driveProperties: DriveSchema = {
+			const drives: DriveSchema = {
 				id: generateUUID(),
 				email: driveEmail,
 				token: encryptedTokenData,
@@ -34,7 +34,7 @@ export class DatabaseService {
 			const updatedUser = await User.findOneAndUpdate(
 				{ email: userEmail },
 				{
-					$push: { drives: driveProperties },
+					$push: { drives },
 				},
 				{ upsert: true, new: true }
 			).exec();
@@ -45,28 +45,29 @@ export class DatabaseService {
 		}
 	}
 
-	async getEncryptedTokenAsString(
+	public async getEncryptedTokenAsString(
 		userEmail: string,
-		driveEmail: string,
-		drive: DriveType
+		driveId: string
 	): Promise<Nullable<string>> {
 		try {
 			const user = await User.findOne({ email: userEmail }).exec();
-			const driveProperties: DriveSchema[] | undefined = user?.drives;
-
-			if (user && driveProperties) {
-				const tokenData = driveProperties.find(
-					properties => properties.email === driveEmail && properties.driveType === drive
-				);
-				return tokenData?.token ?? null;
+			if (!user) {
+				return null;
 			}
-			return null;
+
+			const drives: DriveSchema[] | undefined = user?.drives;
+			if (!drives) {
+				return null;
+			}
+
+			const tokenData = drives.find(drive => drive.id === driveId);
+			return tokenData?.token ?? null;
 		} catch {
 			return null;
 		}
 	}
 
-	async getAllDrives(userEmail: string): Promise<Nullable<DriveSchema[]>> {
+	public async getAllDrives(userEmail: string): Promise<Nullable<DriveSchema[]>> {
 		try {
 			const user = await User.findOne({ email: userEmail }).exec();
 			return user ? user.drives : null;
@@ -75,19 +76,17 @@ export class DatabaseService {
 		}
 	}
 
-	async getDrive(
-		userEmail: string,
-		driveEmail: string,
-		driveType: DriveType
-	): Promise<Nullable<DriveSchema>> {
+	public async getDrive(userEmail: string, driveId: string): Promise<Nullable<DriveSchema>> {
 		try {
 			const user = await User.findOne({
 				email: userEmail,
 			}).exec();
 
-			const foundDrive = user?.drives.find(
-				drive => drive.email === driveEmail && drive.driveType === driveType
-			);
+			if (!user) {
+				return null;
+			}
+
+			const foundDrive = user.drives.find(drive => drive.id === driveId);
 
 			return foundDrive ?? null;
 		} catch (e) {
@@ -95,11 +94,11 @@ export class DatabaseService {
 		}
 	}
 
-	async deleteDrive(userEmail: string, driveEmail: string, drive: DriveType) {
+	public async deleteDrive(userEmail: string, driveId: string) {
 		try {
 			const result = await User.updateOne(
 				{ email: userEmail },
-				{ $pull: { drives: { email: driveEmail, driveType: drive } } }
+				{ $pull: { drives: { id: driveId } } }
 			).exec();
 
 			return result.modifiedCount > 0;

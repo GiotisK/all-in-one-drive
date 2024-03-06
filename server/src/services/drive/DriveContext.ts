@@ -35,8 +35,12 @@ export default class DriveContext {
 		return this.strategy.getDriveQuota(token);
 	}
 
-	public async getDriveFiles(token: string, folderId?: string): Promise<Nullable<FileEntity[]>> {
-		return this.strategy.getDriveFiles(token, folderId);
+	public async getDriveFiles(
+		token: string,
+		dbEntityDriveId: string,
+		folderId?: string
+	): Promise<Nullable<FileEntity[]>> {
+		return this.strategy.getDriveFiles(token, dbEntityDriveId, folderId);
 	}
 
 	public async deleteFile(token: string, fileId: string): Promise<boolean> {
@@ -58,9 +62,10 @@ export default class DriveContext {
 	public async createFile(
 		token: string,
 		fileType: FileType,
+		dbEntityDriveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>> {
-		return this.strategy.createFile(token, fileType, parentFolderId);
+		return this.strategy.createFile(token, fileType, dbEntityDriveId, parentFolderId);
 	}
 
 	public async subscribeForChanges(

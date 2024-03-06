@@ -4,9 +4,9 @@ import FilesController from './drives.files.controllers';
 
 const router: Router = express.Router();
 router.get('/files', authorize, FilesController.getRootFiles);
-router.get('/:drive/:email/files/:folderId', authorize, FilesController.getFolderFiles);
-router.post('/:drive/:email/files', authorize, FilesController.createFile);
-router.delete('/:drive/:email/files/:fileId', authorize, FilesController.deleteFile);
-router.patch('/:drive/:email/files/:fileId', authorize, FilesController.editFile);
+router.get('/:driveId/files/:folderId', authorize, FilesController.getFolderFiles);
+router.post('/:driveId/files', authorize, FilesController.createFile);
+router.delete('/:driveId/files/:fileId', authorize, FilesController.deleteFile);
+router.patch('/:driveId/files/:fileId', authorize, FilesController.editFile);
 
 export default router;

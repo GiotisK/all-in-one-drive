@@ -2,8 +2,6 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import { getRootFiles, getFolderDriveFiles } from '../redux/async-actions/files.async.actions';
 import { useAppDispatch } from '../redux/store/store';
-import { DriveType, Nullable } from '../shared/types/global.types';
-import { getDriveTypeFromString } from '../shared/utils/utils';
 
 export const useFetchFolderContents = () => {
 	const dispatch = useAppDispatch();
@@ -11,13 +9,11 @@ export const useFetchFolderContents = () => {
 	const folderDepth = useRef<number>(0);
 
 	useEffect(() => {
-		const { folderId, email, drive: driveTypeAsString } = pathParams;
-		const hasPathParams = folderId && email && driveTypeAsString;
-		const driveType = getDriveTypeFromString(driveTypeAsString ?? '');
+		const { folderId, driveId } = pathParams;
 
-		if (hasPathParams && driveType) {
+		if (folderId && driveId) {
 			folderDepth.current++;
-			dispatch(getFolderDriveFiles({ drive: driveType, email, id: folderId }));
+			dispatch(getFolderDriveFiles({ driveId, folderId }));
 		} else if (folderDepth.current > 0) {
 			folderDepth.current = 0;
 			dispatch(getRootFiles());

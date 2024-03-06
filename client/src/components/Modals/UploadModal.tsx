@@ -85,9 +85,9 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 	};
 
 	const onDriveClick = async (drive: DriveEntity) => {
-		const { type, email } = drive;
+		const { id: driveId } = drive;
 		try {
-			await dispatch(createFolder({ drive: type, email }));
+			await dispatch(createFolder({ driveId }));
 			dispatch(closeModals());
 		} catch {
 			//TODO: show modal

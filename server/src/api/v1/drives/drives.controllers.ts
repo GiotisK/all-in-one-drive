@@ -6,6 +6,8 @@ import {
 	DriveQuota,
 	DriveType,
 	Status,
+	SubscribeForChangesRequestBody,
+	UnsubscribeForChangesRequestBody,
 	WatchChangesChannel,
 } from '../../../types/global.types';
 import { AuthLocals } from '../../../types/types';
@@ -16,13 +18,16 @@ class DrivesController {
 		this.sseManager = sseManager;
 	}
 
-	async authLink(req: Request<{ drive: DriveType }>, res: Response<string>): Promise<void> {
+	public async authLink(
+		req: Request<{ drive: DriveType }>,
+		res: Response<string>
+	): Promise<void> {
 		const drive = req.params.drive;
 		const authLink = DrivesService.getAuthLink(drive);
 		authLink ? res.status(Status.OK).send(authLink) : res.status(Status.BAD_REQUEST);
 	}
 
-	async connectDrive(
+	public async connectDrive(
 		req: Request<{ drive: DriveType }, void, ConnectDriveRequestBody>,
 		res: Response<void, AuthLocals>
 	): Promise<void> {
@@ -35,15 +40,14 @@ class DrivesController {
 		res.status(statusId).send();
 	}
 
-	async getDriveQuota(
-		req: Request<{ drive: DriveType; email: string }>,
+	public async getDriveQuota(
+		req: Request<{ driveId: string }>,
 		res: Response<DriveQuota, AuthLocals>
 	): Promise<void> {
 		const { email } = res.locals;
-		const drive = req.params.drive;
-		const driveEmail = req.params.email;
+		const driveId = req.params.driveId;
 
-		const quota = await DrivesService.getDriveQuota(email, driveEmail, drive);
+		const quota = await DrivesService.getDriveQuota(email, driveId);
 
 		if (quota) {
 			res.status(Status.OK).send(quota);
@@ -52,7 +56,7 @@ class DrivesController {
 		}
 	}
 
-	async getDrives(_req: Request, res: Response<DriveEntity[], AuthLocals>): Promise<void> {
+	public async getDrives(_req: Request, res: Response<DriveEntity[], AuthLocals>): Promise<void> {
 		const { email } = res.locals;
 		const driveEntities = await DrivesService.getDrives(email);
 
@@ -63,67 +67,50 @@ class DrivesController {
 		}
 	}
 
-	async deleteDrive(
-		req: Request<{ drive: DriveType; email: string }>,
+	public async deleteDrive(
+		req: Request<{ driveId: string }>,
 		res: Response<void, AuthLocals>
 	): Promise<void> {
 		const { email } = res.locals;
-		const { drive, email: driveEmail } = req.params;
-		const success = await DrivesService.deleteDrive(email, driveEmail, drive);
+		const driveId = req.params.driveId;
+		const success = await DrivesService.deleteDrive(email, driveId);
 		const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
 
 		res.status(statusId).send();
 	}
 
 	public async watchDrive(
-		req: Request<any, any, { drive: DriveType; email: string }>,
+		req: Request<{}, void, SubscribeForChangesRequestBody>,
 		res: Response<WatchChangesChannel, AuthLocals>
 	): Promise<void> {
-		console.log('[watchdrive]');
-
 		const { email } = res.locals;
-		const { drive, email: driveEmail } = req.body;
+		const { driveId } = req.body;
 
-		const watchChangesChannel = await DrivesService.subscribeForDriveChanges(
-			email,
-			driveEmail,
-			drive
-		);
+		const watchChangesChannel = await DrivesService.subscribeForDriveChanges(email, driveId);
 
 		console.log({ watchChangesChannel });
 
 		if (watchChangesChannel) {
-			res.status(Status.OK).json(watchChangesChannel);
+			res.status(Status.OK).send(watchChangesChannel);
 		} else {
 			res.status(Status.INTERNAL_SERVER_ERROR).end();
 		}
 	}
 
 	public async stopWatchDrive(
-		req: Request<any, any, { drive: DriveType; email: string; id: string; resourceId: string }>,
+		req: Request<any, any, UnsubscribeForChangesRequestBody>,
 		res: Response<any, AuthLocals>
 	) {
-		console.log('[stopWatchDrive]');
-
 		const { email } = res.locals;
-		const { drive, email: driveEmail } = req.body;
-		const { id, resourceId } = req.body;
+		const { driveId, resourceId, id } = req.body;
 
-		console.log({ email, drive, driveEmail, id, resourceId });
-
-		if (!id || !resourceId) {
+		if (!driveId || !id || !resourceId) {
 			res.status(Status.BAD_REQUEST).send('Missing required parameters');
 			return;
 		}
 
 		try {
-			await DrivesService.unsubscribeForDriveChanges(
-				email,
-				driveEmail,
-				drive,
-				id,
-				resourceId
-			);
+			await DrivesService.unsubscribeForDriveChanges(email, driveId, id, resourceId);
 			res.status(Status.OK).end();
 		} catch (err) {
 			res.status(Status.INTERNAL_SERVER_ERROR).send((err as Error).message);
@@ -131,16 +118,12 @@ class DrivesController {
 	}
 
 	public getChanges = async (
-		req: Request<{ drive: DriveType; email: string }, {}, {}, { startPageToken?: string }>,
+		req: Request<{ driveId: string }, void, void, { startPageToken?: string }>,
 		res: Response<any, AuthLocals>
 	): Promise<void> => {
 		const { email: userEmail } = res.locals;
-		const { email: driveEmail, drive } = req.params;
+		const { driveId } = req.params;
 		const { startPageToken } = req.query;
-
-		console.log('[getChangesDriveController]');
-		console.log({ params: req.params, query: req.query });
-		console.log({ userEmail, driveEmail, drive, startPageToken });
 
 		if (!startPageToken) {
 			res.status(Status.BAD_REQUEST).send('StartPageToken was not provided.');
@@ -149,9 +132,8 @@ class DrivesController {
 
 		try {
 			const changes = await DrivesService.fetchDriveChanges(
-				drive,
+				driveId,
 				userEmail,
-				driveEmail,
 				startPageToken
 			);
 			res.status(Status.OK).json(changes);
@@ -164,7 +146,6 @@ class DrivesController {
 	//TODO: Fix name
 	//TODO: Maybe refactor move to another controller?
 	public driveSubscription = (req: Request, res: Response) => {
-		console.log('[driveSubscriptionController]');
 		this.sseManager.addClient(req, res);
 	};
 
@@ -174,8 +155,6 @@ class DrivesController {
 			driveEmail: req.headers['x-goog-channel-token'],
 			change: req.headers['x-goog-resource-state'],
 		};
-
-		console.log({ notificationDetails });
 
 		this.sseManager.sendNotification('update-event', notificationDetails);
 

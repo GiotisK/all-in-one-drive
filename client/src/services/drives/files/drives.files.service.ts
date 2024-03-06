@@ -1,5 +1,4 @@
 import {
-	DriveType,
 	FileEntity,
 	Status,
 	PatchFileRequestBody,
@@ -16,47 +15,34 @@ export class FilesService {
 		return fileEntities;
 	}
 
-	public async getFolderFiles(
-		drive: DriveType,
-		email: string,
-		id: string
-	): Promise<FileEntity[]> {
+	public async getFolderFiles(driveId: string, folderId: string): Promise<FileEntity[]> {
 		const { data: fileEntities } = await RequestService.get<FileEntity[]>(
-			`drives/${drive}/${email}/files/${id}`
+			`drives/${driveId}/files/${folderId}`
 		);
 		return fileEntities;
 	}
 
-	public async deleteDriveFile(
-		drive: DriveType,
-		driveEmail: string,
-		fileId: string
-	): Promise<boolean> {
-		const res = await RequestService.delete(`drives/${drive}/${driveEmail}/files/${fileId}`);
+	public async deleteDriveFile(driveId: string, fileId: string): Promise<boolean> {
+		const res = await RequestService.delete(`drives/${driveId}/files/${fileId}`);
 		return res.status === Status.OK;
 	}
 
 	public async renameDriveFile(
-		drive: DriveType,
-		driveEmail: string,
+		driveId: string,
 		fileId: string,
 		newName: string
 	): Promise<string> {
 		const res = await RequestService.patch<PatchFileRequestBody, PatchFileResponse>(
-			`drives/${drive}/${driveEmail}/files/${fileId}`,
+			`drives/${driveId}/files/${fileId}`,
 			{ name: newName }
 		);
 		const renameData = res.data.operation.rename;
 		return renameData && renameData.success ? renameData.name : '';
 	}
 
-	public async shareDriveFile(
-		drive: DriveType,
-		driveEmail: string,
-		fileId: string
-	): Promise<Nullable<string>> {
+	public async shareDriveFile(driveId: string, fileId: string): Promise<Nullable<string>> {
 		const res = await RequestService.patch<PatchFileRequestBody, PatchFileResponse>(
-			`drives/${drive}/${driveEmail}/files/${fileId}`,
+			`drives/${driveId}/files/${fileId}`,
 			{ share: true }
 		);
 		const shareData = res.data.operation.share;
@@ -64,33 +50,23 @@ export class FilesService {
 		return shareData && shareData.success ? shareData.sharedLink : null;
 	}
 
-	public async unshareDriveFile(
-		drive: DriveType,
-		driveEmail: string,
-		fileId: string
-	): Promise<boolean> {
+	public async unshareDriveFile(driveId: string, fileId: string): Promise<boolean> {
 		const { data } = await RequestService.patch<PatchFileRequestBody, PatchFileResponse>(
-			`drives/${drive}/${driveEmail}/files/${fileId}`,
+			`drives/${driveId}/files/${fileId}`,
 			{ share: false }
 		);
 		const unshareData = data.operation.unshare;
 		return unshareData && unshareData.success ? true : false;
 	}
 
-	public async createFile(
-		drive: DriveType,
-		driveEmail: string,
-		type: FileType,
-		parentFolderId?: string
-	) {
+	public async createFile(driveId: string, type: FileType, parentFolderId?: string) {
 		const res = await RequestService.post<CreateFileRequestBody, FileEntity>(
-			`drives/${drive}/${driveEmail}/files`,
+			`drives/${driveId}/files`,
 			{
 				type,
 				parentFolderId,
 			}
 		);
-
 		return res.data;
 	}
 }
