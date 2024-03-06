@@ -104,8 +104,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const res = await this.drive.files.list({
 				q: filesQuery,
 				pageSize: 1000,
-				//TODO: GIOTIS ola kathara
-				fields: 'nextPageToken, files(id, size, name, mimeType, createdTime, shared, webContentLink, webViewLink, exportLinks, parents, permissions, owners)',
+				fields: 'files(id, size, name, mimeType, createdTime, webViewLink, permissions)',
 			});
 			const files = res.data.files;
 			const driveEmail = await this.getUserDriveEmail(token);
