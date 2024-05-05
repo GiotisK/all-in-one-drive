@@ -104,8 +104,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const res = await this.drive.files.list({
 				q: filesQuery,
 				pageSize: 1000,
-				//TODO: GIOTIS ola kathara
-				fields: 'nextPageToken, files(id, size, name, mimeType, createdTime, shared, webContentLink, webViewLink, exportLinks, parents, permissions, owners)',
+				fields: 'files(id, size, name, mimeType, createdTime, webViewLink, permissions)',
 			});
 			const files = res.data.files;
 			const driveEmail = await this.getUserDriveEmail(token);
@@ -164,9 +163,10 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				},
 				fields: 'id, name, mimeType, createdTime',
 			});
+
 			const driveEmail = await this.getUserDriveEmail(token);
 
-			return this.mapToUniversalFileEntityFormat(res.data, driveEmail, driveId);
+			return this.mapToUniversalFileEntityFormat([res.data], driveEmail, driveId)[0];
 		} catch {
 			return null;
 		}
@@ -355,30 +355,18 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		return folderId ? folderFilesQuery : rootFilesQuery;
 	}
 
-	//TODO: make it better check samo comment
 	private mapToUniversalFileEntityFormat(
 		files: GoogleDriveFile[],
 		driveEmail: string,
 		driveId: string
-	): FileEntity[];
-	private mapToUniversalFileEntityFormat(
-		file: GoogleDriveFile,
-		driveEmail: string,
-		driveId: string
-	): FileEntity;
-	private mapToUniversalFileEntityFormat(
-		fileOrFiles: GoogleDriveFile[] | GoogleDriveFile,
-		driveEmail: string,
-		driveId: string
-	): FileEntity[] | FileEntity {
-		const isArrayOfFiles = Array.isArray(fileOrFiles);
-		const files = isArrayOfFiles ? fileOrFiles : [fileOrFiles];
+	): FileEntity[] {
 		const driveEntities: FileEntity[] = files.map(file => {
 			const fileType = this.determineEntityType(file.mimeType ?? '');
 			const size = fileType === FileType.File ? normalizeBytes(file.size ?? '') : '';
 			const normalizedDate = file.createdTime?.substring(0, 10) ?? '-';
 			const extension = file.mimeType ? mime.getExtension(file.mimeType) : '-';
 			const isPubliclyShared = this.isFilePubliclyShared(file);
+			const sharedLink = isPubliclyShared && file.webViewLink ? file.webViewLink : null;
 
 			return {
 				id: file.id ?? '',
@@ -390,11 +378,11 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				size: size,
 				date: normalizedDate,
 				extension: extension || '-',
-				sharedLink: isPubliclyShared ? file.webViewLink : null,
+				sharedLink,
 			};
 		});
 
-		return isArrayOfFiles ? driveEntities : driveEntities[0];
+		return driveEntities;
 	}
 
 	private determineEntityType(mimeType?: string): FileType {
