@@ -6,8 +6,10 @@ export class FilesService {
 	async getRootFiles(userEmail: string): Promise<Nullable<FileEntity[]>> {
 		const fileEntities: Array<FileEntity[]> = [];
 		const driveProperties = await DatabaseService.getAllDrives(userEmail);
+
 		if (driveProperties) {
 			const promiseArr: Promise<Nullable<FileEntity[]>>[] = [];
+
 			try {
 				driveProperties.forEach(async properties => {
 					const { token: encryptedTokenStr, driveType, id: driveId } = properties;
@@ -58,6 +60,7 @@ export class FilesService {
 
 	public async deleteFile(driveId: string, userEmail: string, fileId: string): Promise<boolean> {
 		const drive = await DatabaseService.getDrive(userEmail, driveId);
+
 		if (!drive) {
 			return false;
 		}
@@ -139,6 +142,7 @@ export class FilesService {
 		if (drive) {
 			const { driveType, token: encryptedToken, id: driveId } = drive;
 			const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
+
 			if (ctxAndToken) {
 				const { ctx, token } = ctxAndToken;
 				return ctx.createFile(token, fileType, driveId, parentFolderId);

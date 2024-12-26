@@ -17,7 +17,7 @@ export class FilesService {
 
 	public async getFolderFiles(driveId: string, folderId: string): Promise<FileEntity[]> {
 		const { data: fileEntities } = await RequestService.get<FileEntity[]>(
-			`drives/${driveId}/files/${folderId}`
+			`drives/${driveId}/folders/${folderId}/files`
 		);
 		return fileEntities;
 	}

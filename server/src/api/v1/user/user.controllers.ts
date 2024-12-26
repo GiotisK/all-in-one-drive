@@ -39,11 +39,11 @@ class UserController {
 		}
 	}
 
-	async logoutUser(req: Request, res: Response): Promise<void> {
+	async logoutUser(_req: Request, res: Response): Promise<void> {
 		res.clearCookie('token').status(Status.OK).send();
 	}
 
-	async authUser(req: Request, res: Response<AuthUserResponse, AuthLocals>): Promise<void> {
+	async authUser(_req: Request, res: Response<AuthUserResponse, AuthLocals>): Promise<void> {
 		const { email } = res.locals;
 		res.status(Status.OK).send({ email });
 	}
