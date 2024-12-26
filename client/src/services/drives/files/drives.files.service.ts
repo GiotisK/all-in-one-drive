@@ -59,7 +59,11 @@ export class FilesService {
 		return unshareData && unshareData.success ? true : false;
 	}
 
-	public async createFile(driveId: string, type: FileType, parentFolderId?: string) {
+	public async createFile(
+		driveId: string,
+		type: FileType,
+		parentFolderId?: string
+	): Promise<FileEntity> {
 		const res = await RequestService.post<CreateFileRequestBody, FileEntity>(
 			`drives/${driveId}/files`,
 			{
@@ -68,6 +72,12 @@ export class FilesService {
 			}
 		);
 		return res.data;
+	}
+
+	public async downloadDriveFile(driveId: string, fileId: string): Promise<boolean> {
+		const res = await RequestService.get(`drives/${driveId}/files/${fileId}/download`);
+
+		return res.status === Status.OK;
 	}
 }
 

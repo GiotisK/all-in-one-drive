@@ -27,6 +27,7 @@ export interface IDriveStrategy {
 		dbEntityDriveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>>;
+	downloadFile(token: string, fileId: string): Promise<boolean>;
 	subscribeForChanges(
 		token: string,
 		driveEmail: string

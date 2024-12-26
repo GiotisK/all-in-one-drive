@@ -172,6 +172,18 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
+	public async downloadFile(token: string, fileId: string): Promise<boolean> {
+		try {
+			this.setToken(token);
+			const res = await this.drive.files.get({ fileId, alt: 'media' });
+
+			console.log(res.data);
+			return res.status === 200;
+		} catch {
+			return false;
+		}
+	}
+
 	public async shareFile(token: string, fileId: string): Promise<Nullable<string>> {
 		try {
 			this.setToken(token);

@@ -132,7 +132,7 @@ export class FilesService {
 		return false;
 	}
 
-	async createFile(
+	public async createFile(
 		driveId: string,
 		userEmail: string,
 		fileType: FileType,
@@ -150,6 +150,25 @@ export class FilesService {
 		}
 
 		return null;
+	}
+
+	public async downloadFile(
+		driveId: string,
+		userEmail: string,
+		fileId: string
+	): Promise<boolean> {
+		const drive = await DatabaseService.getDrive(userEmail, driveId);
+
+		if (drive) {
+			const { driveType, token: encryptedToken } = drive;
+			const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
+
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.downloadFile(token, fileId);
+			}
+		}
+		return true;
 	}
 }
 

@@ -8,7 +8,7 @@ import { useOutsideClicker } from '../hooks';
 import { FileEntity, FileType } from '../shared/types/global.types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
-import { shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
+import { downloadFile, shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from './Loader';
@@ -146,12 +146,14 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		}
 	};
 
+	const onDownloadClick = () => {
+		dispatch(downloadFile({ driveId, fileId: id }));
+	};
+
 	const fileMenuRows: FileMenuRow[] = [
 		{
 			text: 'Download',
-			onClick: () => {
-				console.log('download');
-			},
+			onClick: onDownloadClick,
 		},
 		{
 			text: 'Rename',

@@ -14,6 +14,7 @@ import {
 	shareFile,
 	unshareFile,
 	createFolder,
+	downloadFile,
 } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
 import { deleteDrive, getChanges } from '../../async-actions/drives.async.actions';
@@ -22,13 +23,14 @@ import { FileType } from '../../../shared/types/global.types';
 const initialState: FilesState = {
 	files: [],
 	requests: {
-		getFiles: requestInitialState,
-		getFolderDriveFiles: requestInitialState,
-		deleteFile: requestInitialState,
-		renameFile: requestInitialState,
-		shareFile: requestInitialState,
-		unshareFile: requestInitialState,
-		createFolder: requestInitialState,
+		getFiles: { ...requestInitialState },
+		getFolderDriveFiles: { ...requestInitialState },
+		deleteFile: { ...requestInitialState },
+		renameFile: { ...requestInitialState },
+		shareFile: { ...requestInitialState },
+		unshareFile: { ...requestInitialState },
+		createFolder: { ...requestInitialState },
+		downloadFile: { ...requestInitialState },
 	},
 };
 
@@ -121,6 +123,18 @@ const filesSlice = createSlice({
 			})
 			.addCase(unshareFile.rejected, state => {
 				state.requests.unshareFile = requestErrorState;
+			});
+
+		// downloadFile
+		builder
+			.addCase(downloadFile.pending, state => {
+				state.requests.downloadFile = requestPendingState;
+			})
+			.addCase(downloadFile.fulfilled, state => {
+				state.requests.downloadFile = requestSuccessState;
+			})
+			.addCase(downloadFile.rejected, state => {
+				state.requests.downloadFile = requestErrorState;
 			});
 
 		// createFolder

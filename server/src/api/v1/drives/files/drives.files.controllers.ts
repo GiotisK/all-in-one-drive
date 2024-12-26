@@ -16,12 +16,13 @@ class FilesController {
 		res: Response<FileEntity[], AuthLocals>
 	): Promise<void> {
 		const { email } = res.locals;
+
 		const files = await FilesService.getRootFiles(email);
 
 		if (files) {
 			res.status(Status.OK).send(files);
 		} else {
-			res.status(Status.INTERNAL_SERVER_ERROR).send();
+			res.status(Status.INTERNAL_SERVER_ERROR).end();
 		}
 	}
 
@@ -31,12 +32,13 @@ class FilesController {
 	): Promise<void> {
 		const { email: userEmail } = res.locals;
 		const { driveId, folderId } = req.params;
+
 		const files = await FilesService.getFolderFiles(driveId, userEmail, folderId);
 
 		if (files) {
 			res.status(Status.OK).send(files);
 		} else {
-			res.status(Status.INTERNAL_SERVER_ERROR).send();
+			res.status(Status.INTERNAL_SERVER_ERROR).end();
 		}
 	}
 
@@ -46,8 +48,10 @@ class FilesController {
 	): Promise<void> {
 		const { email: userEmail } = res.locals;
 		const { driveId, fileId } = req.params;
+
 		const success = await FilesService.deleteFile(driveId, userEmail, fileId);
 		const status = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
+
 		res.status(status).end();
 	}
 
@@ -101,7 +105,7 @@ class FilesController {
 		if (isRequestSuccessful) {
 			res.status(Status.OK).send(responseBody);
 		} else {
-			res.status(Status.INTERNAL_SERVER_ERROR).send();
+			res.status(Status.INTERNAL_SERVER_ERROR).end();
 		}
 	}
 
@@ -118,8 +122,22 @@ class FilesController {
 		if (file) {
 			res.status(Status.OK).send(file);
 		} else {
-			res.status(Status.INTERNAL_SERVER_ERROR).send();
+			res.status(Status.INTERNAL_SERVER_ERROR).end();
 		}
+	}
+
+	public async downloadFile(
+		req: Request<{ driveId: string; fileId: string }, void, void>,
+		res: Response<FileEntity, AuthLocals>
+	): Promise<void> {
+		const { email: userEmail } = res.locals;
+		const { driveId, fileId } = req.params;
+
+		const success = await FilesService.downloadFile(driveId, userEmail, fileId);
+
+		const status = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
+
+		res.status(status).end();
 	}
 }
 

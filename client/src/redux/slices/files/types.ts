@@ -11,5 +11,6 @@ export interface FilesState {
 		shareFile: RequestState;
 		unshareFile: RequestState;
 		createFolder: RequestState;
+		downloadFile: RequestState;
 	};
 }

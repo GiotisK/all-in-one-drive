@@ -60,3 +60,12 @@ export const createFolder = createAsyncThunk(
 		return folder;
 	}
 );
+
+type DownloadFileParams = { driveId: string; fileId: string };
+export const downloadFile = createAsyncThunk(
+	'files/downloadFile',
+	async ({ driveId, fileId }: DownloadFileParams) => {
+		await FilesService.downloadDriveFile(driveId, fileId);
+		return { driveId, fileId };
+	}
+);
