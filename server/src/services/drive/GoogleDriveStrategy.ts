@@ -14,6 +14,7 @@ import {
 } from '../../types/global.types';
 import { LOCALTUNNEL_URL } from '../../tunnel/subdomain';
 import mime from 'mime';
+import fs from 'fs';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
@@ -175,9 +176,29 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 	public async downloadFile(token: string, fileId: string): Promise<boolean> {
 		try {
 			this.setToken(token);
-			const res = await this.drive.files.get({ fileId, alt: 'media' });
 
-			console.log(res.data);
+			const { name, extension } = await this.getFileMetadata(fileId);
+
+			const res = await this.drive.files.get(
+				{ fileId, alt: 'media' },
+				{ responseType: 'stream' }
+			);
+
+			var writeStream = fs.createWriteStream(
+				process.env.USERPROFILE + '/Downloads/' + name + '.' + extension
+			);
+
+			res.data.pipe(writeStream);
+
+			writeStream.on('finish', function () {
+				//todo: send event to frontend
+				writeStream.end();
+			});
+			writeStream.on('error', function () {
+				//todo: send event to frontend
+				writeStream.end();
+			});
+
 			return res.status === 200;
 		} catch {
 			return false;
@@ -365,6 +386,15 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		const folderFilesQuery = `'${folderId}' in parents`;
 
 		return folderId ? folderFilesQuery : rootFilesQuery;
+	}
+
+	private async getFileMetadata(fileId: string) {
+		const metadataRes = await this.drive.files.get({ fileId, fields: 'name, mimeType' });
+
+		const name = metadataRes.data.name ?? 'file';
+		const extension = mime.getExtension(metadataRes.data.mimeType ?? '');
+
+		return { name, extension };
 	}
 
 	private mapToUniversalFileEntityFormat(
