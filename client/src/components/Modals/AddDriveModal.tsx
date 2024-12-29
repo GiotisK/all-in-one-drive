@@ -3,6 +3,7 @@ import { AddDriveButton } from '../AddDriveButton';
 import { styled } from 'styled-components';
 import { DriveType } from '../../shared/types/global.types';
 import DrivesService from '../../services/drives/drives.service';
+import { toast } from 'react-toastify';
 
 const ButtonsContainer = styled.div`
 	display: flex;
@@ -19,7 +20,7 @@ export const AddDriveModal = (): JSX.Element => {
 			const authLink = await DrivesService.getAuthLink(drive);
 			authLink && window.location.replace(authLink);
 		} catch {
-			//TODO: show toast
+			toast.error('Failed to get the authentication link');
 		}
 	};
 

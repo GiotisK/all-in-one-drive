@@ -15,6 +15,7 @@ import { openModal } from '../../redux/slices/modal/modalSlice';
 import { ModalKind } from '../../redux/slices/modal/types';
 import { useParams } from 'react-router-dom';
 import { createFolder } from '../../redux/async-actions/files.async.actions';
+import { toast } from 'react-toastify';
 
 const Container = styled.div`
 	position: absolute;
@@ -56,9 +57,10 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 				setIsLoading(true);
 				await dispatch(createFolder({ driveId, parentFolderId: folderId }));
 				setIsLoading(false);
+				toast.success('Folder created successfully');
 			} catch {
 				setIsLoading(false);
-				//TODO: show toast
+				toast.error('Failed to create folder');
 			}
 		} else {
 			dispatch(

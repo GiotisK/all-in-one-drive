@@ -8,6 +8,7 @@ import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/store/store';
 import { deleteDrive } from '../../redux/async-actions/drives.async.actions';
 import { deleteFile } from '../../redux/async-actions/files.async.actions';
+import { toast } from 'react-toastify';
 
 interface DeleteFileProps {
 	file: FileEntity;
@@ -71,16 +72,20 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 	const sendDeleteEntityRequest = async () => {
 		if (!entity) return;
 		try {
+			let entityName = '';
 			if (isDriveEntity(entity)) {
 				const { id: driveId } = entity;
+				entityName = 'drive';
 				await dispatch(deleteDrive({ driveId }));
 			} else if (isFileEntity(entity)) {
 				const { driveId, id: fileId } = entity;
+				entityName = 'file';
 				await dispatch(deleteFile({ driveId, fileId }));
 			}
+			toast.success(`${entityName} deleted successfully`);
 			dispatch(closeModals());
 		} catch {
-			//TODO: show toast
+			toast.error('Failed to delete entity');
 		}
 	};
 

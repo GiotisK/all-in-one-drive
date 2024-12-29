@@ -6,6 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/store/store';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { useState, ChangeEvent } from 'react';
 import { renameFile } from '../../redux/async-actions/files.async.actions';
+import { toast } from 'react-toastify';
 
 const Content = styled.div`
 	display: flex;
@@ -33,9 +34,10 @@ export const RenameModal = ({ state }: IProps): JSX.Element => {
 		const { driveId, id } = entity;
 		try {
 			await dispatch(renameFile({ driveId, fileId: id, newName: inputValue }));
+			toast.success('File renamed successfully');
 			dispatch(closeModals());
 		} catch {
-			//TODO: show toast
+			toast.error;
 		}
 	};
 

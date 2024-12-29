@@ -7,6 +7,7 @@ import { Nullable } from '../shared/types/global.types';
 import { loginUser } from '../redux/async-actions/user.async.actions';
 import { useAppDispatch } from '../redux/store/store';
 import UserService from '../services/user.service';
+import { toast } from 'react-toastify';
 
 const centerAbsoluteDivInPage = `
 	position: absolute;
@@ -127,7 +128,7 @@ export const CredentialsBox = (): JSX.Element => {
 				isRequestSuccessful = true;
 				setIsFormRequestSuccessful(isRequestSuccessful);
 			} catch {
-				//TODO: show toast
+				toast.error('Failed to register user');
 			}
 		}
 	};

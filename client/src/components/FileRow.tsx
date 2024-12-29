@@ -5,13 +5,14 @@ import { CreateDriveSvg } from '../shared/utils/utils';
 import { IconButton } from './IconButton';
 import { styled, useTheme } from 'styled-components';
 import { useOutsideClicker } from '../hooks';
-import { FileEntity, FileType } from '../shared/types/global.types';
+import { DriveType, FileEntity, FileType } from '../shared/types/global.types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
 import { downloadFile, shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from './Loader';
+import { toast } from 'react-toastify';
 
 const Container = styled.div`
 	display: flex;
@@ -147,6 +148,11 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	};
 
 	const onDownloadClick = () => {
+		if (file.drive === DriveType.GoogleDrive && file.type === FileType.Folder) {
+			toast.error('Cannot download folder from Google Drive');
+			return;
+		}
+
 		dispatch(downloadFile({ driveId, fileId: id }));
 	};
 

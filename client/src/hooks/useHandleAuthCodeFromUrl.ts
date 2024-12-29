@@ -5,6 +5,7 @@ import { getDrives } from '../redux/async-actions/drives.async.actions';
 import { useAppDispatch } from '../redux/store/store';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { getRootFiles } from '../redux/async-actions/files.async.actions';
+import { toast } from 'react-toastify';
 
 export const useHandleAuthCodeFromUrl = () => {
 	const dispatch = useAppDispatch();
@@ -28,7 +29,7 @@ export const useHandleAuthCodeFromUrl = () => {
 						dispatch(getRootFiles());
 					}
 				} catch {
-					//TODO: show toast
+					toast.error('Failed to connect drive');
 				}
 			}
 		})();
