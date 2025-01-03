@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieparser from 'cookie-parser';
-import { userRouter, drivesRouter, drivesFilesRouter } from './src/api/v1/';
+import { userRouter, drivesRouter, drivesFilesRouter, googleDriveFilesRouter } from './src/api/v1/';
 import { connectDB } from './src/configs/database/database.config';
 import { createTunnel } from './src/tunnel/localtunnel';
 
@@ -21,6 +21,7 @@ app.use(cors({ origin: frontendURL, credentials: true }));
 app.use(cookieparser());
 app.use('/users', userRouter);
 app.use('/drives', [drivesRouter, drivesFilesRouter]);
+app.use('/drives/googledrive', googleDriveFilesRouter);
 
 app.listen(port, () => {
 	console.log(`[server]: Server is running at http://localhost:${port}`);

@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { FileType } from '../../shared/types/global.types';
 import FilesService from '../../services/drives/files/drives.files.service';
+import GoogledriveFilesService from '../../services/drives/files/googledrive/googledrive.files.service';
 
 export const getRootFiles = createAsyncThunk('files/getRootFiles', async () => {
 	const files = await FilesService.getRootFiles();
@@ -67,5 +68,27 @@ export const downloadFile = createAsyncThunk(
 	async ({ driveId, fileId }: DownloadFileParams) => {
 		await FilesService.downloadDriveFile(driveId, fileId);
 		return { driveId, fileId };
+	}
+);
+
+type GetGoogleDriveExportFormatsParams = { driveId: string; fileId: string };
+export const getGoogleDriveExportFormats = createAsyncThunk(
+	'files/getGoogleDriveFileExportFormats',
+	async ({ driveId, fileId }: GetGoogleDriveExportFormatsParams) => {
+		const exportFormats = await GoogledriveFilesService.getExportFormats(driveId, fileId);
+		return exportFormats;
+	}
+);
+
+type ExportGoogleDriveFileParams = { driveId: string; fileId: string; mimeType: string };
+export const exportGoogleDriveFile = createAsyncThunk(
+	'files/exportGoogleDriveFile',
+	async ({ driveId, fileId, mimeType }: ExportGoogleDriveFileParams) => {
+		const exportFormats = await GoogledriveFilesService.exportGoogleDriveFile(
+			driveId,
+			fileId,
+			mimeType
+		);
+		return exportFormats;
 	}
 );

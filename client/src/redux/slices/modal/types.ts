@@ -6,6 +6,8 @@ export type DeleteModalState = {
 };
 
 export type ExportFormatModalState = {
+	fileId: string;
+	driveId: string;
 	exportFormats: string[];
 };
 

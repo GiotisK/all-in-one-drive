@@ -1,14 +1,19 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FileElement } from './FileElement';
 import { SvgNames } from '../shared/utils/svg-utils';
-import { CreateDriveSvg } from '../shared/utils/utils';
+import { CreateDriveSvg, isNativeGoogleDriveFile } from '../shared/utils/utils';
 import { IconButton } from './IconButton';
 import { styled, useTheme } from 'styled-components';
 import { useOutsideClicker } from '../hooks';
 import { DriveType, FileEntity, FileType } from '../shared/types/global.types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
-import { downloadFile, shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
+import {
+	downloadFile,
+	getGoogleDriveExportFormats,
+	shareFile,
+	unshareFile,
+} from '../redux/async-actions/files.async.actions';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from './Loader';
@@ -109,15 +114,19 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
-	const { shareFile: shareFileReq, unshareFile: unshareFileReq } = useAppSelector(
-		state => state.files.requests
-	);
+	const {
+		shareFile: shareFileReq,
+		unshareFile: unshareFileReq,
+		getGoogleDriveExportFormats: getGoogleDriveExportFormatsReq,
+	} = useAppSelector(state => state.files.requests);
 	const [menuToggle, setMenuToggle] = useState(false);
-	const [shareOrUnshareClicked, setShareOrUnshareClicked] = useState(false);
+	const [rowClicked, setRowClicked] = useState(false);
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
 	const { driveId, id, type, extension, date, drive, email, name, size, sharedLink } = file;
+
+	const isGoogleDriveFile = isNativeGoogleDriveFile(extension);
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
 
@@ -130,15 +139,15 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	};
 
 	const onShareClick = async () => {
-		setShareOrUnshareClicked(true);
+		setRowClicked(true);
 		await dispatch(shareFile({ driveId, fileId: id }));
-		setShareOrUnshareClicked(false);
+		setRowClicked(false);
 	};
 
 	const onUnshareClick = async () => {
-		setShareOrUnshareClicked(true);
+		setRowClicked(true);
 		await dispatch(unshareFile({ driveId, fileId: id }));
-		setShareOrUnshareClicked(false);
+		setRowClicked(false);
 	};
 
 	const onFileClick = () => {
@@ -153,13 +162,34 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 			return;
 		}
 
+		toast.info('File downloading initiated...');
+
 		dispatch(downloadFile({ driveId, fileId: id }));
+	};
+
+	const onExportClick = async () => {
+		setRowClicked(true);
+		const exportFormatsMimeTypes = await dispatch(
+			getGoogleDriveExportFormats({ driveId, fileId: id })
+		).unwrap();
+		setRowClicked(false);
+
+		if (exportFormatsMimeTypes) {
+			dispatch(
+				openModal({
+					kind: ModalKind.ExportFormat,
+					state: { exportFormats: exportFormatsMimeTypes, fileId: id, driveId },
+				})
+			);
+		} else {
+			toast.error('Failed to get export formats');
+		}
 	};
 
 	const fileMenuRows: FileMenuRow[] = [
 		{
-			text: 'Download',
-			onClick: onDownloadClick,
+			text: isGoogleDriveFile ? 'Export' : 'Download',
+			onClick: isGoogleDriveFile ? onExportClick : onDownloadClick,
 		},
 		{
 			text: 'Rename',
@@ -224,7 +254,13 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 					onClick={() => navigator.clipboard.writeText(sharedLink)}
 				/>
 			)}
-			{(shareFileReq.loading || unshareFileReq.loading) && shareOrUnshareClicked && (
+			{(shareFileReq.loading || unshareFileReq.loading) && rowClicked && (
+				<LoaderContainer>
+					<Loader size={8} />
+				</LoaderContainer>
+			)}
+
+			{getGoogleDriveExportFormatsReq.loading && rowClicked && (
 				<LoaderContainer>
 					<Loader size={8} />
 				</LoaderContainer>

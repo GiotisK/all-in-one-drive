@@ -15,6 +15,8 @@ import {
 import { LOCALTUNNEL_URL } from '../../tunnel/subdomain';
 import mime from 'mime';
 import fs from 'fs';
+import { getDefaultSavePathForFile } from '../utils';
+import FilesystemService from '../filesystem/filesystem.service';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
@@ -177,27 +179,46 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		try {
 			this.setToken(token);
 
-			const { name, extension } = await this.getFileMetadata(fileId);
+			const metadata = await this.getFileMetadata(fileId);
+
+			if (!metadata) {
+				return false;
+			}
 
 			const res = await this.drive.files.get(
 				{ fileId, alt: 'media' },
 				{ responseType: 'stream' }
 			);
 
-			var writeStream = fs.createWriteStream(
-				process.env.USERPROFILE + '/Downloads/' + name + '.' + extension
+			FilesystemService.saveFileToDownloads(res.data, metadata.name);
+
+			return res.status === 200;
+		} catch {
+			return false;
+		}
+	}
+
+	public async exportFile(token: string, fileId: string, mimeType: string): Promise<boolean> {
+		try {
+			this.setToken(token);
+
+			const metadata = await this.getFileMetadata(fileId);
+
+			console.log(metadata);
+			if (!metadata) {
+				return false;
+			}
+
+			const res = await this.drive.files.export(
+				{ fileId, mimeType },
+				{ responseType: 'stream' }
 			);
 
-			res.data.pipe(writeStream);
-
-			writeStream.on('finish', function () {
-				//todo: send event to frontend
-				writeStream.end();
-			});
-			writeStream.on('error', function () {
-				//todo: send event to frontend
-				writeStream.end();
-			});
+			FilesystemService.saveFileToDownloads(
+				res.data,
+				metadata.name,
+				mime.getExtension(mimeType) ?? ''
+			);
 
 			return res.status === 200;
 		} catch {
@@ -244,6 +265,20 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			return false;
 		} catch {
 			return false;
+		}
+	}
+
+	public async getExportFormats(token: string, fileId: string): Promise<Nullable<string[]>> {
+		try {
+			this.setToken(token);
+			const res = await this.drive.files.get({
+				fileId,
+				fields: 'exportLinks',
+			});
+
+			return res.data.exportLinks ? Object.keys(res.data.exportLinks) : [];
+		} catch {
+			return null;
 		}
 	}
 
@@ -389,12 +424,16 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 	}
 
 	private async getFileMetadata(fileId: string) {
-		const metadataRes = await this.drive.files.get({ fileId, fields: 'name, mimeType' });
+		try {
+			const metadataRes = await this.drive.files.get({ fileId, fields: 'name, mimeType' });
 
-		const name = metadataRes.data.name ?? 'file';
-		const extension = mime.getExtension(metadataRes.data.mimeType ?? '');
+			const name = metadataRes.data.name ?? 'file';
+			const extension = mime.getExtension(metadataRes.data.mimeType ?? '');
 
-		return { name, extension };
+			return { name, extension };
+		} catch {
+			return null;
+		}
 	}
 
 	private mapToUniversalFileEntityFormat(

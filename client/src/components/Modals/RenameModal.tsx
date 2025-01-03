@@ -32,12 +32,13 @@ export const RenameModal = ({ state }: IProps): JSX.Element => {
 	const sendRenameFileRequest = async () => {
 		if (!entity) return;
 		const { driveId, id } = entity;
+		//todo: fix, catch will never get triggered
 		try {
-			await dispatch(renameFile({ driveId, fileId: id, newName: inputValue }));
+			await dispatch(renameFile({ driveId, fileId: id + '1234', newName: inputValue }));
 			toast.success('File renamed successfully');
 			dispatch(closeModals());
 		} catch {
-			toast.error;
+			toast.error('Rename failed');
 		}
 	};
 

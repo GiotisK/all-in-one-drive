@@ -15,6 +15,7 @@ import {
 	unshareFile,
 	createFolder,
 	downloadFile,
+	getGoogleDriveExportFormats,
 } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
 import { deleteDrive, getChanges } from '../../async-actions/drives.async.actions';
@@ -31,6 +32,7 @@ const initialState: FilesState = {
 		unshareFile: { ...requestInitialState },
 		createFolder: { ...requestInitialState },
 		downloadFile: { ...requestInitialState },
+		getGoogleDriveExportFormats: { ...requestInitialState },
 	},
 };
 
@@ -181,6 +183,18 @@ const filesSlice = createSlice({
 				}
 			});
 		});
+
+		// getGoogleDriveExportFormats
+		builder
+			.addCase(getGoogleDriveExportFormats.rejected, state => {
+				state.requests.getGoogleDriveExportFormats = requestErrorState;
+			})
+			.addCase(getGoogleDriveExportFormats.pending, state => {
+				state.requests.getGoogleDriveExportFormats = requestPendingState;
+			})
+			.addCase(getGoogleDriveExportFormats.fulfilled, state => {
+				state.requests.getGoogleDriveExportFormats = requestSuccessState;
+			});
 	},
 });
 

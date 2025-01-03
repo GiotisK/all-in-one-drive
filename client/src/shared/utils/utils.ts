@@ -45,3 +45,8 @@ export const getDriveTypeFromString = (driveType: string): Nullable<DriveType> =
 			return null;
 	}
 };
+
+//todo: add the rest of the types
+export const isNativeGoogleDriveFile = (fileExtension: string): boolean => {
+	return fileExtension === 'gdoc' || fileExtension === 'gsheet';
+};

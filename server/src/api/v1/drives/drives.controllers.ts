@@ -146,7 +146,7 @@ class DrivesController {
 	//TODO: Fix name
 	//TODO: Maybe refactor move to another controller?
 	public driveSubscription = (req: Request, res: Response) => {
-		this.sseManager.addClient(req, res);
+		/* this.sseManager.addClient(req, res); */
 	};
 
 	public driveNotification = (req: Request, res: Response): void => {
@@ -156,7 +156,7 @@ class DrivesController {
 			change: req.headers['x-goog-resource-state'],
 		};
 
-		this.sseManager.sendNotification('update-event', notificationDetails);
+		/* this.sseManager.sendNotification('update-event', notificationDetails); */
 
 		res.status(Status.OK).end();
 	};
