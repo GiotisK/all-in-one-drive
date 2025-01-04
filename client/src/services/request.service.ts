@@ -6,8 +6,9 @@ class RequestService {
 		return axiosInstance.get(path);
 	}
 
-	async post<T, U>(path: string, data?: T): Promise<AxiosResponse<U>> {
-		return axiosInstance.post(path, data);
+	async post<T, U>(path: string, data?: T, contentType?: string): Promise<AxiosResponse<U>> {
+		const headers = { 'Content-Type': contentType || 'application/json' };
+		return axiosInstance.post(path, data, contentType ? { headers } : undefined);
 	}
 
 	async put<T>(path: string, data?: T) {

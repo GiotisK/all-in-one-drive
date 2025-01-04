@@ -1,11 +1,13 @@
 import { styled } from 'styled-components';
 import { CreateDriveSvg } from '../../shared/utils/utils';
 import { BaseModal } from './BaseModal';
-import { DriveEntity, FileType } from '../../shared/types/global.types';
+import { DriveEntity, FileType, Nullable } from '../../shared/types/global.types';
 import { UploadModalState } from '../../redux/slices/modal/types';
 import { useAppDispatch, useAppSelector } from '../../redux/store/store';
-import { createFolder } from '../../redux/async-actions/files.async.actions';
+import { createFolder, uploadFile } from '../../redux/async-actions/files.async.actions';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
+import { toast } from 'react-toastify';
+import { useRef, useState } from 'react';
 
 const Content = styled.div`
 	display: flex;
@@ -62,6 +64,10 @@ const DriveRowText = styled.p`
 	word-wrap: break-word;
 `;
 
+const FileOpenerInput = styled.input`
+	display: none;
+`;
+
 interface IProps {
 	state: UploadModalState;
 }
@@ -69,8 +75,10 @@ interface IProps {
 export const UploadModal = ({ state }: IProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const drives = useAppSelector(state => state.drives.drives);
+	const uploaderRef = useRef<Nullable<HTMLInputElement>>(null);
 	const createFolderReq = useAppSelector(state => state.files.requests.createFolder);
 	const { fileType } = state;
+	const [selectedDrive, setSelectedDrive] = useState<Nullable<DriveEntity>>(null);
 
 	const getTitle = (): string => {
 		switch (fileType) {
@@ -86,11 +94,25 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 
 	const onDriveClick = async (drive: DriveEntity) => {
 		const { id: driveId } = drive;
-		try {
+		setSelectedDrive(drive);
+
+		if (fileType === FileType.File) {
+			openFilePicker();
+		} else if (fileType === FileType.Folder) {
 			await dispatch(createFolder({ driveId }));
+			toast.success('Folder created successfully');
 			dispatch(closeModals());
-		} catch {
-			//TODO: show modal
+		}
+	};
+
+	const openFilePicker = (): void => {
+		uploaderRef.current?.click();
+	};
+
+	const onFileLoad = (): void => {
+		const file = uploaderRef.current?.files?.[0];
+		if (file && selectedDrive) {
+			dispatch(uploadFile({ driveId: selectedDrive.id, file }));
 		}
 	};
 
@@ -117,6 +139,7 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 						))}
 					</DriveRowScrollView>
 				)}
+				<FileOpenerInput type='file' ref={uploaderRef} onChange={onFileLoad} />
 			</Content>
 		</BaseModal>
 	);

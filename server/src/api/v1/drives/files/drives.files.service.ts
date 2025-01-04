@@ -1,5 +1,5 @@
 import DatabaseService from '../../../../services/database/mongodb.service';
-import { DriveType, FileEntity, FileType, Nullable } from '../../../../types/global.types';
+import { FileEntity, FileType, Nullable } from '../../../../types/global.types';
 import { getDriveContextAndToken } from '../drives.helpers';
 
 export class FilesService {
@@ -169,6 +169,27 @@ export class FilesService {
 			}
 		}
 		return true;
+	}
+
+	public async uploadFile(
+		driveId: string,
+		userEmail: string,
+		file: Express.Multer.File,
+		parentFolderId?: string
+	): Promise<Nullable<FileEntity>> {
+		const drive = await DatabaseService.getDrive(userEmail, driveId);
+
+		if (drive) {
+			const { driveType, token: encryptedToken } = drive;
+			const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
+
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.uploadFile(token, file, driveId, parentFolderId);
+			}
+		}
+
+		return null;
 	}
 }
 

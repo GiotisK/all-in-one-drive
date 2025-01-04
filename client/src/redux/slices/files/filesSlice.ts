@@ -16,6 +16,7 @@ import {
 	createFolder,
 	downloadFile,
 	getGoogleDriveExportFormats,
+	uploadFile,
 } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
 import { deleteDrive, getChanges } from '../../async-actions/drives.async.actions';
@@ -33,6 +34,7 @@ const initialState: FilesState = {
 		createFolder: { ...requestInitialState },
 		downloadFile: { ...requestInitialState },
 		getGoogleDriveExportFormats: { ...requestInitialState },
+		uploadFile: { ...requestInitialState },
 	},
 };
 
@@ -150,6 +152,19 @@ const filesSlice = createSlice({
 			})
 			.addCase(createFolder.rejected, state => {
 				state.requests.createFolder = requestErrorState;
+			});
+
+		// uploadFile
+		builder
+			.addCase(uploadFile.pending, state => {
+				state.requests.uploadFile = requestPendingState;
+			})
+			.addCase(uploadFile.fulfilled, (state, { payload: file }) => {
+				state.files.unshift(file);
+				state.requests.uploadFile = requestSuccessState;
+			})
+			.addCase(uploadFile.rejected, state => {
+				state.requests.uploadFile = requestErrorState;
 			});
 
 		// deleteDrive

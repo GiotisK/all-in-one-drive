@@ -72,6 +72,15 @@ export default class DriveContext {
 		return this.strategy.downloadFile(token, fileId);
 	}
 
+	public async uploadFile(
+		token: string,
+		file: Express.Multer.File,
+		driveId: string,
+		parentFolderId?: string
+	): Promise<Nullable<FileEntity>> {
+		return this.strategy.uploadFile(token, file, driveId, parentFolderId);
+	}
+
 	public async subscribeForChanges(
 		token: string,
 		driveEmail: string

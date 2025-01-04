@@ -15,7 +15,6 @@ import {
 import { LOCALTUNNEL_URL } from '../../tunnel/subdomain';
 import mime from 'mime';
 import fs from 'fs';
-import { getDefaultSavePathForFile } from '../utils';
 import FilesystemService from '../filesystem/filesystem.service';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
@@ -198,13 +197,56 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
+	public async uploadFile(
+		token: string,
+		file: Express.Multer.File,
+		driveId: string,
+		parentFolderId?: string
+	): Promise<Nullable<FileEntity>> {
+		try {
+			this.setToken(token);
+
+			const res = await this.drive.files.create({
+				media: {
+					mimeType: file.mimetype,
+					body: fs.createReadStream(file.path),
+				},
+				fields: 'id',
+			});
+
+			const newFileId = res.data.id;
+
+			if (newFileId) {
+				const res = await this.drive.files.update({
+					fileId: newFileId,
+					requestBody: {
+						name: file.originalname,
+					},
+					fields: 'id, size, name, mimeType, createdTime, webViewLink, permissions',
+				});
+
+				const driveEmail = await this.getUserDriveEmail(token);
+				const fileEntities = this.mapToUniversalFileEntityFormat(
+					[res.data],
+					driveEmail,
+					driveId
+				);
+
+				return fileEntities.length > 0 ? fileEntities[0] : null;
+			}
+
+			return null;
+		} catch {
+			return null;
+		}
+	}
+
 	public async exportFile(token: string, fileId: string, mimeType: string): Promise<boolean> {
 		try {
 			this.setToken(token);
 
 			const metadata = await this.getFileMetadata(fileId);
 
-			console.log(metadata);
 			if (!metadata) {
 				return false;
 			}

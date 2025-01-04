@@ -28,6 +28,12 @@ export interface IDriveStrategy {
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>>;
 	downloadFile(token: string, fileId: string): Promise<boolean>;
+	uploadFile(
+		token: string,
+		File: Express.Multer.File,
+		driveId: string,
+		parentFolderId?: string
+	): Promise<Nullable<FileEntity>>;
 	subscribeForChanges(
 		token: string,
 		driveEmail: string

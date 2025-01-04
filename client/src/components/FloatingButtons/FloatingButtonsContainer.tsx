@@ -14,7 +14,7 @@ import { useAppDispatch } from '../../redux/store/store';
 import { openModal } from '../../redux/slices/modal/modalSlice';
 import { ModalKind } from '../../redux/slices/modal/types';
 import { useParams } from 'react-router-dom';
-import { createFolder } from '../../redux/async-actions/files.async.actions';
+import { createFolder, uploadFile } from '../../redux/async-actions/files.async.actions';
 import { toast } from 'react-toastify';
 
 const Container = styled.div`
@@ -46,9 +46,16 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 		uploaderRef.current?.click();
 	};
 
-	const uploadFile = (): void => {
-		//TODO: upload file here
-		console.log('upload file');
+	const onFileLoad = (): void => {
+		if (!folderId || !driveId) {
+			return;
+		}
+
+		const file = uploaderRef.current?.files?.[0];
+
+		if (file) {
+			dispatch(uploadFile({ driveId, parentFolderId: folderId, file }));
+		}
 	};
 
 	const onAddFolderClick = async () => {
@@ -72,6 +79,19 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 		}
 	};
 
+	const onAddFileClick = async () => {
+		if (folderId && driveId) {
+			openFilePicker();
+		} else {
+			dispatch(
+				openModal({
+					kind: ModalKind.Upload,
+					state: { fileType: FileType.File },
+				})
+			);
+		}
+	};
+
 	return (
 		<Container>
 			{menuOpen && (
@@ -79,14 +99,14 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 					<FloatingButton
 						color={theme?.colors.orange ?? 'orange'}
 						icon={SvgNames.AddFile}
-						onClick={openFilePicker}
+						onClick={onAddFileClick}
 						animation={slideUp70pxAnimation}
 					>
 						<FileOpenerInput
 							type='file'
 							id='file'
 							ref={uploaderRef}
-							onChange={uploadFile}
+							onChange={onFileLoad}
 						/>
 					</FloatingButton>
 					<FloatingButton

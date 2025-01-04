@@ -139,6 +139,34 @@ class FilesController {
 
 		res.status(status).end();
 	}
+
+	public async uploadFile(
+		req: Request<{ driveId: string }, void, void, { parentFolderId?: string }>,
+		res: Response<FileEntity, AuthLocals>
+	): Promise<void> {
+		const { email: userEmail } = res.locals;
+		const { driveId } = req.params;
+		const { parentFolderId } = req.query;
+		const file = req.file;
+
+		if (!file) {
+			res.status(Status.BAD_REQUEST).end();
+			return;
+		}
+
+		const uploadedFileEntity = await FilesService.uploadFile(
+			driveId,
+			userEmail,
+			file,
+			parentFolderId
+		);
+
+		if (uploadedFileEntity) {
+			res.status(Status.OK).send(uploadedFileEntity);
+		} else {
+			res.status(Status.INTERNAL_SERVER_ERROR).end();
+		}
+	}
 }
 
 export default new FilesController();
