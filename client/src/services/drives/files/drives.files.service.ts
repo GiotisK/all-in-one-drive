@@ -10,18 +10,6 @@ import {
 import RequestService from '../../request.service';
 
 export class FilesService {
-	public async getRootFiles(): Promise<FileEntity[]> {
-		const { data: fileEntities } = await RequestService.get<FileEntity[]>('/drives/files');
-		return fileEntities;
-	}
-
-	public async getFolderFiles(driveId: string, folderId: string): Promise<FileEntity[]> {
-		const { data: fileEntities } = await RequestService.get<FileEntity[]>(
-			`drives/${driveId}/folders/${folderId}/files`
-		);
-		return fileEntities;
-	}
-
 	public async deleteDriveFile(driveId: string, fileId: string): Promise<boolean> {
 		const res = await RequestService.delete(`drives/${driveId}/files/${fileId}`);
 		return res.status === Status.OK;

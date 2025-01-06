@@ -3,20 +3,6 @@ import { FileType } from '../../shared/types/global.types';
 import FilesService from '../../services/drives/files/drives.files.service';
 import GoogledriveFilesService from '../../services/drives/files/googledrive/googledrive.files.service';
 
-export const getRootFiles = createAsyncThunk('files/getRootFiles', async () => {
-	const files = await FilesService.getRootFiles();
-	return files;
-});
-
-type GetFolderFilesParams = { driveId: string; folderId: string };
-export const getFolderDriveFiles = createAsyncThunk(
-	'files/getFolderDriveFiles',
-	async ({ driveId, folderId }: GetFolderFilesParams) => {
-		const files = await FilesService.getFolderFiles(driveId, folderId);
-		return files;
-	}
-);
-
 type DeleteFileParams = { driveId: string; fileId: string };
 export const deleteFile = createAsyncThunk(
 	'files/deleteFile',

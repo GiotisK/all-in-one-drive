@@ -48,11 +48,10 @@ export const DrivePage = (): JSX.Element => {
 	useCheckAuth();
 	useHandleAuthCodeFromUrl();
 	useFetchInitialData();
-	useFetchFolderContents();
 
-	useServerSideEvents();
+	/* 	useServerSideEvents();
 	useSubscribeForDriveChanges();
-
+ */
 	return isUserAuthenticated ? (
 		<OuterContainer>
 			<InnerContainer>

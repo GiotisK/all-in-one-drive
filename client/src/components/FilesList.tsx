@@ -1,4 +1,3 @@
-import { useAppSelector } from '../redux/store/store';
 import { FileRow } from '../components/FileRow';
 import { Loader } from '../components/Loader';
 import { styled } from 'styled-components';
@@ -16,16 +15,10 @@ const NoFilesText = styled.p`
 `;
 
 export const FilesList = () => {
-	const activeDriveFiles = useActiveDriveFiles();
-	const filesLoading = useAppSelector(state => state.files.requests.getFiles.loading);
-	const folderFilesLoading = useAppSelector(
-		state => state.files.requests.getFolderDriveFiles.loading
-	);
-	const filesDone = useAppSelector(state => state.files.requests.getFiles.done);
-	const folderFilesDone = useAppSelector(state => state.files.requests.getFolderDriveFiles.done);
-	const showEmptyFilesState = (filesDone || folderFilesDone) && !activeDriveFiles.length;
+	const { files, isLoading, isSuccess } = useActiveDriveFiles();
+	const showEmptyFilesState = isSuccess && !files.length;
 
-	return filesLoading || folderFilesLoading ? (
+	return isLoading ? (
 		<LoaderContainer>
 			<Loader size={25} />
 		</LoaderContainer>
@@ -33,7 +26,7 @@ export const FilesList = () => {
 		<NoFilesText>No files exist...</NoFilesText>
 	) : (
 		<>
-			{activeDriveFiles.map(file => (
+			{files.map(file => (
 				<FileRow key={file.id} file={file} />
 			))}
 		</>

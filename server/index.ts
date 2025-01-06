@@ -12,7 +12,7 @@ const app = express();
 const port = parseInt(process.env.PORT || '8000');
 const frontendURL = process.env.FRONTEND_URL;
 
-createTunnel({ port });
+/* createTunnel({ port }); */
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
