@@ -206,6 +206,9 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 					mimeType: file.mimetype,
 					body: fs.createReadStream(file.path),
 				},
+				requestBody: {
+					parents: parentFolderId ? [parentFolderId] : [],
+				},
 				fields: 'id',
 			});
 
@@ -216,7 +219,6 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 					fileId: newFileId,
 					requestBody: {
 						name: file.originalname,
-						parents: parentFolderId ? [parentFolderId] : [],
 					},
 					fields: 'id, size, name, mimeType, createdTime, webViewLink, permissions',
 				});
@@ -232,7 +234,8 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			}
 
 			return null;
-		} catch {
+		} catch (e) {
+			console.log('e', e);
 			return null;
 		}
 	}
