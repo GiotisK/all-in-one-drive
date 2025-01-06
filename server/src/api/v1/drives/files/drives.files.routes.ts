@@ -7,9 +7,13 @@ const router: Router = express.Router();
 router.get('/files', authorize, FilesController.getRootFiles);
 router.get('/:driveId/folders/:folderId/files', authorize, FilesController.getFolderFiles);
 router.get('/:driveId/files/:fileId/download', authorize, FilesController.downloadFile);
+router.get('/:driveId/files/:fileId/open', authorize, FilesController.openFile);
+
 router.post('/:driveId/files', authorize, FilesController.createFile);
 router.post('/:driveId/files/upload', authorize, upload.single('file'), FilesController.uploadFile);
+
 router.delete('/:driveId/files/:fileId', authorize, FilesController.deleteFile);
+
 router.patch('/:driveId/files/:fileId', authorize, FilesController.editFile);
 
 export default router;

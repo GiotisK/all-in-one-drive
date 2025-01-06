@@ -30,10 +30,11 @@ export interface IDriveStrategy {
 	downloadFile(token: string, fileId: string): Promise<boolean>;
 	uploadFile(
 		token: string,
-		File: Express.Multer.File,
+		file: Express.Multer.File,
 		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>>;
+	openFile: (token: string, fileId: string) => Promise<boolean>;
 	subscribeForChanges(
 		token: string,
 		driveEmail: string

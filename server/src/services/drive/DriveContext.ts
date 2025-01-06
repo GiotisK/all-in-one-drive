@@ -81,6 +81,10 @@ export default class DriveContext {
 		return this.strategy.uploadFile(token, file, driveId, parentFolderId);
 	}
 
+	public async openFile(token: string, fileId: string): Promise<boolean> {
+		return this.strategy.openFile(token, fileId);
+	}
+
 	public async subscribeForChanges(
 		token: string,
 		driveEmail: string

@@ -191,6 +191,22 @@ export class FilesService {
 
 		return null;
 	}
+
+	public async openFile(driveId: string, userEmail: string, fileId: string): Promise<boolean> {
+		const drive = await DatabaseService.getDrive(userEmail, driveId);
+
+		if (drive) {
+			const { driveType, token: encryptedToken } = drive;
+			const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
+
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.openFile(token, fileId);
+			}
+		}
+
+		return false;
+	}
 }
 
 export default new FilesService();

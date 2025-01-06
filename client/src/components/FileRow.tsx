@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { FileElement } from './FileElement';
 import { SvgNames } from '../shared/utils/svg-utils';
 import { CreateDriveSvg, isNativeGoogleDriveFile } from '../shared/utils/utils';
@@ -18,6 +18,7 @@ import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from './Loader';
 import { toast } from 'react-toastify';
+import DrivesFilesService from '../services/drives/files/drives.files.service';
 
 const Container = styled.div`
 	display: flex;
@@ -150,9 +151,16 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		setRowClicked(false);
 	};
 
-	const onFileClick = () => {
+	const onFileClick = async () => {
 		if (type === FileType.Folder) {
 			navigate(`${driveId}/${id}`);
+		} else if (type === FileType.File) {
+			try {
+				await DrivesFilesService.openDriveFile(driveId, id);
+				toast.success('File opening initiated successfully');
+			} catch {
+				toast.error('Failed to open file');
+			}
 		}
 	};
 

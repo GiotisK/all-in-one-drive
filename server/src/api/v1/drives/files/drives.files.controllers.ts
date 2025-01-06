@@ -167,6 +167,20 @@ class FilesController {
 			res.status(Status.INTERNAL_SERVER_ERROR).end();
 		}
 	}
+
+	public async openFile(
+		req: Request<{ driveId: string; fileId: string }, void, void>,
+		res: Response<void, AuthLocals>
+	): Promise<void> {
+		const { email: userEmail } = res.locals;
+		const { driveId, fileId } = req.params;
+
+		const success = await FilesService.openFile(driveId, userEmail, fileId);
+
+		const status = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
+
+		res.status(status).end();
+	}
 }
 
 export default new FilesController();

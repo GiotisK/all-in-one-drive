@@ -10,6 +10,7 @@ import {
 	FileEntity,
 	FileType,
 	Nullable,
+	Status,
 	WatchChangesChannel,
 } from '../../types/global.types';
 import { LOCALTUNNEL_URL } from '../../tunnel/subdomain';
@@ -178,20 +179,14 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		try {
 			this.setToken(token);
 
-			const metadata = await this.getFileMetadata(fileId);
+			const data = await this.downloadFileInternal(fileId);
 
-			if (!metadata) {
-				return false;
+			if (data) {
+				FilesystemService.saveFileToDownloads(data.fileData, data.name);
+				return true;
 			}
 
-			const res = await this.drive.files.get(
-				{ fileId, alt: 'media' },
-				{ responseType: 'stream' }
-			);
-
-			FilesystemService.saveFileToDownloads(res.data, metadata.name);
-
-			return res.status === 200;
+			return false;
 		} catch {
 			return false;
 		}
@@ -221,6 +216,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 					fileId: newFileId,
 					requestBody: {
 						name: file.originalname,
+						parents: parentFolderId ? [parentFolderId] : [],
 					},
 					fields: 'id, size, name, mimeType, createdTime, webViewLink, permissions',
 				});
@@ -238,6 +234,25 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			return null;
 		} catch {
 			return null;
+		}
+	}
+
+	public async openFile(token: string, fileId: string): Promise<boolean> {
+		try {
+			this.setToken(token);
+
+			this.setToken(token);
+
+			const data = await this.downloadFileInternal(fileId);
+
+			if (data) {
+				FilesystemService.saveFileToTemp(data.fileData, data.name, '', true);
+				return true;
+			}
+
+			return false;
+		} catch {
+			return false;
 		}
 	}
 
@@ -262,7 +277,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				mime.getExtension(mimeType) ?? ''
 			);
 
-			return res.status === 200;
+			return res.status === Status.OK;
 		} catch {
 			return false;
 		}
@@ -397,6 +412,28 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		this.setToken(token);
 		const watchChangesChannel = await this.registerForDriveChanges(driveEmail);
 		return watchChangesChannel;
+	}
+
+	private async downloadFileInternal(fileId: string) {
+		try {
+			const metadata = await this.getFileMetadata(fileId);
+
+			if (!metadata) {
+				return false;
+			}
+
+			const res = await this.drive.files.get(
+				{ fileId, alt: 'media' },
+				{ responseType: 'stream' }
+			);
+
+			return {
+				fileData: res.data,
+				name: metadata.name,
+			};
+		} catch {
+			return null;
+		}
 	}
 
 	private async registerForDriveChanges(

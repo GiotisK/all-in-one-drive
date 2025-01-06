@@ -81,6 +81,12 @@ export class FilesService {
 		return res.status === Status.OK;
 	}
 
+	public async openDriveFile(driveId: string, fileId: string): Promise<boolean> {
+		const res = await RequestService.get(`drives/${driveId}/files/${fileId}/open`);
+
+		return res.status === Status.OK;
+	}
+
 	public async uploadDriveFile(
 		driveId: string,
 		file: File,
