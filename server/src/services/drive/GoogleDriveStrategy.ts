@@ -234,8 +234,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			}
 
 			return null;
-		} catch (e) {
-			console.log('e', e);
+		} catch {
 			return null;
 		}
 	}

@@ -98,7 +98,7 @@ export class DatabaseService {
 		try {
 			const result = await User.updateOne(
 				{ email: userEmail },
-				{ $pull: { drives: { id: driveId } } }
+				{ $pull: { drives: { _id: driveId } } }
 			).exec();
 
 			return result.modifiedCount > 0;
