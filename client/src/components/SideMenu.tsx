@@ -4,11 +4,12 @@ import { DriveRow } from './DriveRow';
 import { Loader } from './Loader';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
-import { useAppDispatch, useAppSelector } from '../redux/store/store';
+import { useAppDispatch } from '../redux/store/store';
 import { SvgNames } from '../shared/utils/svg-utils';
 import { IconButton } from './IconButton';
 import { useEffect, useState } from 'react';
 import { toggleAllDrivesSelection } from '../redux/slices/drives/drivesSlice';
+import { useGetDrivesQuery } from '../redux/rtk/driveApi';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
@@ -64,10 +65,9 @@ const LoaderContainer = styled.div`
 
 export const SideMenu = (): JSX.Element => {
 	const dispatch = useAppDispatch();
+	const { data: drives = [], isLoading: areDrivesLoading } = useGetDrivesQuery();
 	const [checked, setChecked] = useState(true);
 	const theme = useTheme();
-	const drives = useAppSelector(state => state.drives.drives);
-	const drivesLoading = useAppSelector(state => state.drives.requests.getDrives.loading);
 
 	useEffect(() => {
 		const hasAtLeastOneInactive = drives.some(drive => !drive.active);
@@ -102,7 +102,7 @@ export const SideMenu = (): JSX.Element => {
 				/>
 			</Header>
 
-			{drivesLoading ? (
+			{areDrivesLoading ? (
 				<LoaderContainer>
 					<Loader size={25} />
 				</LoaderContainer>

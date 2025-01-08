@@ -1,16 +1,15 @@
 import { useEffect, useRef } from 'react';
 import { DriveType, Nullable } from '../shared/types/global.types';
 import DrivesService from '../services/drives/drives.service';
-import { getDrives } from '../redux/async-actions/drives.async.actions';
-import { useAppDispatch } from '../redux/store/store';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { useLazyGetDrivesQuery } from '../redux/rtk/driveApi';
 
 export const useHandleAuthCodeFromUrl = () => {
-	const dispatch = useAppDispatch();
 	const location = useLocation();
 	const [params] = useSearchParams();
 	const isRequestSent = useRef<boolean>(false);
+	const [trigger] = useLazyGetDrivesQuery();
 
 	useEffect(() => {
 		let ignore = false;
@@ -24,7 +23,7 @@ export const useHandleAuthCodeFromUrl = () => {
 					isRequestSent.current = true;
 					const success = await DrivesService.connectDrive(authCode, drive);
 					if (success) {
-						dispatch(getDrives());
+						trigger();
 					}
 				} catch {
 					toast.error('Failed to connect drive');
@@ -35,7 +34,7 @@ export const useHandleAuthCodeFromUrl = () => {
 		return () => {
 			ignore = true;
 		};
-	}, [dispatch, location.search, params]);
+	}, [location.search, params, trigger]);
 };
 
 // Helpers

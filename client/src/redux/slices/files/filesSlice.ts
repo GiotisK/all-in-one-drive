@@ -17,7 +17,7 @@ import {
 	uploadFile,
 } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
-import { deleteDrive, getChanges } from '../../async-actions/drives.async.actions';
+import { getChanges } from '../../async-actions/drives.async.actions';
 import { FileType } from '../../../shared/types/global.types';
 
 const initialState: FilesState = {
@@ -138,12 +138,6 @@ const filesSlice = createSlice({
 			.addCase(uploadFile.rejected, state => {
 				state.requests.uploadFile = requestErrorState;
 			});
-
-		// deleteDrive
-		builder.addCase(deleteDrive.fulfilled, (state, { payload }) => {
-			const { driveId } = payload;
-			state.files = state.files.filter(file => file.driveId === driveId);
-		});
 
 		// logoutUser
 		builder.addCase(logoutUser.fulfilled, () => {

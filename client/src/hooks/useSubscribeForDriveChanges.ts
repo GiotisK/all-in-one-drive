@@ -1,11 +1,13 @@
 import { useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { subscribeForChanges } from '../redux/async-actions/drives.async.actions';
+import { useGetDrivesQuery } from '../redux/rtk/driveApi';
 
 export const useSubscribeForDriveChanges = () => {
 	const dispatch = useAppDispatch();
 	const { isAuthenticated } = useAppSelector(state => state.user);
-	const { drives } = useAppSelector(state => state.drives);
+	const { data: drives = [] } = useGetDrivesQuery();
+
 	const subscriptionDone = useRef<boolean>(false);
 
 	useEffect(() => {

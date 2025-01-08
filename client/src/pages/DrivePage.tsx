@@ -14,12 +14,10 @@ import {
 	useServerSideEvents,
 	useSubscribeForDriveChanges,
 } from '../hooks';
-import { useFetchInitialData } from '../hooks/useFetchInitialData';
 import { Navigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
 import { useAppSelector } from '../redux/store/store';
 import { FilesList } from '../components/FilesList';
-import { useFetchFolderContents } from '../hooks/useFetchFolderContents';
 import { useIsInsideFolder } from '../hooks/useIsInsideFolder';
 
 const OuterContainer = styled.div`
@@ -47,11 +45,10 @@ export const DrivePage = (): JSX.Element => {
 
 	useCheckAuth();
 	useHandleAuthCodeFromUrl();
-	useFetchInitialData();
 
-	/* 	useServerSideEvents();
-	useSubscribeForDriveChanges();
- */
+	/*useServerSideEvents();
+	useSubscribeForDriveChanges();*/
+
 	return isUserAuthenticated ? (
 		<OuterContainer>
 			<InnerContainer>

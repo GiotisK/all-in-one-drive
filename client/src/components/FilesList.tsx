@@ -2,6 +2,7 @@ import { FileRow } from '../components/FileRow';
 import { Loader } from '../components/Loader';
 import { styled } from 'styled-components';
 import { useActiveDriveFiles } from '../hooks/useActiveDriveFiles';
+import { useGetDrivesQuery } from '../redux/rtk/driveApi';
 
 const LoaderContainer = styled.div`
 	margin-top: 3%;
@@ -15,14 +16,16 @@ const NoFilesText = styled.p`
 `;
 
 export const FilesList = () => {
-	const { files, isLoading, isSuccess } = useActiveDriveFiles();
-	const showEmptyFilesState = isSuccess && !files.length;
+	const { files, isLoading } = useActiveDriveFiles();
+	const { isSuccess: drivesSuccess } = useGetDrivesQuery();
+
+	const shouldShowEmptyState = drivesSuccess && files.length === 0;
 
 	return isLoading ? (
 		<LoaderContainer>
 			<Loader size={25} />
 		</LoaderContainer>
-	) : showEmptyFilesState ? (
+	) : shouldShowEmptyState ? (
 		<NoFilesText>No files exist...</NoFilesText>
 	) : (
 		<>

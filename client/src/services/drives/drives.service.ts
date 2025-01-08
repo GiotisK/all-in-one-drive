@@ -27,16 +27,6 @@ export class DrivesService {
 		return res.status === Status.OK;
 	}
 
-	async getDrives(): Promise<DriveEntity[]> {
-		const { data } = await RequestService.get<DriveEntity[]>('/drives');
-		return data;
-	}
-
-	async deleteDrive(driveId: string): Promise<boolean> {
-		const res = await RequestService.delete(`/drives/${driveId}`);
-		return res.status === Status.OK;
-	}
-
 	public async subscribeForDriveChanges(driveId: string): Promise<WatchChangesChannel> {
 		const { data: watchChangesChannel } = await RequestService.post<
 			SubscribeForChangesRequestBody,

@@ -1,25 +1,10 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DrivesState } from './types';
-import {
-	getDrives,
-	deleteDrive,
-	subscribeForChanges,
-	getChanges,
-} from '../../async-actions/drives.async.actions';
-import {
-	requestErrorState,
-	requestInitialState,
-	requestPendingState,
-	requestSuccessState,
-} from '../constants';
+import { subscribeForChanges, getChanges } from '../../async-actions/drives.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
 
 const initialState: DrivesState = {
 	drives: [],
-	requests: {
-		deleteDrive: requestInitialState,
-		getDrives: requestInitialState,
-	},
 };
 
 const drivesSlice = createSlice({
@@ -38,33 +23,6 @@ const drivesSlice = createSlice({
 		},
 	},
 	extraReducers: builder => {
-		// getDrives
-		builder
-			.addCase(getDrives.pending, state => {
-				state.requests.getDrives = requestPendingState;
-			})
-			.addCase(getDrives.fulfilled, (state, { payload: drives }) => {
-				state.drives = drives;
-				state.requests.getDrives = requestSuccessState;
-			})
-			.addCase(getDrives.rejected, state => {
-				state.requests.getDrives = requestErrorState;
-			});
-
-		// deleteDrive
-		builder
-			.addCase(deleteDrive.pending, state => {
-				state.requests.deleteDrive = requestPendingState;
-			})
-			.addCase(deleteDrive.fulfilled, (state, { payload }) => {
-				const { driveId } = payload;
-				state.drives = state.drives.filter(drive => drive.id !== driveId);
-				state.requests.deleteDrive = requestSuccessState;
-			})
-			.addCase(deleteDrive.rejected, state => {
-				state.requests.deleteDrive = requestErrorState;
-			});
-
 		// logoutUser
 		builder.addCase(logoutUser.fulfilled, () => {
 			return initialState;

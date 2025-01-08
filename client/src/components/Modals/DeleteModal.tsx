@@ -6,9 +6,9 @@ import { DriveEntity, DriveType, FileEntity, FileType } from '../../shared/types
 import { DeleteModalState } from '../../redux/slices/modal/types';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { useAppDispatch, useAppSelector } from '../../redux/store/store';
-import { deleteDrive } from '../../redux/async-actions/drives.async.actions';
 import { deleteFile } from '../../redux/async-actions/files.async.actions';
 import { toast } from 'react-toastify';
+import { useDeleteDriveMutation } from '../../redux/rtk/driveApi';
 
 interface DeleteFileProps {
 	file: FileEntity;
@@ -64,8 +64,8 @@ interface IProps {
 
 export const DeleteModal = ({ state }: IProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const deleteDriveReq = useAppSelector(state => state.drives.requests.deleteDrive);
 	const deleteFileReq = useAppSelector(state => state.files.requests.deleteFile);
+	const [deleteDrive, { isLoading: deleteDriveLoading }] = useDeleteDriveMutation();
 
 	const { entity } = state;
 
@@ -76,7 +76,7 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 			if (isDriveEntity(entity)) {
 				const { id: driveId } = entity;
 				entityName = 'drive';
-				await dispatch(deleteDrive({ driveId }));
+				deleteDrive({ driveId });
 			} else if (isFileEntity(entity)) {
 				const { driveId, id: fileId } = entity;
 				entityName = 'file';
@@ -100,7 +100,7 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 					text: 'Delete',
 					onClick: sendDeleteEntityRequest,
 				},
-				showLoader: deleteDriveReq.loading || deleteFileReq.loading,
+				showLoader: deleteDriveLoading || deleteFileReq.loading,
 			}}
 		>
 			<Content>

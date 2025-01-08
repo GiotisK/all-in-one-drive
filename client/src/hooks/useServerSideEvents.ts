@@ -6,14 +6,14 @@ import { getChanges } from '../redux/async-actions/drives.async.actions';
 import { useEventSourceEvents } from './useEventSourceEvents';
 import { validateEventData } from '../sse/validateEventData';
 import { isValidServerSideEventData } from '../sse/validators';
+import { useGetDrivesQuery } from '../redux/rtk/driveApi';
 
 const DRIVE_NOTIFICATION_SUBSCRIPTION_URL = `${config.baseURL}/drives/subscribe`;
 
 export const useServerSideEvents = () => {
 	const dispatch = useAppDispatch();
 	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
-	const getDrivesRequest = useAppSelector(state => state.drives.requests.getDrives);
-	const { drives } = useAppSelector(state => state.drives);
+	const { data: drives = [], isSuccess } = useGetDrivesQuery();
 
 	const handleServerSideEvent = useCallback(
 		(event: MessageEvent<string>) => {
@@ -68,8 +68,8 @@ export const useServerSideEvents = () => {
 	});
 
 	useEffect(() => {
-		if (isUserAuthenticated && getDrivesRequest.done) {
+		if (isUserAuthenticated && isSuccess) {
 			openStream();
 		}
-	}, [getDrivesRequest.done, isUserAuthenticated, openStream]);
+	}, [isSuccess, isUserAuthenticated, openStream]);
 };

@@ -8,6 +8,7 @@ import { createFolder, uploadFile } from '../../redux/async-actions/files.async.
 import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { toast } from 'react-toastify';
 import { useRef, useState } from 'react';
+import { useGetDrivesQuery } from '../../redux/rtk/driveApi';
 
 const Content = styled.div`
 	display: flex;
@@ -74,11 +75,11 @@ interface IProps {
 
 export const UploadModal = ({ state }: IProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const drives = useAppSelector(state => state.drives.drives);
 	const uploaderRef = useRef<Nullable<HTMLInputElement>>(null);
 	const createFolderReq = useAppSelector(state => state.files.requests.createFolder);
 	const { fileType } = state;
 	const [selectedDrive, setSelectedDrive] = useState<Nullable<DriveEntity>>(null);
+	const { data: drives = [] } = useGetDrivesQuery();
 
 	const getTitle = (): string => {
 		switch (fileType) {

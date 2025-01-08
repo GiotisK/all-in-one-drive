@@ -2,20 +2,6 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { DriveChanges } from '../../shared/types/global.types';
 import DrivesService from '../../services/drives/drives.service';
 
-export const getDrives = createAsyncThunk('drives/getDrives', async () => {
-	const drives = await DrivesService.getDrives();
-	return drives;
-});
-
-type DeleteDriveParams = { driveId: string };
-export const deleteDrive = createAsyncThunk(
-	'drives/deleteDrive',
-	async ({ driveId }: DeleteDriveParams) => {
-		await DrivesService.deleteDrive(driveId);
-		return { driveId };
-	}
-);
-
 type SubscribeForChangesParams = { driveId: string };
 export const subscribeForChanges = createAsyncThunk(
 	'drives/subscribeForChanges',
