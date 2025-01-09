@@ -7,13 +7,20 @@ export const driveApi = createApi({
 	endpoints: builder => ({
 		getDriveRootFiles: builder.query<FileEntity[], void>({
 			query: () => ({ url: '/files' }),
-			providesTags: ['Drives'],
+			providesTags: ['Files', 'Drives'],
 		}),
 		getDriveFolderFiles: builder.query<FileEntity[], { driveId?: string; folderId?: string }>({
 			query: ({ driveId, folderId }) => ({
 				url: `${driveId}/folders/${folderId}/files`,
 			}),
-			providesTags: ['Drives'],
+			providesTags: ['Drives', 'Files'],
+		}),
+		deleteFile: builder.mutation<void, { driveId: string; fileId: string }>({
+			query: ({ driveId, fileId }) => ({
+				url: `${driveId}/files/${fileId}`,
+				method: 'DELETE',
+			}),
+			invalidatesTags: ['Files'],
 		}),
 		getDrives: builder.query<DriveEntity[], void>({
 			query: () => ({ url: '' }),
@@ -24,7 +31,7 @@ export const driveApi = createApi({
 			invalidatesTags: ['Drives'],
 		}),
 	}),
-	tagTypes: ['Drives'],
+	tagTypes: ['Drives', 'Files'],
 });
 
 export const {
@@ -33,4 +40,5 @@ export const {
 	useGetDrivesQuery,
 	useLazyGetDrivesQuery,
 	useDeleteDriveMutation,
+	useDeleteFileMutation,
 } = driveApi;

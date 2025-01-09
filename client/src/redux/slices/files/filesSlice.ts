@@ -7,7 +7,6 @@ import {
 	requestSuccessState,
 } from '../constants';
 import {
-	deleteFile,
 	renameFile,
 	shareFile,
 	unshareFile,
@@ -23,9 +22,6 @@ import { FileType } from '../../../shared/types/global.types';
 const initialState: FilesState = {
 	files: [],
 	requests: {
-		getFiles: { ...requestInitialState },
-		getFolderDriveFiles: { ...requestInitialState },
-		deleteFile: { ...requestInitialState },
 		renameFile: { ...requestInitialState },
 		shareFile: { ...requestInitialState },
 		unshareFile: { ...requestInitialState },
@@ -41,19 +37,6 @@ const filesSlice = createSlice({
 	initialState,
 	reducers: {},
 	extraReducers: builder => {
-		// deleteFile
-		builder
-			.addCase(deleteFile.pending, state => {
-				state.requests.deleteFile = requestPendingState;
-			})
-			.addCase(deleteFile.fulfilled, (state, { payload: fileId }) => {
-				state.files = state.files.filter(file => file.id !== fileId);
-				state.requests.deleteFile = requestSuccessState;
-			})
-			.addCase(deleteFile.rejected, state => {
-				state.requests.deleteFile = requestErrorState;
-			});
-
 		// renameFile
 		builder
 			.addCase(renameFile.pending, state => {

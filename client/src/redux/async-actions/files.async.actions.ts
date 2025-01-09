@@ -3,15 +3,6 @@ import { FileType } from '../../shared/types/global.types';
 import FilesService from '../../services/drives/files/drives.files.service';
 import GoogledriveFilesService from '../../services/drives/files/googledrive/googledrive.files.service';
 
-type DeleteFileParams = { driveId: string; fileId: string };
-export const deleteFile = createAsyncThunk(
-	'files/deleteFile',
-	async ({ driveId, fileId }: DeleteFileParams) => {
-		await FilesService.deleteDriveFile(driveId, fileId);
-		return fileId;
-	}
-);
-
 type RenameFileParams = { driveId: string; fileId: string; newName: string };
 export const renameFile = createAsyncThunk(
 	'files/renameFile',

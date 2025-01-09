@@ -15,7 +15,7 @@ export const useActiveDriveFiles = () => {
 		isLoading: rootFilesLoading,
 		isSuccess: rootFilesSuccess,
 		isUninitialized: rootFilesUninitialized,
-	} = useGetDriveRootFilesQuery(undefined, { skip: !drives.length });
+	} = useGetDriveRootFilesQuery(undefined, { skip: !!folderId || !drives.length });
 
 	const {
 		data: folderFiles = [],
