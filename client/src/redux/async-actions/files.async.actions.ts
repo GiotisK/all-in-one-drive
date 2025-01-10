@@ -57,15 +57,6 @@ export const uploadFile = createAsyncThunk(
 	}
 );
 
-type GetGoogleDriveExportFormatsParams = { driveId: string; fileId: string };
-export const getGoogleDriveExportFormats = createAsyncThunk(
-	'files/getGoogleDriveFileExportFormats',
-	async ({ driveId, fileId }: GetGoogleDriveExportFormatsParams) => {
-		const exportFormats = await GoogledriveFilesService.getExportFormats(driveId, fileId);
-		return exportFormats;
-	}
-);
-
 type ExportGoogleDriveFileParams = { driveId: string; fileId: string; mimeType: string };
 export const exportGoogleDriveFile = createAsyncThunk(
 	'files/exportGoogleDriveFile',

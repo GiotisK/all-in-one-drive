@@ -9,7 +9,6 @@ export interface FilesState {
 		unshareFile: RequestState;
 		createFolder: RequestState;
 		downloadFile: RequestState;
-		getGoogleDriveExportFormats: RequestState;
 		uploadFile: RequestState;
 	};
 }

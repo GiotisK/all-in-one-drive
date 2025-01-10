@@ -30,6 +30,14 @@ export const driveApi = createApi({
 			query: ({ driveId }) => ({ url: `/${driveId}`, method: 'DELETE' }),
 			invalidatesTags: ['Drives'],
 		}),
+		getGoogleDriveFileExportFormats: builder.query<
+			string[],
+			{ driveId: string; fileId: string }
+		>({
+			query: ({ driveId, fileId }) => ({
+				url: `googledrive/${driveId}/files/${fileId}/export/formats`,
+			}),
+		}),
 	}),
 	tagTypes: ['Drives', 'Files'],
 });
@@ -41,4 +49,5 @@ export const {
 	useLazyGetDrivesQuery,
 	useDeleteDriveMutation,
 	useDeleteFileMutation,
+	useGetGoogleDriveFileExportFormatsQuery,
 } = driveApi;

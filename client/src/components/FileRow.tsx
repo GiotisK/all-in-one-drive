@@ -8,17 +8,13 @@ import { useOutsideClicker } from '../hooks';
 import { DriveType, FileEntity, FileType } from '../shared/types/global.types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
-import {
-	downloadFile,
-	getGoogleDriveExportFormats,
-	shareFile,
-	unshareFile,
-} from '../redux/async-actions/files.async.actions';
+import { downloadFile, shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from './Loader';
 import { toast } from 'react-toastify';
 import DrivesFilesService from '../services/drives/files/drives.files.service';
+import { useGetGoogleDriveFileExportFormatsQuery } from '../redux/rtk/driveApi';
 
 const Container = styled.div`
 	display: flex;
@@ -115,19 +111,24 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
-	const {
-		shareFile: shareFileReq,
-		unshareFile: unshareFileReq,
-		getGoogleDriveExportFormats: getGoogleDriveExportFormatsReq,
-	} = useAppSelector(state => state.files.requests);
+	const { shareFile: shareFileReq, unshareFile: unshareFileReq } = useAppSelector(
+		state => state.files.requests
+	);
 	const [menuToggle, setMenuToggle] = useState(false);
-	const [rowClicked, setRowClicked] = useState(false);
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
 	const { driveId, id, type, extension, date, drive, email, name, size, sharedLink } = file;
-
 	const isGoogleDriveFile = isNativeGoogleDriveFile(extension);
+
+	const { data: formats = [], isLoading: exportFormatsLoading } =
+		useGetGoogleDriveFileExportFormatsQuery(
+			{
+				driveId,
+				fileId: id,
+			},
+			{ skip: !isGoogleDriveFile || !menuToggle }
+		);
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
 
@@ -140,15 +141,11 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	};
 
 	const onShareClick = async () => {
-		setRowClicked(true);
 		await dispatch(shareFile({ driveId, fileId: id }));
-		setRowClicked(false);
 	};
 
 	const onUnshareClick = async () => {
-		setRowClicked(true);
 		await dispatch(unshareFile({ driveId, fileId: id }));
-		setRowClicked(false);
 	};
 
 	const onFileClick = async () => {
@@ -176,22 +173,13 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	};
 
 	const onExportClick = async () => {
-		setRowClicked(true);
-		const exportFormatsMimeTypes = await dispatch(
-			getGoogleDriveExportFormats({ driveId, fileId: id })
-		).unwrap();
-		setRowClicked(false);
-
-		if (exportFormatsMimeTypes) {
-			dispatch(
-				openModal({
-					kind: ModalKind.ExportFormat,
-					state: { exportFormats: exportFormatsMimeTypes, fileId: id, driveId },
-				})
-			);
-		} else {
-			toast.error('Failed to get export formats');
-		}
+		if (exportFormatsLoading) return;
+		dispatch(
+			openModal({
+				kind: ModalKind.ExportFormat,
+				state: { exportFormats: formats, fileId: id, driveId },
+			})
+		);
 	};
 
 	const fileMenuRows: FileMenuRow[] = [
@@ -262,13 +250,13 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 					onClick={() => navigator.clipboard.writeText(sharedLink)}
 				/>
 			)}
-			{(shareFileReq.loading || unshareFileReq.loading) && rowClicked && (
+			{(shareFileReq.loading || unshareFileReq.loading) && menuToggle && (
 				<LoaderContainer>
 					<Loader size={8} />
 				</LoaderContainer>
 			)}
 
-			{getGoogleDriveExportFormatsReq.loading && rowClicked && (
+			{exportFormatsLoading && menuToggle && (
 				<LoaderContainer>
 					<Loader size={8} />
 				</LoaderContainer>
