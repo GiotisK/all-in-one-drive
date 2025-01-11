@@ -3,7 +3,6 @@ import {
 	Status,
 	PatchFileRequestBody,
 	PatchFileResponse,
-	Nullable,
 	CreateFileRequestBody,
 	FileType,
 } from '../../../shared/types/global.types';
@@ -26,25 +25,6 @@ export class FilesService {
 		);
 		const renameData = res.data.operation.rename;
 		return renameData && renameData.success ? renameData.name : '';
-	}
-
-	public async shareDriveFile(driveId: string, fileId: string): Promise<Nullable<string>> {
-		const res = await RequestService.patch<PatchFileRequestBody, PatchFileResponse>(
-			`drives/${driveId}/files/${fileId}`,
-			{ share: true }
-		);
-		const shareData = res.data.operation.share;
-
-		return shareData && shareData.success ? shareData.sharedLink : null;
-	}
-
-	public async unshareDriveFile(driveId: string, fileId: string): Promise<boolean> {
-		const { data } = await RequestService.patch<PatchFileRequestBody, PatchFileResponse>(
-			`drives/${driveId}/files/${fileId}`,
-			{ share: false }
-		);
-		const unshareData = data.operation.unshare;
-		return unshareData && unshareData.success ? true : false;
 	}
 
 	public async createFile(

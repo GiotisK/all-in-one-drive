@@ -5,8 +5,6 @@ export interface FilesState {
 	files: FileEntity[];
 	requests: {
 		renameFile: RequestState;
-		shareFile: RequestState;
-		unshareFile: RequestState;
 		createFolder: RequestState;
 		downloadFile: RequestState;
 		uploadFile: RequestState;

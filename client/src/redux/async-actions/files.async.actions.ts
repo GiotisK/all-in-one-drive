@@ -12,24 +12,6 @@ export const renameFile = createAsyncThunk(
 	}
 );
 
-type ShareFileParams = { driveId: string; fileId: string };
-export const shareFile = createAsyncThunk(
-	'files/shareFile',
-	async ({ driveId, fileId }: ShareFileParams) => {
-		const sharedLink = await FilesService.shareDriveFile(driveId, fileId);
-		return { sharedLink, fileId };
-	}
-);
-
-type UnshareFileParams = { driveId: string; fileId: string };
-export const unshareFile = createAsyncThunk(
-	'files/unshareFile',
-	async ({ driveId, fileId }: UnshareFileParams) => {
-		await FilesService.unshareDriveFile(driveId, fileId);
-		return fileId;
-	}
-);
-
 type CreateFolderParams = { driveId: string; parentFolderId?: string };
 export const createFolder = createAsyncThunk(
 	'files/createFolder',

@@ -8,8 +8,6 @@ import {
 } from '../constants';
 import {
 	renameFile,
-	shareFile,
-	unshareFile,
 	createFolder,
 	downloadFile,
 	uploadFile,
@@ -22,8 +20,6 @@ const initialState: FilesState = {
 	files: [],
 	requests: {
 		renameFile: { ...requestInitialState },
-		shareFile: { ...requestInitialState },
-		unshareFile: { ...requestInitialState },
 		createFolder: { ...requestInitialState },
 		downloadFile: { ...requestInitialState },
 		uploadFile: { ...requestInitialState },
@@ -49,37 +45,6 @@ const filesSlice = createSlice({
 			})
 			.addCase(renameFile.rejected, state => {
 				state.requests.renameFile = requestErrorState;
-			});
-
-		// shareFile
-		builder
-			.addCase(shareFile.pending, state => {
-				state.requests.shareFile = requestPendingState;
-			})
-			.addCase(shareFile.fulfilled, (state, { payload }) => {
-				const { sharedLink, fileId } = payload;
-				const fileForUpdateIndex = state.files.findIndex(file => file.id === fileId);
-
-				state.files[fileForUpdateIndex].sharedLink = sharedLink;
-				state.requests.shareFile = requestSuccessState;
-			})
-			.addCase(shareFile.rejected, state => {
-				state.requests.shareFile = requestErrorState;
-			});
-
-		// unshareFile
-		builder
-			.addCase(unshareFile.pending, state => {
-				state.requests.unshareFile = requestPendingState;
-			})
-			.addCase(unshareFile.fulfilled, (state, { payload: id }) => {
-				const fileForUpdateIndex = state.files.findIndex(file => file.id === id);
-
-				state.files[fileForUpdateIndex].sharedLink = null;
-				state.requests.unshareFile = requestSuccessState;
-			})
-			.addCase(unshareFile.rejected, state => {
-				state.requests.unshareFile = requestErrorState;
 			});
 
 		// downloadFile

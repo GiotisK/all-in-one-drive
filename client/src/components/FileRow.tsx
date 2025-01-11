@@ -8,13 +8,16 @@ import { useOutsideClicker } from '../hooks';
 import { DriveType, FileEntity, FileType } from '../shared/types/global.types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
-import { downloadFile, shareFile, unshareFile } from '../redux/async-actions/files.async.actions';
-import { useAppDispatch, useAppSelector } from '../redux/store/store';
+import { downloadFile } from '../redux/async-actions/files.async.actions';
+import { useAppDispatch } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from './Loader';
 import { toast } from 'react-toastify';
 import DrivesFilesService from '../services/drives/files/drives.files.service';
-import { useGetGoogleDriveFileExportFormatsQuery } from '../redux/rtk/driveApi';
+import {
+	useGetGoogleDriveFileExportFormatsQuery,
+	useShareDriveFileMutation,
+} from '../redux/rtk/driveApi';
 
 const Container = styled.div`
 	display: flex;
@@ -77,8 +80,19 @@ const PopupMenu = styled.div`
 	box-shadow: ${({ theme }) => theme.colors.boxShadow}};
 `;
 
-const MenuRow = styled.div`
+const MenuRow = styled.button`
+	border: none;
 	border-bottom: solid 1px ${({ theme }) => theme.colors.border};
+	background: none;
+	color: inherit;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+
+	&:disabled {
+		color: ${({ theme }) => theme.colors.textSecondary};
+	}
 `;
 
 const MenuRowText = styled.p`
@@ -104,6 +118,7 @@ interface IProps {
 
 type FileMenuRow = {
 	text: string;
+	disabled?: boolean;
 	onClick: () => void;
 };
 
@@ -111,9 +126,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	const theme = useTheme();
 	const navigate = useNavigate();
 	const dispatch = useAppDispatch();
-	const { shareFile: shareFileReq, unshareFile: unshareFileReq } = useAppSelector(
-		state => state.files.requests
-	);
+
 	const [menuToggle, setMenuToggle] = useState(false);
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
@@ -129,6 +142,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 			},
 			{ skip: !isGoogleDriveFile || !menuToggle }
 		);
+	const [shareDriveFile, { isLoading: shareDriveFileLoading }] = useShareDriveFileMutation();
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
 
@@ -141,11 +155,11 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	};
 
 	const onShareClick = async () => {
-		await dispatch(shareFile({ driveId, fileId: id }));
+		shareDriveFile({ driveId, fileId: id, share: true });
 	};
 
 	const onUnshareClick = async () => {
-		await dispatch(unshareFile({ driveId, fileId: id }));
+		shareDriveFile({ driveId, fileId: id, share: false });
 	};
 
 	const onFileClick = async () => {
@@ -173,7 +187,6 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	};
 
 	const onExportClick = async () => {
-		if (exportFormatsLoading) return;
 		dispatch(
 			openModal({
 				kind: ModalKind.ExportFormat,
@@ -186,6 +199,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		{
 			text: isGoogleDriveFile ? 'Export' : 'Download',
 			onClick: isGoogleDriveFile ? onExportClick : onDownloadClick,
+			disabled: exportFormatsLoading,
 		},
 		{
 			text: 'Rename',
@@ -215,7 +229,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 			{menuToggle && (
 				<PopupMenu ref={menuRef}>
 					{fileMenuRows.map((row, index) => (
-						<MenuRow key={index} onClick={row.onClick}>
+						<MenuRow disabled={row.disabled} key={index} onClick={row.onClick}>
 							<MenuRowText>{row.text}</MenuRowText>
 						</MenuRow>
 					))}
@@ -250,13 +264,8 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 					onClick={() => navigator.clipboard.writeText(sharedLink)}
 				/>
 			)}
-			{(shareFileReq.loading || unshareFileReq.loading) && menuToggle && (
-				<LoaderContainer>
-					<Loader size={8} />
-				</LoaderContainer>
-			)}
 
-			{exportFormatsLoading && menuToggle && (
+			{(exportFormatsLoading || shareDriveFileLoading) && (
 				<LoaderContainer>
 					<Loader size={8} />
 				</LoaderContainer>
