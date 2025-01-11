@@ -6,12 +6,7 @@ import {
 	requestPendingState,
 	requestSuccessState,
 } from '../constants';
-import {
-	renameFile,
-	createFolder,
-	downloadFile,
-	uploadFile,
-} from '../../async-actions/files.async.actions';
+import { createFolder, downloadFile, uploadFile } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
 import { getChanges } from '../../async-actions/drives.async.actions';
 import { FileType } from '../../../shared/types/global.types';
@@ -19,7 +14,6 @@ import { FileType } from '../../../shared/types/global.types';
 const initialState: FilesState = {
 	files: [],
 	requests: {
-		renameFile: { ...requestInitialState },
 		createFolder: { ...requestInitialState },
 		downloadFile: { ...requestInitialState },
 		uploadFile: { ...requestInitialState },
@@ -31,22 +25,6 @@ const filesSlice = createSlice({
 	initialState,
 	reducers: {},
 	extraReducers: builder => {
-		// renameFile
-		builder
-			.addCase(renameFile.pending, state => {
-				state.requests.renameFile = requestPendingState;
-			})
-			.addCase(renameFile.fulfilled, (state, { payload }) => {
-				const { name, fileId } = payload;
-				const fileForUpdateIndex = state.files.findIndex(file => file.id === fileId);
-
-				state.files[fileForUpdateIndex].name = name;
-				state.requests.renameFile = requestSuccessState;
-			})
-			.addCase(renameFile.rejected, state => {
-				state.requests.renameFile = requestErrorState;
-			});
-
 		// downloadFile
 		builder
 			.addCase(downloadFile.pending, state => {

@@ -1,8 +1,6 @@
 import {
 	FileEntity,
 	Status,
-	PatchFileRequestBody,
-	PatchFileResponse,
 	CreateFileRequestBody,
 	FileType,
 } from '../../../shared/types/global.types';
@@ -12,19 +10,6 @@ export class FilesService {
 	public async deleteDriveFile(driveId: string, fileId: string): Promise<boolean> {
 		const res = await RequestService.delete(`drives/${driveId}/files/${fileId}`);
 		return res.status === Status.OK;
-	}
-
-	public async renameDriveFile(
-		driveId: string,
-		fileId: string,
-		newName: string
-	): Promise<string> {
-		const res = await RequestService.patch<PatchFileRequestBody, PatchFileResponse>(
-			`drives/${driveId}/files/${fileId}`,
-			{ name: newName }
-		);
-		const renameData = res.data.operation.rename;
-		return renameData && renameData.success ? renameData.name : '';
 	}
 
 	public async createFile(

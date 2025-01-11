@@ -3,15 +3,6 @@ import { FileType } from '../../shared/types/global.types';
 import FilesService from '../../services/drives/files/drives.files.service';
 import GoogledriveFilesService from '../../services/drives/files/googledrive/googledrive.files.service';
 
-type RenameFileParams = { driveId: string; fileId: string; newName: string };
-export const renameFile = createAsyncThunk(
-	'files/renameFile',
-	async ({ driveId, fileId, newName }: RenameFileParams) => {
-		const name = await FilesService.renameDriveFile(driveId, fileId, newName);
-		return { name, fileId };
-	}
-);
-
 type CreateFolderParams = { driveId: string; parentFolderId?: string };
 export const createFolder = createAsyncThunk(
 	'files/createFolder',

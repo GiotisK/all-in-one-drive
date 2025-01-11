@@ -49,6 +49,14 @@ export const driveApi = createApi({
 			}),
 			invalidatesTags: ['Files'],
 		}),
+		renameDriveFile: builder.mutation<void, { driveId: string; fileId: string; name: string }>({
+			query: ({ driveId, fileId, name }) => ({
+				url: `${driveId}/files/${fileId}`,
+				method: 'PATCH',
+				body: { name },
+			}),
+			invalidatesTags: ['Files'],
+		}),
 	}),
 	tagTypes: ['Drives', 'Files'],
 });
@@ -62,4 +70,5 @@ export const {
 	useDeleteFileMutation,
 	useGetGoogleDriveFileExportFormatsQuery,
 	useShareDriveFileMutation,
+	useRenameDriveFileMutation,
 } = driveApi;

@@ -5,9 +5,10 @@ import { styled } from 'styled-components';
 import { DriveEntity, DriveType, FileEntity, FileType } from '../../shared/types/global.types';
 import { DeleteModalState } from '../../redux/slices/modal/types';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
-import { useAppDispatch, useAppSelector } from '../../redux/store/store';
+import { useAppDispatch } from '../../redux/store/store';
 import { toast } from 'react-toastify';
 import { useDeleteDriveMutation, useDeleteFileMutation } from '../../redux/rtk/driveApi';
+import { useEffect } from 'react';
 
 interface DeleteFileProps {
 	file: FileEntity;
@@ -63,27 +64,27 @@ interface IProps {
 
 export const DeleteModal = ({ state }: IProps): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const [deleteFile, { isLoading: deleteFileLoading }] = useDeleteFileMutation();
-	const [deleteDrive, { isLoading: deleteDriveLoading }] = useDeleteDriveMutation();
+	const [deleteFile, { isLoading: deleteFileLoading, isSuccess: deleteFileSuccesss }] =
+		useDeleteFileMutation();
+	const [deleteDrive, { isLoading: deleteDriveLoading, isSuccess: deleteDriveSuccess }] =
+		useDeleteDriveMutation();
 	const { entity } = state;
+
+	useEffect(() => {
+		if (deleteFileSuccesss || deleteDriveSuccess) {
+			toast.success('Deleted successfully');
+			dispatch(closeModals());
+		}
+	}, [deleteDriveSuccess, deleteFileSuccesss, dispatch]);
 
 	const sendDeleteEntityRequest = async () => {
 		if (!entity) return;
-		try {
-			let entityName = '';
-			if (isDriveEntity(entity)) {
-				const { id: driveId } = entity;
-				entityName = 'drive';
-				deleteDrive({ driveId });
-			} else if (isFileEntity(entity)) {
-				const { driveId, id: fileId } = entity;
-				entityName = 'file';
-				deleteFile({ driveId, fileId });
-			}
-			toast.success(`${entityName} deleted successfully`);
-			dispatch(closeModals());
-		} catch {
-			toast.error('Failed to delete entity');
+		if (isDriveEntity(entity)) {
+			const { id: driveId } = entity;
+			deleteDrive({ driveId });
+		} else if (isFileEntity(entity)) {
+			const { driveId, id: fileId } = entity;
+			deleteFile({ driveId, fileId });
 		}
 	};
 
@@ -98,7 +99,7 @@ export const DeleteModal = ({ state }: IProps): JSX.Element => {
 					text: 'Delete',
 					onClick: sendDeleteEntityRequest,
 				},
-				showLoader: deleteDriveLoading || deleteDriveLoading,
+				showLoader: deleteDriveLoading || deleteFileLoading,
 			}}
 		>
 			<Content>
