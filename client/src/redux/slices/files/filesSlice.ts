@@ -6,7 +6,7 @@ import {
 	requestPendingState,
 	requestSuccessState,
 } from '../constants';
-import { createFolder, downloadFile, uploadFile } from '../../async-actions/files.async.actions';
+import { createFolder, downloadFile } from '../../async-actions/files.async.actions';
 import { logoutUser } from '../../async-actions/user.async.actions';
 import { getChanges } from '../../async-actions/drives.async.actions';
 import { FileType } from '../../../shared/types/global.types';
@@ -16,7 +16,6 @@ const initialState: FilesState = {
 	requests: {
 		createFolder: { ...requestInitialState },
 		downloadFile: { ...requestInitialState },
-		uploadFile: { ...requestInitialState },
 	},
 };
 
@@ -48,19 +47,6 @@ const filesSlice = createSlice({
 			})
 			.addCase(createFolder.rejected, state => {
 				state.requests.createFolder = requestErrorState;
-			});
-
-		// uploadFile
-		builder
-			.addCase(uploadFile.pending, state => {
-				state.requests.uploadFile = requestPendingState;
-			})
-			.addCase(uploadFile.fulfilled, (state, { payload: file }) => {
-				state.files.unshift(file);
-				state.requests.uploadFile = requestSuccessState;
-			})
-			.addCase(uploadFile.rejected, state => {
-				state.requests.uploadFile = requestErrorState;
 			});
 
 		// logoutUser

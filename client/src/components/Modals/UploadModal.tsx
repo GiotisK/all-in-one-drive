@@ -4,11 +4,11 @@ import { BaseModal } from './BaseModal';
 import { DriveEntity, FileType, Nullable } from '../../shared/types/global.types';
 import { UploadModalState } from '../../redux/slices/modal/types';
 import { useAppDispatch, useAppSelector } from '../../redux/store/store';
-import { createFolder, uploadFile } from '../../redux/async-actions/files.async.actions';
+import { createFolder } from '../../redux/async-actions/files.async.actions';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { toast } from 'react-toastify';
 import { useRef, useState } from 'react';
-import { useGetDrivesQuery } from '../../redux/rtk/driveApi';
+import { useGetDrivesQuery, useUploadDriveFileMutation } from '../../redux/rtk/driveApi';
 
 const Content = styled.div`
 	display: flex;
@@ -80,6 +80,7 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 	const { fileType } = state;
 	const [selectedDrive, setSelectedDrive] = useState<Nullable<DriveEntity>>(null);
 	const { data: drives = [] } = useGetDrivesQuery();
+	const [uploadDriveFile] = useUploadDriveFileMutation();
 
 	const getTitle = (): string => {
 		switch (fileType) {
@@ -113,7 +114,7 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 	const onFileLoad = (): void => {
 		const file = uploaderRef.current?.files?.[0];
 		if (file && selectedDrive) {
-			dispatch(uploadFile({ driveId: selectedDrive.id, file }));
+			uploadDriveFile({ driveId: selectedDrive.id, file });
 		}
 	};
 

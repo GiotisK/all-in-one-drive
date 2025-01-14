@@ -14,8 +14,9 @@ import { useAppDispatch } from '../../redux/store/store';
 import { openModal } from '../../redux/slices/modal/modalSlice';
 import { ModalKind } from '../../redux/slices/modal/types';
 import { useParams } from 'react-router-dom';
-import { createFolder, uploadFile } from '../../redux/async-actions/files.async.actions';
+import { createFolder } from '../../redux/async-actions/files.async.actions';
 import { toast } from 'react-toastify';
+import { useUploadDriveFileMutation } from '../../redux/rtk/driveApi';
 
 const Container = styled.div`
 	position: absolute;
@@ -34,6 +35,7 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [plusButtonAnimation, setPlusButtonAnimation] = useState<Keyframes>();
 	const theme = useTheme();
+	const [uploadDriveFile] = useUploadDriveFileMutation();
 
 	const uploaderRef = useRef<Nullable<HTMLInputElement>>(null);
 
@@ -54,7 +56,7 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 		const file = uploaderRef.current?.files?.[0];
 
 		if (file) {
-			dispatch(uploadFile({ driveId, parentFolderId: folderId, file }));
+			uploadDriveFile({ driveId, parentFolderId: folderId, file });
 		}
 	};
 

@@ -2,7 +2,7 @@ import { styled } from 'styled-components';
 import { Input } from '../Input';
 import { BaseModal } from './BaseModal';
 import { RenameModalState } from '../../redux/slices/modal/types';
-import { useAppDispatch, useAppSelector } from '../../redux/store/store';
+import { useAppDispatch } from '../../redux/store/store';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { useState, ChangeEvent, useEffect } from 'react';
 import { useRenameDriveFileMutation } from '../../redux/rtk/driveApi';

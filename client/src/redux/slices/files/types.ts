@@ -6,6 +6,5 @@ export interface FilesState {
 	requests: {
 		createFolder: RequestState;
 		downloadFile: RequestState;
-		uploadFile: RequestState;
 	};
 }

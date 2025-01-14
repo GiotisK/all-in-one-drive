@@ -39,24 +39,6 @@ export class FilesService {
 
 		return res.status === Status.OK;
 	}
-
-	public async uploadDriveFile(
-		driveId: string,
-		file: File,
-		parentFolderId?: string
-	): Promise<FileEntity> {
-		const formData = new FormData();
-		formData.append('file', file);
-
-		const res = await RequestService.post<FormData, FileEntity>(
-			`/drives/${driveId}/files/upload` +
-				(parentFolderId ? `?parentFolderId=${parentFolderId}` : ''),
-			formData,
-			'multipart/form-data'
-		);
-
-		return res.data;
-	}
 }
 
 export default new FilesService();

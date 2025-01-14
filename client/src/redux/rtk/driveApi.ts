@@ -57,6 +57,22 @@ export const driveApi = createApi({
 			}),
 			invalidatesTags: ['Files'],
 		}),
+		uploadDriveFile: builder.mutation<
+			FileEntity,
+			{ driveId: string; file: File; parentFolderId?: string }
+		>({
+			query: ({ driveId, file, parentFolderId }) => {
+				const formData = new FormData();
+				formData.append('file', file);
+				const queryParam = parentFolderId ? `?parentFolderId=${parentFolderId}` : '';
+				return {
+					url: `${driveId}/files/upload${queryParam}`,
+					method: 'POST',
+					body: formData,
+					formData: true,
+				};
+			},
+		}),
 	}),
 	tagTypes: ['Drives', 'Files'],
 });
@@ -71,4 +87,5 @@ export const {
 	useGetGoogleDriveFileExportFormatsQuery,
 	useShareDriveFileMutation,
 	useRenameDriveFileMutation,
+	useUploadDriveFileMutation,
 } = driveApi;
