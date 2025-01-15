@@ -28,12 +28,6 @@ export class FilesService {
 		return res.data;
 	}
 
-	public async downloadDriveFile(driveId: string, fileId: string): Promise<boolean> {
-		const res = await RequestService.get(`drives/${driveId}/files/${fileId}/download`);
-
-		return res.status === Status.OK;
-	}
-
 	public async openDriveFile(driveId: string, fileId: string): Promise<boolean> {
 		const res = await RequestService.get(`drives/${driveId}/files/${fileId}/open`);
 

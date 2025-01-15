@@ -12,15 +12,6 @@ export const createFolder = createAsyncThunk(
 	}
 );
 
-type DownloadFileParams = { driveId: string; fileId: string };
-export const downloadFile = createAsyncThunk(
-	'files/downloadFile',
-	async ({ driveId, fileId }: DownloadFileParams) => {
-		await FilesService.downloadDriveFile(driveId, fileId);
-		return { driveId, fileId };
-	}
-);
-
 type ExportGoogleDriveFileParams = { driveId: string; fileId: string; mimeType: string };
 export const exportGoogleDriveFile = createAsyncThunk(
 	'files/exportGoogleDriveFile',

@@ -5,6 +5,5 @@ export interface FilesState {
 	files: FileEntity[];
 	requests: {
 		createFolder: RequestState;
-		downloadFile: RequestState;
 	};
 }

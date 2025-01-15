@@ -2,7 +2,6 @@ import RequestService from '../request.service';
 import {
 	ConnectDriveRequestBody,
 	DriveChanges,
-	DriveEntity,
 	DriveType,
 	Status,
 	SubscribeForChangesRequestBody,

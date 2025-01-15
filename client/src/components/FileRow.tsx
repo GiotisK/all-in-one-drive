@@ -8,13 +8,13 @@ import { useOutsideClicker } from '../hooks';
 import { DriveType, FileEntity, FileType } from '../shared/types/global.types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
-import { downloadFile } from '../redux/async-actions/files.async.actions';
 import { useAppDispatch } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from './Loader';
 import { toast } from 'react-toastify';
 import DrivesFilesService from '../services/drives/files/drives.files.service';
 import {
+	useDownloadDriveFileMutation,
 	useGetGoogleDriveFileExportFormatsQuery,
 	useShareDriveFileMutation,
 } from '../redux/rtk/driveApi';
@@ -143,6 +143,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 			{ skip: !isGoogleDriveFile || !menuToggle }
 		);
 	const [shareDriveFile, { isLoading: shareDriveFileLoading }] = useShareDriveFileMutation();
+	const [downloadDriveFile] = useDownloadDriveFileMutation();
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
 
@@ -183,7 +184,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 
 		toast.info('File downloading initiated...');
 
-		dispatch(downloadFile({ driveId, fileId: id }));
+		downloadDriveFile({ driveId, fileId: id });
 	};
 
 	const onExportClick = async () => {

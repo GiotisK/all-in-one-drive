@@ -73,6 +73,12 @@ export const driveApi = createApi({
 				};
 			},
 		}),
+		downloadDriveFile: builder.mutation<void, { driveId: string; fileId: string }>({
+			query: ({ driveId, fileId }) => ({
+				url: `${driveId}/files/${fileId}/download`,
+				method: 'GET',
+			}),
+		}),
 	}),
 	tagTypes: ['Drives', 'Files'],
 });
@@ -88,4 +94,5 @@ export const {
 	useShareDriveFileMutation,
 	useRenameDriveFileMutation,
 	useUploadDriveFileMutation,
+	useDownloadDriveFileMutation,
 } = driveApi;

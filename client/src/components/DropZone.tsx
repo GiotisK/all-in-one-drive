@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react';
-import { styled, useTheme } from 'styled-components';
+import { styled } from 'styled-components';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 
 const Container = styled.div`

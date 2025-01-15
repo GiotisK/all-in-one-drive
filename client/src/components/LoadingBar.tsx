@@ -71,7 +71,7 @@ export const LoadingBar = (): JSX.Element => {
 	const { percentage, loaded, total, totalFilesBeingUploaded, currentFileNumBeingUploaded } =
 		uploadState;
 
-	const [isUploading, setIsUploading] = useState(true);
+	const [isUploading] = useState(true);
 
 	return (
 		<LoadingBarContainer className={isUploading ? '' : 'slide-out'}>
