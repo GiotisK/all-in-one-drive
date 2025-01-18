@@ -236,6 +236,13 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		</IconButton>
 	);
 
+	const copyToClipboard = () => {
+		if (sharedLink) {
+			navigator.clipboard.writeText(sharedLink);
+			toast.success('Shared link copied to clipboard');
+		}
+	};
+
 	return (
 		<Container>
 			<FirstColumn onClick={onFileClick}>
@@ -259,7 +266,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 					icon={SvgNames.Link}
 					color={theme?.colors.green}
 					size={20}
-					onClick={() => navigator.clipboard.writeText(sharedLink)}
+					onClick={copyToClipboard}
 				/>
 			)}
 
