@@ -14,9 +14,7 @@ import { useAppDispatch } from '../../redux/store/store';
 import { openModal } from '../../redux/slices/modal/modalSlice';
 import { ModalKind } from '../../redux/slices/modal/types';
 import { useParams } from 'react-router-dom';
-import { createFolder } from '../../redux/async-actions/files.async.actions';
-import { toast } from 'react-toastify';
-import { useUploadDriveFileMutation } from '../../redux/rtk/driveApi';
+import { useCreateDriveFileMutation, useUploadDriveFileMutation } from '../../redux/rtk/driveApi';
 
 const Container = styled.div`
 	position: absolute;
@@ -32,10 +30,10 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const { folderId, driveId } = useParams();
 	const [menuOpen, setMenuOpen] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
 	const [plusButtonAnimation, setPlusButtonAnimation] = useState<Keyframes>();
 	const theme = useTheme();
 	const [uploadDriveFile] = useUploadDriveFileMutation();
+	const [createDriveFile, { isLoading: createDriveFileLoading }] = useCreateDriveFileMutation();
 
 	const uploaderRef = useRef<Nullable<HTMLInputElement>>(null);
 
@@ -62,15 +60,7 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 
 	const onAddFolderClick = async () => {
 		if (folderId && driveId) {
-			try {
-				setIsLoading(true);
-				await dispatch(createFolder({ driveId, parentFolderId: folderId }));
-				setIsLoading(false);
-				toast.success('Folder created successfully');
-			} catch {
-				setIsLoading(false);
-				toast.error('Failed to create folder');
-			}
+			createDriveFile({ driveId, parentFolderId: folderId, fileType: FileType.Folder });
 		} else {
 			dispatch(
 				openModal({
@@ -116,7 +106,7 @@ export const FloatingButtonsContainer = (): JSX.Element => {
 						color={theme?.colors.red ?? ''}
 						animation={slideUp40pxAnimation}
 						onClick={onAddFolderClick}
-						isLoading={isLoading}
+						isLoading={createDriveFileLoading}
 					/>
 				</>
 			)}

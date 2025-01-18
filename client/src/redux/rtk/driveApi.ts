@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { DriveEntity, FileEntity } from '../../shared/types/global.types';
+import { DriveEntity, FileEntity, FileType } from '../../shared/types/global.types';
 
 export const driveApi = createApi({
 	reducerPath: 'driveApi',
@@ -79,6 +79,32 @@ export const driveApi = createApi({
 				method: 'GET',
 			}),
 		}),
+		openDriveFile: builder.mutation<void, { driveId: string; fileId: string }>({
+			query: ({ driveId, fileId }) => ({
+				url: `${driveId}/files/${fileId}/open`,
+				method: 'GET',
+			}),
+		}),
+		createDriveFile: builder.mutation<
+			FileEntity,
+			{ driveId: string; fileType: FileType; parentFolderId?: string }
+		>({
+			query: ({ driveId, fileType, parentFolderId }) => ({
+				url: `${driveId}/folders`,
+				method: 'POST',
+				body: { parentFolderId, type: fileType },
+			}),
+			invalidatesTags: ['Files'],
+		}),
+		exportGoogleDriveFile: builder.mutation<
+			void,
+			{ driveId: string; fileId: string; mimeType: string }
+		>({
+			query: ({ driveId, fileId, mimeType }) => ({
+				url: `googledrive/${driveId}/files/${fileId}/export?mimeType=${mimeType}`,
+				method: 'GET',
+			}),
+		}),
 	}),
 	tagTypes: ['Drives', 'Files'],
 });
@@ -95,4 +121,7 @@ export const {
 	useRenameDriveFileMutation,
 	useUploadDriveFileMutation,
 	useDownloadDriveFileMutation,
+	useOpenDriveFileMutation,
+	useCreateDriveFileMutation,
+	useExportGoogleDriveFileMutation,
 } = driveApi;

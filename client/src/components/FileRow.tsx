@@ -12,10 +12,10 @@ import { useAppDispatch } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { Loader } from './Loader';
 import { toast } from 'react-toastify';
-import DrivesFilesService from '../services/drives/files/drives.files.service';
 import {
 	useDownloadDriveFileMutation,
 	useGetGoogleDriveFileExportFormatsQuery,
+	useOpenDriveFileMutation,
 	useShareDriveFileMutation,
 } from '../redux/rtk/driveApi';
 
@@ -144,6 +144,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		);
 	const [shareDriveFile, { isLoading: shareDriveFileLoading }] = useShareDriveFileMutation();
 	const [downloadDriveFile] = useDownloadDriveFileMutation();
+	const [openDriveFile] = useOpenDriveFileMutation();
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
 
@@ -167,12 +168,8 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		if (type === FileType.Folder) {
 			navigate(`${driveId}/${id}`);
 		} else if (type === FileType.File) {
-			try {
-				await DrivesFilesService.openDriveFile(driveId, id);
-				toast.success('File opening initiated successfully');
-			} catch {
-				toast.error('Failed to open file');
-			}
+			openDriveFile({ driveId, fileId: id });
+			toast.info('File opening initiated successfully');
 		}
 	};
 

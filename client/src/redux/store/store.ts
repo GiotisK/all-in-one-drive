@@ -3,7 +3,6 @@ import userReducer from '../slices/user/userSlice';
 import settingsReducer from '../slices/settings/settingsSlice';
 import modalReducer from '../slices/modal/modalSlice';
 import drivesReducer from '../slices/drives/drivesSlice';
-import filesReducer from '../slices/files/filesSlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { driveApi } from '../rtk/driveApi';
 
@@ -13,7 +12,6 @@ const store = configureStore({
 		user: userReducer,
 		modal: modalReducer,
 		drives: drivesReducer,
-		files: filesReducer,
 		[driveApi.reducerPath]: driveApi.reducer,
 	},
 	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(driveApi.middleware),

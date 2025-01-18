@@ -1,9 +1,11 @@
 import { styled } from 'styled-components';
 import { BaseModal } from './BaseModal';
 import { ExportFormatModalState } from '../../redux/slices/modal/types';
-import { useAppDispatch } from '../../redux/store/store';
 import mime from 'mime';
-import { exportGoogleDriveFile } from '../../redux/async-actions/files.async.actions';
+import { useExportGoogleDriveFileMutation } from '../../redux/rtk/driveApi';
+import { useAppDispatch } from '../../redux/store/store';
+import { closeModals } from '../../redux/slices/modal/modalSlice';
+import { toast } from 'react-toastify';
 
 const FormatButtonsContainer = styled.div`
 	display: flex;
@@ -41,11 +43,14 @@ interface IProps {
 }
 
 export const ExportFormatModal = ({ state }: IProps) => {
-	const { exportFormats, driveId, fileId } = state;
 	const dispatch = useAppDispatch();
+	const [exportGoogleDriveFile] = useExportGoogleDriveFileMutation();
+	const { exportFormats } = state;
 
 	const onExportClick = async (mimeType: string) => {
-		dispatch(exportGoogleDriveFile({ driveId, fileId, mimeType }));
+		exportGoogleDriveFile({ driveId: state.driveId, fileId: state.fileId, mimeType });
+		dispatch(closeModals());
+		toast.info('File export initiated...');
 	};
 
 	return (

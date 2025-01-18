@@ -3,12 +3,15 @@ import { CreateDriveSvg } from '../../shared/utils/utils';
 import { BaseModal } from './BaseModal';
 import { DriveEntity, FileType, Nullable } from '../../shared/types/global.types';
 import { UploadModalState } from '../../redux/slices/modal/types';
-import { useAppDispatch, useAppSelector } from '../../redux/store/store';
-import { createFolder } from '../../redux/async-actions/files.async.actions';
+import { useAppDispatch } from '../../redux/store/store';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { toast } from 'react-toastify';
 import { useRef, useState } from 'react';
-import { useGetDrivesQuery, useUploadDriveFileMutation } from '../../redux/rtk/driveApi';
+import {
+	useCreateDriveFileMutation,
+	useGetDrivesQuery,
+	useUploadDriveFileMutation,
+} from '../../redux/rtk/driveApi';
 
 const Content = styled.div`
 	display: flex;
@@ -76,11 +79,11 @@ interface IProps {
 export const UploadModal = ({ state }: IProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const uploaderRef = useRef<Nullable<HTMLInputElement>>(null);
-	const createFolderReq = useAppSelector(state => state.files.requests.createFolder);
 	const { fileType } = state;
 	const [selectedDrive, setSelectedDrive] = useState<Nullable<DriveEntity>>(null);
 	const { data: drives = [] } = useGetDrivesQuery();
 	const [uploadDriveFile] = useUploadDriveFileMutation();
+	const [createDriveFile, { isLoading: createDriveFileLoading }] = useCreateDriveFileMutation();
 
 	const getTitle = (): string => {
 		switch (fileType) {
@@ -101,7 +104,7 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 		if (fileType === FileType.File) {
 			openFilePicker();
 		} else if (fileType === FileType.Folder) {
-			await dispatch(createFolder({ driveId }));
+			createDriveFile({ driveId, fileType: FileType.Folder });
 			toast.success('Folder created successfully');
 			dispatch(closeModals());
 		}
@@ -120,7 +123,7 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 
 	return (
 		<BaseModal
-			footerProps={{ showLoader: createFolderReq.loading }}
+			footerProps={{ showLoader: createDriveFileLoading }}
 			headerProps={{ title: getTitle() }}
 		>
 			<Content>
