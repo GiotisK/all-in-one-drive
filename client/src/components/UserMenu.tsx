@@ -4,7 +4,7 @@ import { useOutsideClicker } from '../hooks';
 import { ModalKind } from '../redux/slices/modal/types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
-import { logoutUser } from '../redux/async-actions/user.async.actions';
+import { useLogoutUserMutation } from '../redux/rtk/userApi';
 
 const PopupMenuContainer = styled.div`
 	display: flex;
@@ -103,12 +103,11 @@ const SettingsText = styled.p`
 export const UserMenu = (): JSX.Element => {
 	const { email } = useAppSelector(state => state.user);
 	const dispatch = useAppDispatch();
-
 	const [menuVisible, setMenuVisible] = useState(false);
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
-
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuVisible(false));
+	const [logoutUser] = useLogoutUserMutation();
 
 	const virtualDriveEnabled = true;
 
@@ -127,7 +126,7 @@ export const UserMenu = (): JSX.Element => {
 			{
 				title: 'Signout',
 				onClick: async () => {
-					dispatch(logoutUser());
+					logoutUser();
 				},
 			},
 		];

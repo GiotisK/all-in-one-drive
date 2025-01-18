@@ -1,7 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { DrivesState } from './types';
 import { subscribeForChanges, getChanges } from '../../async-actions/drives.async.actions';
-import { logoutUser } from '../../async-actions/user.async.actions';
 
 const initialState: DrivesState = {
 	drives: [],
@@ -23,11 +22,6 @@ const drivesSlice = createSlice({
 		},
 	},
 	extraReducers: builder => {
-		// logoutUser
-		builder.addCase(logoutUser.fulfilled, () => {
-			return initialState;
-		});
-
 		// subscribeForChanges
 		builder.addCase(subscribeForChanges.fulfilled, (state, { payload }) => {
 			const { driveId, watchChangesChannel } = payload;

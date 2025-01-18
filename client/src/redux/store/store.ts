@@ -5,6 +5,7 @@ import modalReducer from '../slices/modal/modalSlice';
 import drivesReducer from '../slices/drives/drivesSlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { driveApi } from '../rtk/driveApi';
+import { userApi } from '../rtk/userApi';
 
 const store = configureStore({
 	reducer: {
@@ -13,8 +14,10 @@ const store = configureStore({
 		modal: modalReducer,
 		drives: drivesReducer,
 		[driveApi.reducerPath]: driveApi.reducer,
+		[userApi.reducerPath]: userApi.reducer,
 	},
-	middleware: getDefaultMiddleware => getDefaultMiddleware().concat(driveApi.middleware),
+	middleware: getDefaultMiddleware =>
+		getDefaultMiddleware().concat(driveApi.middleware, userApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

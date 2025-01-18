@@ -1,11 +1,6 @@
-import { RequestState } from '../types';
+import { Nullable } from '../../../shared/types/global.types';
 
 export interface UserState {
-	isAuthenticated: boolean;
+	isAuthenticated: Nullable<boolean>;
 	email: string;
-	requests: {
-		login: RequestState;
-		logout: RequestState;
-		authorize: RequestState;
-	};
 }

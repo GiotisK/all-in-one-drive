@@ -9,7 +9,6 @@ import { styled } from 'styled-components';
 
 import { ModalContainer } from '../components/Modals/ModalContainer';
 import {
-	useCheckAuth,
 	useHandleAuthCodeFromUrl,
 	useServerSideEvents,
 	useSubscribeForDriveChanges,
@@ -43,7 +42,6 @@ export const DrivePage = (): JSX.Element => {
 	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
 	const isInsideFolder = useIsInsideFolder();
 
-	useCheckAuth();
 	useHandleAuthCodeFromUrl();
 
 	/*useServerSideEvents();

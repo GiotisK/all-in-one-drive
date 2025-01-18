@@ -1,21 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { UserState } from './types';
-import {
-	requestErrorState,
-	requestInitialState,
-	requestPendingState,
-	requestSuccessState,
-} from '../constants';
-import { authorizeUser, loginUser, logoutUser } from '../../async-actions/user.async.actions';
+import { userApi } from '../../rtk/userApi';
 
 const initialState: UserState = {
-	isAuthenticated: false,
+	isAuthenticated: null,
 	email: '',
-	requests: {
-		authorize: requestInitialState,
-		login: requestInitialState,
-		logout: requestInitialState,
-	},
 };
 
 const userSlice = createSlice({
@@ -23,43 +12,28 @@ const userSlice = createSlice({
 	initialState,
 	reducers: {},
 	extraReducers: builder => {
-		// loginUser
 		builder
-			.addCase(loginUser.pending, state => {
-				state.requests.login = requestPendingState;
+			.addMatcher(
+				userApi.endpoints.authorizeUser.matchFulfilled,
+				(state, { payload: { email } }) => {
+					state.isAuthenticated = true;
+					state.email = email;
+				}
+			)
+			.addMatcher(userApi.endpoints.authorizeUser.matchRejected, state => {
+				state.isAuthenticated = false;
 			})
-			.addCase(loginUser.fulfilled, state => {
-				state.requests.login = requestSuccessState;
+			.addMatcher(userApi.endpoints.logoutUser.matchFulfilled, state => {
+				state.isAuthenticated = false;
+				state.email = '';
 			})
-			.addCase(loginUser.rejected, state => {
-				state.requests.login = requestErrorState;
-			});
-
-		//logoutUser
-		builder
-			.addCase(logoutUser.pending, state => {
-				state.requests.logout = requestPendingState;
-			})
-			.addCase(logoutUser.fulfilled, () => {
-				return initialState;
-			})
-			.addCase(logoutUser.rejected, state => {
-				state.requests.logout = requestErrorState;
-			});
-
-		// authorizeUser
-		builder
-			.addCase(authorizeUser.pending, state => {
-				state.requests.authorize = requestPendingState;
-			})
-			.addCase(authorizeUser.fulfilled, (state, { payload: email }) => {
-				state.isAuthenticated = true;
-				state.email = email;
-				state.requests.authorize = requestSuccessState;
-			})
-			.addCase(authorizeUser.rejected, state => {
-				state.requests.authorize = requestErrorState;
-			});
+			.addMatcher(
+				userApi.endpoints.loginUser.matchFulfilled,
+				(state, { payload: { email } }) => {
+					state.isAuthenticated = true;
+					state.email = email;
+				}
+			);
 	},
 });
 

@@ -1,13 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from './Input';
-import { ResponseText } from './ResponseText';
 import { Button } from './Button';
 import { styled } from 'styled-components';
-import { Nullable } from '../shared/types/global.types';
-import { loginUser } from '../redux/async-actions/user.async.actions';
-import { useAppDispatch } from '../redux/store/store';
-import UserService from '../services/user.service';
 import { toast } from 'react-toastify';
+import { useLoginUserMutation, useRegisterUserMutation } from '../redux/rtk/userApi';
 
 const centerAbsoluteDivInPage = `
 	position: absolute;
@@ -94,21 +90,23 @@ enum Mode {
 }
 
 export const CredentialsBox = (): JSX.Element => {
-	const dispatch = useAppDispatch();
-
 	const [mode, setMode] = useState<Mode>(Mode.Login);
-
-	const [isFormRequestSuccessful, setIsFormRequestSuccessful] = useState<boolean>();
-
 	const [inputValues, setInputValues] = useState({
 		email: '',
 		password: '',
 		confirmedPassword: '',
 	});
+	const [loginUser, { isError: isLoginUserError }] = useLoginUserMutation();
+	const [registerUser, { isError: isRegisterUserError }] = useRegisterUserMutation();
+
+	useEffect(() => {
+		if (isRegisterUserError || isLoginUserError) {
+			toast.error('Something went wrong');
+		}
+	}, [isRegisterUserError, isLoginUserError]);
 
 	function onInputChange(event: React.ChangeEvent<HTMLInputElement>): void {
 		const { name, value } = event.target;
-
 		setInputValues({
 			...inputValues,
 			[name]: value,
@@ -117,29 +115,13 @@ export const CredentialsBox = (): JSX.Element => {
 
 	const onFormSubmitClick = async (e: React.FormEvent): Promise<void> => {
 		e.preventDefault();
-		let isRequestSuccessful = false;
+		const { email, password } = inputValues;
 
 		if (mode === Mode.Login) {
-			const { email, password } = inputValues;
-			dispatch(loginUser({ email, password }));
+			loginUser({ email, password });
 		} else if (mode === Mode.Register) {
-			try {
-				await UserService.registerUser(inputValues.email, inputValues.password);
-				isRequestSuccessful = true;
-				setIsFormRequestSuccessful(isRequestSuccessful);
-			} catch {
-				toast.error('Failed to register user');
-			}
+			registerUser({ email, password });
 		}
-	};
-
-	const renderResponseMessage = (): Nullable<JSX.Element> => {
-		if (isFormRequestSuccessful === undefined) return null;
-
-		const color = isFormRequestSuccessful ? 'green' : 'red';
-		const text = isFormRequestSuccessful ? 'OK' : 'Something went wrong';
-
-		return <ResponseText text={text} color={color} />;
 	};
 
 	const renderTabs = (): JSX.Element[] => {
@@ -148,7 +130,6 @@ export const CredentialsBox = (): JSX.Element => {
 				text: 'Login',
 				onClick: () => {
 					setMode(Mode.Login);
-					setIsFormRequestSuccessful(undefined);
 				},
 				class: mode === Mode.Login ? 'tab-active' : 'tab-inactive',
 			},
@@ -156,7 +137,6 @@ export const CredentialsBox = (): JSX.Element => {
 				text: 'Register',
 				onClick: () => {
 					setMode(Mode.Register);
-					setIsFormRequestSuccessful(undefined);
 				},
 				class: mode === Mode.Register ? 'tab-active' : 'tab-inactive',
 			},
@@ -226,7 +206,6 @@ export const CredentialsBox = (): JSX.Element => {
 			<TabsContainer>{renderTabs()}</TabsContainer>
 			{renderInputs()}
 			<ButtonContainer>
-				{renderResponseMessage()}
 				<Button style={{ margin: '3% 10% 4% 0' }} text={buttontext} />
 			</ButtonContainer>
 		</FormContainer>
