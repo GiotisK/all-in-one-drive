@@ -77,7 +77,6 @@ export type DriveEntity = {
 	type: DriveType;
 	email: string;
 	quota: DriveQuota;
-	active: boolean;
 	watchChangesChannel?: WatchChangesChannel; // TODO: Fix name
 };
 

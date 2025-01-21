@@ -18,6 +18,7 @@ import { routes } from '../shared/constants/routes';
 import { useAppSelector } from '../redux/store/store';
 import { FilesList } from '../components/FilesList';
 import { useIsInsideFolder } from '../hooks/useIsInsideFolder';
+import { DriveSelectionProvider } from '../providers/DriveSelection';
 
 const OuterContainer = styled.div`
 	display: flex;
@@ -50,20 +51,23 @@ export const DrivePage = (): JSX.Element => {
 	return isUserAuthenticated ? (
 		<OuterContainer>
 			<InnerContainer>
-				{sideMenuVisible && !isInsideFolder && <SideMenu />}
-				<RowsScrollview>
-					<TitleBanner
-						onBurgerMenuClick={() => {
-							setSideMenuVisible(prevVisible => !prevVisible);
-						}}
-					/>
-					<DropZone>
-						<MenuBanner />
-						<LoadingBar />
-						<FilesList />
-					</DropZone>
-					<FloatingButtonsContainer />
-				</RowsScrollview>
+				<DriveSelectionProvider>
+					{sideMenuVisible && !isInsideFolder && <SideMenu />}
+
+					<RowsScrollview>
+						<TitleBanner
+							onBurgerMenuClick={() => {
+								setSideMenuVisible(prevVisible => !prevVisible);
+							}}
+						/>
+						<DropZone>
+							<MenuBanner />
+							<LoadingBar />
+							<FilesList />
+						</DropZone>
+						<FloatingButtonsContainer />
+					</RowsScrollview>
+				</DriveSelectionProvider>
 			</InnerContainer>
 			<ModalContainer />
 		</OuterContainer>

@@ -8,8 +8,8 @@ import { useAppDispatch } from '../redux/store/store';
 import { SvgNames } from '../shared/utils/svg-utils';
 import { IconButton } from './IconButton';
 import { useEffect, useState } from 'react';
-import { toggleAllDrivesSelection } from '../redux/slices/drives/drivesSlice';
 import { useGetDrivesQuery } from '../redux/rtk/driveApi';
+import { useDriveSelectionContext } from '../hooks/useDriveSelectionContext';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
@@ -68,19 +68,28 @@ export const SideMenu = (): JSX.Element => {
 	const { data: drives = [], isLoading: areDrivesLoading } = useGetDrivesQuery();
 	const [checked, setChecked] = useState(true);
 	const theme = useTheme();
+	const { selectedDriveIds, setSelectedDriveIds } = useDriveSelectionContext();
 
 	useEffect(() => {
-		const hasAtLeastOneInactive = drives.some(drive => !drive.active);
-		setChecked(!hasAtLeastOneInactive);
-	}, [drives]);
+		setChecked(selectedDriveIds.length === drives.length);
+	}, [drives.length, selectedDriveIds.length]);
 
 	const onAddDriveClick = (): void => {
 		dispatch(openModal({ kind: ModalKind.AddDrive }));
 	};
 
 	const toggleCheckBox = () => {
-		setChecked(prevChecked => !prevChecked);
-		dispatch(toggleAllDrivesSelection(!checked));
+		checked ? setSelectedDriveIds([]) : setSelectedDriveIds(drives.map(drive => drive.id));
+	};
+
+	const onDriveClick = (driveId: string) => {
+		if (selectedDriveIds.includes(driveId)) {
+			setSelectedDriveIds(prevSelectedDrives =>
+				prevSelectedDrives.filter(selectedDriveId => selectedDriveId !== driveId)
+			);
+		} else {
+			setSelectedDriveIds(prevSelectedDrives => [...prevSelectedDrives, driveId]);
+		}
 	};
 
 	return (
@@ -115,7 +124,16 @@ export const SideMenu = (): JSX.Element => {
 				</>
 			) : (
 				drives.map(drive => {
-					return <DriveRow drive={drive} key={drive.id} />;
+					return (
+						<DriveRow
+							onDriveClick={() => {
+								onDriveClick(drive.id);
+							}}
+							active={selectedDriveIds.includes(drive.id)}
+							drive={drive}
+							key={drive.id}
+						/>
+					);
 				})
 			)}
 		</Container>

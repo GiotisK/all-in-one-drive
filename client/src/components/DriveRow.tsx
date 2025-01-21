@@ -5,7 +5,6 @@ import { DriveEntity, DriveQuota } from '../shared/types/global.types';
 import { ModalKind } from '../redux/slices/modal/types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { useAppDispatch } from '../redux/store/store';
-import { toggleDriveSelection } from '../redux/slices/drives/drivesSlice';
 
 const DriveElementContainer = styled.div`
 	display: flex;
@@ -84,18 +83,16 @@ const DriveSvgContainer = styled.div`
 
 interface IProps {
 	drive: DriveEntity;
+	active: boolean;
+	onDriveClick: () => void;
 }
 
-export const DriveRow = ({ drive }: IProps): JSX.Element => {
+export const DriveRow = ({ drive, active, onDriveClick }: IProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const theme = useTheme();
 
 	const formatQuota = (quota: DriveQuota) => {
 		return quota.used + ' / ' + quota.total + 'GB';
-	};
-
-	const onDriveClick = (): void => {
-		dispatch(toggleDriveSelection(drive.id));
 	};
 
 	const onDeleteDriveClick = (e: React.MouseEvent): void => {
@@ -104,7 +101,7 @@ export const DriveRow = ({ drive }: IProps): JSX.Element => {
 	};
 
 	return (
-		<DriveElementContainer onClick={onDriveClick} style={{ opacity: drive.active ? 1 : 0.5 }}>
+		<DriveElementContainer onClick={onDriveClick} style={{ opacity: active ? 1 : 0.5 }}>
 			<DriveSvgContainer>{CreateDriveSvg(drive.type)}</DriveSvgContainer>
 
 			<EmailQuotaContainer>
@@ -118,7 +115,7 @@ export const DriveRow = ({ drive }: IProps): JSX.Element => {
 				</TrashcanDiv>
 				<ActiveIndicator
 					style={{
-						backgroundColor: drive.active ? theme?.colors.green : theme?.colors.border,
+						backgroundColor: active ? theme?.colors.green : theme?.colors.border,
 					}}
 				/>
 			</TrashCanAndIndicatorContainer>

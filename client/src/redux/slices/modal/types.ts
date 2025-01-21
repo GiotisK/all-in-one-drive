@@ -1,4 +1,4 @@
-import { DriveEntity, FileEntity, FileType, Nullable } from '../../../shared/types/global.types';
+import { FileEntity, FileType, Nullable } from '../../../shared/types/global.types';
 import { Entity, MultiMediaType } from '../../../shared/types/types';
 
 export type DeleteModalState = {

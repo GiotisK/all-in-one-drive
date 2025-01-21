@@ -1,28 +1,12 @@
-import { PayloadAction, createSlice } from '@reduxjs/toolkit';
-import { DrivesState } from './types';
+import { createSlice } from '@reduxjs/toolkit';
 import { subscribeForChanges, getChanges } from '../../async-actions/drives.async.actions';
 
-const initialState: DrivesState = {
-	selectedDrives: [],
-};
+const initialState = {};
 
 const drivesSlice = createSlice({
 	name: 'drives',
 	initialState,
-	reducers: {
-		toggleDriveSelection(state, action: PayloadAction<string>) {
-			const index = state.selectedDrives.findIndex(drive => drive.id === action.payload);
-
-			if (index >= 0) {
-				state.selectedDrives[index].active = !state.selectedDrives[index].active;
-			} else {
-				state.selectedDrives.push({ id: action.payload, active: true });
-			}
-		},
-		toggleAllDrivesSelection(state, action: PayloadAction<boolean>) {
-			state.selectedDrives.forEach(drive => (drive.active = action.payload));
-		},
-	},
+	reducers: {},
 	// extraReducers: builder => {
 	// 	// subscribeForChanges
 	// 	builder.addCase(subscribeForChanges.fulfilled, (state, { payload }) => {
@@ -59,7 +43,5 @@ const drivesSlice = createSlice({
 	// 	});
 	// },
 });
-
-export const { toggleDriveSelection, toggleAllDrivesSelection } = drivesSlice.actions;
 
 export default drivesSlice.reducer;
