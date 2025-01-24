@@ -1,31 +1,12 @@
 import RequestService from '../request.service';
 import {
-	ConnectDriveRequestBody,
 	DriveChanges,
-	DriveType,
-	Status,
 	SubscribeForChangesRequestBody,
 	UnsubscribeForChangesRequestBody,
 	WatchChangesChannel,
 } from '../../shared/types/global.types';
 
 export class DrivesService {
-	async getAuthLink(drive: DriveType): Promise<string> {
-		const res = await RequestService.get<string>(`/drives/${drive}/authlink`);
-		const authLink = res.data;
-		return authLink;
-	}
-
-	async connectDrive(authCode: string, drive: DriveType): Promise<boolean> {
-		const res = await RequestService.post<ConnectDriveRequestBody, void>(
-			`/drives/${drive}/connect`,
-			{
-				authCode,
-			}
-		);
-		return res.status === Status.OK;
-	}
-
 	public async subscribeForDriveChanges(driveId: string): Promise<WatchChangesChannel> {
 		const { data: watchChangesChannel } = await RequestService.post<
 			SubscribeForChangesRequestBody,

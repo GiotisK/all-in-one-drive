@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { DriveEntity, FileEntity, FileType } from '../../shared/types/global.types';
+import { DriveEntity, DriveType, FileEntity, FileType } from '../../shared/types/global.types';
 
 export const driveApi = createApi({
 	reducerPath: 'driveApi',
@@ -105,6 +105,21 @@ export const driveApi = createApi({
 				method: 'GET',
 			}),
 		}),
+		getAuthLink: builder.query<string, { drive?: DriveType }>({
+			query: ({ drive }) => ({
+				url: `${drive}/authlink`,
+				method: 'GET',
+				responseHandler: res => res.text(),
+			}),
+		}),
+		connectDrive: builder.mutation<boolean, { authCode: string; drive: DriveType }>({
+			query: ({ authCode, drive }) => ({
+				url: `${drive}/connect`,
+				method: 'POST',
+				body: { authCode },
+			}),
+			invalidatesTags: ['Files', 'Drives'],
+		}),
 	}),
 	tagTypes: ['Drives', 'Files'],
 });
@@ -124,4 +139,6 @@ export const {
 	useOpenDriveFileMutation,
 	useCreateDriveFileMutation,
 	useExportGoogleDriveFileMutation,
+	useConnectDriveMutation,
+	useGetAuthLinkQuery,
 } = driveApi;

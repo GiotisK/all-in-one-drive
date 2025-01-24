@@ -2,8 +2,8 @@ import { BaseModal } from './BaseModal';
 import { AddDriveButton } from '../AddDriveButton';
 import { styled } from 'styled-components';
 import { DriveType } from '../../shared/types/global.types';
-import DrivesService from '../../services/drives/drives.service';
-import { toast } from 'react-toastify';
+import { useGetAuthLinkQuery } from '../../redux/rtk/driveApi';
+import { useEffect, useState } from 'react';
 
 const ButtonsContainer = styled.div`
 	display: flex;
@@ -15,13 +15,17 @@ const ButtonsContainer = styled.div`
 `;
 
 export const AddDriveModal = (): JSX.Element => {
-	const onDriveClick = async (drive: DriveType): Promise<void> => {
-		try {
-			const authLink = await DrivesService.getAuthLink(drive);
-			authLink && window.location.replace(authLink);
-		} catch {
-			toast.error('Failed to get the authentication link');
+	const [drive, setDrive] = useState<DriveType>();
+	const { data: authLink = '' } = useGetAuthLinkQuery({ drive }, { skip: !drive });
+
+	useEffect(() => {
+		if (authLink) {
+			window.location.replace(authLink);
 		}
+	}, [authLink]);
+
+	const onDriveClick = async (drive: DriveType): Promise<void> => {
+		setDrive(drive);
 	};
 
 	return (
