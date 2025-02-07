@@ -72,6 +72,7 @@ export const driveApi = createApi({
 					formData: true,
 				};
 			},
+			invalidatesTags: ['Files'],
 		}),
 		downloadDriveFile: builder.mutation<void, { driveId: string; fileId: string }>({
 			query: ({ driveId, fileId }) => ({
