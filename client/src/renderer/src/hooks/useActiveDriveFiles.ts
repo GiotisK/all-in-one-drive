@@ -22,7 +22,6 @@ export const useActiveDriveFiles = () => {
 		data: folderFiles = [],
 		isLoading: folderFilesLoading,
 		isSuccess: folderFilesSuccess,
-		isFetching: folderFilesFetching,
 		isUninitialized: folderFilesUninitialized,
 	} = useGetDriveFolderFilesQuery({ driveId, folderId }, { skip: !folderId || !driveId });
 
@@ -32,7 +31,7 @@ export const useActiveDriveFiles = () => {
 
 	return {
 		files: isInsideFolder ? folderFiles : filterFiles(rootFiles, drives, selectedDriveIds),
-		isLoading: rootFilesLoading || folderFilesLoading || folderFilesFetching,
+		isLoading: rootFilesLoading || folderFilesLoading,
 		isSuccess: rootFilesSuccess || folderFilesSuccess,
 		isUninitialized: rootFilesUninitialized && folderFilesUninitialized,
 	};
