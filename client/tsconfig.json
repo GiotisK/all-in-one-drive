@@ -19,6 +19,6 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "electron.vite.config.ts", "electron/renderer", "electron/preload", "electron/main"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
