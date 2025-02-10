@@ -10,12 +10,11 @@ const DriveElementContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	height: 73px;
+	height: 60px;
 	background-color: ${({ theme }) => theme.colors.background};
 	margin: 2% 0% 0% 0%;
 	border: solid 1px ${({ theme }) => theme.colors.border};
 	border-radius: 5px;
-	width: 300px;
 	cursor: pointer;
 	user-select: none;
 	position: relative;
@@ -24,7 +23,7 @@ const DriveElementContainer = styled.div`
 
 const DriveElementEmail = styled.div`
 	margin: 0;
-	font-size: 14px;
+	font-size: 12px;
 	overflow-wrap: break-word;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
@@ -37,7 +36,7 @@ const DriveElementQuota = styled.p`
 	align-self: flex-start;
 	margin: 0;
 	margin-top: 1%;
-	font-size: 13px;
+	font-size: 12px;
 `;
 
 const EmailQuotaContainer = styled.div`
@@ -68,7 +67,8 @@ const TrashCanAndIndicatorContainer = styled.div`
 `;
 
 const ActiveIndicator = styled.div`
-	height: 73px;
+	top: 0px;
+	height: 60px;
 	width: 5px;
 	border-top-right-radius: 5px;
 	border-bottom-right-radius: 5px;
@@ -102,7 +102,7 @@ export const DriveRow = ({ drive, active, onDriveClick }: IProps): JSX.Element =
 
 	return (
 		<DriveElementContainer onClick={onDriveClick} style={{ opacity: active ? 1 : 0.5 }}>
-			<DriveSvgContainer>{CreateDriveSvg(drive.type)}</DriveSvgContainer>
+			<DriveSvgContainer>{CreateDriveSvg(drive.type, 25)}</DriveSvgContainer>
 
 			<EmailQuotaContainer>
 				<DriveElementEmail>{drive.email}</DriveElementEmail>

@@ -11,7 +11,7 @@ const ElementContainer = styled.div`
 `;
 
 const FileElementContainer = styled(ElementContainer)`
-	height: 40px;
+	height: 36px;
 	width: 32px;
 	min-width: 32px;
 	border: 1px solid ${({ theme }) => theme.colors.border};

@@ -13,10 +13,9 @@ import { useDriveSelectionContext } from '../hooks/useDriveSelectionContext';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
-	width: 300px;
 	background-color: ${({ theme }) => theme.colors.panelBackground};
 	padding: 0% 1% 0% 1%;
-	width: 300px;
+	width: 200px;
 	display: flex;
 	flex-direction: column;
 	user-select: none;
@@ -31,7 +30,7 @@ const Header = styled.div`
 `;
 
 const HeaderText = styled.div`
-	font-size: 20px;
+	font-size: 16px;
 	color: ${({ theme }) => theme.colors.textPrimary};
 	cursor: pointer;
 	user-select: none;

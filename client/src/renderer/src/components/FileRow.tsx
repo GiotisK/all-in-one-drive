@@ -24,8 +24,7 @@ const Container = styled.div`
 	flex-direction: row;
 	align-items: center;
 	margin-left: 10px;
-	padding: 10px 0 10px 10px;
-	border-bottom: solid 0.5px ${({ theme }) => theme.colors.border};
+	padding: 5px 0 5px 10px;
 `;
 
 const ColumnBase = styled.div`
