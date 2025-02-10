@@ -6,7 +6,7 @@ import { getChanges } from '../redux/async-actions/drives.async.actions';
 import { useEventSourceEvents } from './useEventSourceEvents';
 import { validateEventData } from '../sse/validateEventData';
 import { isValidServerSideEventData } from '../sse/validators';
-import { useGetDrivesQuery } from '../redux/rtk/driveApi';
+import { useGetDrivesQuery, useWatchDriveChangesQuery } from '../redux/rtk/driveApi';
 
 const DRIVE_NOTIFICATION_SUBSCRIPTION_URL = `${config.baseURL}/drives/subscribe`;
 
@@ -14,6 +14,10 @@ export const useServerSideEvents = () => {
 	const dispatch = useAppDispatch();
 	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
 	const { data: drives = [], isSuccess } = useGetDrivesQuery();
+	const { data: watchChangesChannels = [] } = useWatchDriveChangesQuery(
+		{ driveIds: drives.map(drive => drive.id) },
+		{ skip: !isUserAuthenticated || drives.length === 0 }
+	);
 
 	const handleServerSideEvent = useCallback(
 		(event: MessageEvent<string>) => {
@@ -24,24 +28,22 @@ export const useServerSideEvents = () => {
 
 			const eventData = validationResult.data;
 			if (eventData.change == 'change') {
-				const drive = drives.find(drive => drive.email === eventData.driveEmail);
-				if (!drive) {
-					console.log(
-						'Could not find drive to request changes for email: ',
-						eventData.driveEmail
-					);
+				const channel = watchChangesChannels.find(
+					channel => channel.driveId === eventData.driveId
+				);
+				if (!channel) {
 					return;
 				}
 
 				dispatch(
 					getChanges({
-						driveId: drive.id,
-						startPageToken: drive.watchChangesChannel?.startPageToken ?? '-',
+						driveId: channel.driveId,
+						startPageToken: channel.startPageToken ?? '-',
 					})
 				);
 			}
 		},
-		[dispatch, drives]
+		[dispatch, watchChangesChannels]
 	);
 
 	const { eventSource, openStream } = useEventSource({

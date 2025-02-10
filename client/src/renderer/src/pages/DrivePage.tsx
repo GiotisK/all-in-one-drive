@@ -8,11 +8,7 @@ import { LoadingBar } from '../components/LoadingBar';
 import { styled } from 'styled-components';
 
 import { ModalContainer } from '../components/Modals/ModalContainer';
-import {
-	useHandleAuthCodeFromUrl,
-	useServerSideEvents,
-	useSubscribeForDriveChanges,
-} from '../hooks';
+import { useHandleAuthCodeFromUrl, useServerSideEvents } from '../hooks';
 import { Navigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
 import { useAppSelector } from '../redux/store/store';
@@ -45,8 +41,7 @@ export const DrivePage = (): JSX.Element => {
 
 	useHandleAuthCodeFromUrl();
 
-	/*useServerSideEvents();
-	useSubscribeForDriveChanges();*/
+	useServerSideEvents();
 
 	return isUserAuthenticated ? (
 		<OuterContainer>

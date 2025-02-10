@@ -1,5 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { DriveEntity, DriveType, FileEntity, FileType } from '../../shared/types/global.types';
+import {
+	DriveEntity,
+	DriveType,
+	FileEntity,
+	FileType,
+	WatchChangesChannel,
+} from '../../shared/types/global.types';
 
 export const driveApi = createApi({
 	reducerPath: 'driveApi',
@@ -121,6 +127,13 @@ export const driveApi = createApi({
 			}),
 			invalidatesTags: ['Files', 'Drives'],
 		}),
+		watchDriveChanges: builder.query<WatchChangesChannel[], { driveIds: string[] }>({
+			query: ({ driveIds }) => ({
+				url: '/watch',
+				method: 'POST',
+				body: { driveIds },
+			}),
+		}),
 	}),
 	tagTypes: ['Drives', 'Files'],
 });
@@ -142,4 +155,5 @@ export const {
 	useExportGoogleDriveFileMutation,
 	useConnectDriveMutation,
 	useGetAuthLinkQuery,
+	useWatchDriveChangesQuery,
 } = driveApi;

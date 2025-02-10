@@ -1,3 +1,5 @@
+import { drive } from '@googleapis/drive';
+import { DriveSchema } from '../../../models/user.model';
 import DatabaseService from '../../../services/database/mongodb.service';
 import EncryptionService from '../../../services/encryption/encryption.service';
 import {
@@ -104,26 +106,41 @@ export class DrivesService {
 		return DatabaseService.deleteDrive(userEmail, driveId);
 	}
 
-	// TODO: These all use the same logic to get the token
-	// Maybe extract it to a common
 	public async subscribeForDriveChanges(
 		userEmail: string,
-		driveId: string
-	): Promise<WatchChangesChannel | undefined> {
-		const drive = await DatabaseService.getDrive(userEmail, driveId);
-		if (!drive) {
-			return;
-		}
+		driveIds: string[]
+	): Promise<WatchChangesChannel[] | null> {
+		try {
+			const drivesPromises: Promise<Nullable<DriveSchema>>[] = [];
 
-		const { driveType, token: encryptedToken, email: driveEmail } = drive;
-		const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
-		if (!ctxAndToken) {
-			return;
-		}
+			driveIds.forEach(driveId => {
+				drivesPromises.push(DatabaseService.getDrive(userEmail, driveId));
+			});
 
-		const { ctx, token } = ctxAndToken;
-		const watchChangesChannel = await ctx.subscribeForChanges(token, driveEmail);
-		return watchChangesChannel;
+			const drives = await Promise.all(drivesPromises);
+
+			const watchChangesChanelPromises = drives.map(drive => {
+				if (!drive) return Promise.resolve(null);
+
+				const { driveType, token: encryptedToken, id: driveId } = drive;
+				const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
+
+				if (!ctxAndToken) {
+					return Promise.resolve(null);
+				}
+
+				const { ctx, token } = ctxAndToken;
+				return ctx.subscribeForChanges(token, driveId);
+			});
+
+			const watchChangesChannels = await Promise.all(watchChangesChanelPromises);
+
+			return watchChangesChannels.filter(
+				(channel): channel is WatchChangesChannel => channel !== null
+			);
+		} catch {
+			return null;
+		}
 	}
 
 	public async unsubscribeForDriveChanges(

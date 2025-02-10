@@ -87,9 +87,9 @@ export default class DriveContext {
 
 	public async subscribeForChanges(
 		token: string,
-		driveEmail: string
-	): Promise<WatchChangesChannel | undefined> {
-		return this.strategy.subscribeForChanges(token, driveEmail);
+		driveId: string
+	): Promise<WatchChangesChannel | null> {
+		return this.strategy.subscribeForChanges(token, driveId);
 	}
 
 	public async unsubscribeForChanges(

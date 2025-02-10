@@ -1,4 +1,4 @@
-import { ServerSideEventData } from './types';
+import { ServerSideEventData } from '../shared/types/global.types';
 
 export type Validator<T> = (data: unknown) => data is T;
 

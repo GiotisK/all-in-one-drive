@@ -7,7 +7,7 @@ import {
 } from '../../shared/types/global.types';
 
 export class DrivesService {
-	public async subscribeForDriveChanges(driveId: string): Promise<WatchChangesChannel> {
+	/* public async subscribeForDriveChanges(driveId: string): Promise<WatchChangesChannel> {
 		const { data: watchChangesChannel } = await RequestService.post<
 			SubscribeForChangesRequestBody,
 			WatchChangesChannel
@@ -16,7 +16,7 @@ export class DrivesService {
 		});
 
 		return watchChangesChannel;
-	}
+	} */
 
 	public async unsubscribeForDriveChanges(
 		driveId: string,

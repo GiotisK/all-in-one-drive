@@ -5,6 +5,7 @@ import {
 	DriveEntity,
 	DriveQuota,
 	DriveType,
+	ServerSideEventData,
 	Status,
 	SubscribeForChangesRequestBody,
 	UnsubscribeForChangesRequestBody,
@@ -81,28 +82,29 @@ class DrivesController {
 
 	public async watchDrive(
 		req: Request<{}, void, SubscribeForChangesRequestBody>,
-		res: Response<WatchChangesChannel, AuthLocals>
+		res: Response<WatchChangesChannel[], AuthLocals>
 	): Promise<void> {
 		const { email } = res.locals;
-		const { driveId } = req.body;
+		const driveIds = req.body.driveIds;
 
-		const watchChangesChannel = await DrivesService.subscribeForDriveChanges(email, driveId);
+		const watchChangesChannels = await DrivesService.subscribeForDriveChanges(email, driveIds);
 
-		console.log({ watchChangesChannel });
+		console.log({ watchChangesChannels });
 
-		if (watchChangesChannel) {
-			res.status(Status.OK).send(watchChangesChannel);
+		if (watchChangesChannels) {
+			res.status(Status.OK).send(watchChangesChannels);
 		} else {
 			res.status(Status.INTERNAL_SERVER_ERROR).end();
 		}
 	}
 
 	public async stopWatchDrive(
-		req: Request<any, any, UnsubscribeForChangesRequestBody>,
-		res: Response<any, AuthLocals>
+		req: Request<{ driveId: string }, void, UnsubscribeForChangesRequestBody>,
+		res: Response<string, AuthLocals>
 	) {
 		const { email } = res.locals;
-		const { driveId, resourceId, id } = req.body;
+		const driveId = req.params.driveId;
+		const { resourceId, id } = req.body;
 
 		if (!driveId || !id || !resourceId) {
 			res.status(Status.BAD_REQUEST).send('Missing required parameters');
@@ -119,7 +121,7 @@ class DrivesController {
 
 	public getChanges = async (
 		req: Request<{ driveId: string }, void, void, { startPageToken?: string }>,
-		res: Response<any, AuthLocals>
+		res: Response<string, AuthLocals>
 	): Promise<void> => {
 		const { email: userEmail } = res.locals;
 		const { driveId } = req.params;
@@ -146,17 +148,18 @@ class DrivesController {
 	//TODO: Fix name
 	//TODO: Maybe refactor move to another controller?
 	public driveSubscription = (req: Request, res: Response) => {
-		/* this.sseManager.addClient(req, res); */
+		this.sseManager.addClient(req, res);
 	};
 
 	public driveNotification = (req: Request, res: Response): void => {
-		const notificationDetails = {
+		console.log('Notification received:', req.headers);
+		const notificationDetails: ServerSideEventData = {
 			driveType: DriveType.GoogleDrive,
-			driveEmail: req.headers['x-goog-channel-token'],
-			change: req.headers['x-goog-resource-state'],
+			driveId: req.headers['x-goog-channel-token'] as string,
+			change: req.headers['x-goog-resource-state'] as 'sync' | 'change',
 		};
 
-		/* this.sseManager.sendNotification('update-event', notificationDetails); */
+		this.sseManager.sendNotification('update-event', notificationDetails);
 
 		res.status(Status.OK).end();
 	};

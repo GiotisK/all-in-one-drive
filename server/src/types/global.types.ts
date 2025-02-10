@@ -19,7 +19,7 @@ export interface AuthUserResponse {
 }
 
 export interface SubscribeForChangesRequestBody {
-	driveId: string;
+	driveIds: string[];
 }
 
 export interface UnsubscribeForChangesRequestBody {
@@ -77,7 +77,7 @@ export type DriveEntity = {
 	type: DriveType;
 	email: string;
 	quota: DriveQuota;
-	watchChangesChannel?: WatchChangesChannel; // TODO: Fix name
+	watchChangesChannel?: WatchChangesChannel;
 };
 
 export type FileEntity = {
@@ -107,14 +107,20 @@ export type DriveChanges = {
 	startPageToken: string;
 };
 
-//TODO: Fix name
 export type WatchChangesChannel = {
 	id: string;
 	resourceId: string;
 	startPageToken: string;
+	driveId: string;
 };
 
 export enum FileType {
 	Folder = 'folder',
 	File = 'file',
 }
+
+export type ServerSideEventData = {
+	driveType: string;
+	driveId: string;
+	change: 'sync' | 'change';
+};

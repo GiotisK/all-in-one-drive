@@ -13,6 +13,7 @@ export const createTunnel = async ({
 	subdomain = LOCALTUNNEL_SUBDOMAIN,
 }: TunnelOpts): Promise<Tunnel | undefined> => {
 	try {
+		console.log(`${TAG}: Creating tunnel...`);
 		const tunnel = await localtunnel({
 			port: port,
 			subdomain: subdomain,

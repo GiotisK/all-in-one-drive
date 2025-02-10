@@ -409,10 +409,10 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 	public async subscribeForChanges(
 		token: string,
-		driveEmail: string
-	): Promise<WatchChangesChannel | undefined> {
+		driveId: string
+	): Promise<WatchChangesChannel | null> {
 		this.setToken(token);
-		const watchChangesChannel = await this.registerForDriveChanges(driveEmail);
+		const watchChangesChannel = await this.registerForDriveChanges(driveId);
 		return watchChangesChannel;
 	}
 
@@ -438,14 +438,16 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	private async registerForDriveChanges(
-		driveEmail: string
-	): Promise<WatchChangesChannel | undefined> {
+	private async registerForDriveChanges(driveId: string): Promise<WatchChangesChannel | null> {
 		try {
 			const watchChangesRequest = await this.createChangesWatchRequest(
 				WEBHOOK_UUID,
 				WEBHOOK_ENDPOINT,
-				driveEmail
+				driveId
+			);
+			console.log(
+				'[GoogleDriveStrategy::registerForDriveChanges]: sending watch request with endpoint',
+				WEBHOOK_ENDPOINT
 			);
 			const response = await this.drive.changes.watch(watchChangesRequest);
 			console.log('[GoogleDriveStrategy::registerForDriveChanges]');
@@ -455,19 +457,21 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				id: response.data.id ?? '',
 				resourceId: response.data.resourceId ?? '',
 				startPageToken: watchChangesRequest.pageToken ?? '',
+				driveId,
 			};
 		} catch (err) {
 			console.error(
 				'An error occured while trying to subscribe to watch changes.\nError: ',
 				(err as Error).message
 			);
+			return null;
 		}
 	}
 
 	private async createChangesWatchRequest(
 		id: string,
 		address: string,
-		driveEmail: string
+		driveId: string
 	): Promise<ParamsResourceChangesWatch> {
 		const startPageToken = await this.getChangesStartPageToken();
 
@@ -480,7 +484,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				type: 'web_hook',
 				address,
 				expiration: String(Date.now() + WEBHOOK_EXPIRATION_TIME_IN_MS),
-				token: driveEmail,
+				token: driveId,
 			},
 		};
 	}

@@ -35,10 +35,7 @@ export interface IDriveStrategy {
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>>;
 	openFile: (token: string, fileId: string) => Promise<boolean>;
-	subscribeForChanges(
-		token: string,
-		driveEmail: string
-	): Promise<WatchChangesChannel | undefined>;
+	subscribeForChanges(token: string, driveId: string): Promise<WatchChangesChannel | null>;
 	unsubscribeForChanges(token: string, id: string, resourceId: string): Promise<void>;
 	fetchDriveChanges(token: string, driveEmail: string): Promise<DriveChanges | undefined>;
 }

@@ -2,14 +2,14 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { DriveChanges } from '../../shared/types/global.types';
 import DrivesService from '../../services/drives/drives.service';
 
-type SubscribeForChangesParams = { driveId: string };
+/* type SubscribeForChangesParams = { driveId: string };
 export const subscribeForChanges = createAsyncThunk(
 	'drives/subscribeForChanges',
 	async ({ driveId }: SubscribeForChangesParams) => {
 		const watchChangesChannel = await DrivesService.subscribeForDriveChanges(driveId);
 		return { driveId, watchChangesChannel };
 	}
-);
+); */
 
 type UnSubscribeForChangesParams = {
 	driveId: string;
