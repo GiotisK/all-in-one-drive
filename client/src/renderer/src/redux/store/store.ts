@@ -2,7 +2,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import userReducer from '../slices/user/userSlice';
 import settingsReducer from '../slices/settings/settingsSlice';
 import modalReducer from '../slices/modal/modalSlice';
-import drivesReducer from '../slices/drives/drivesSlice';
 import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import { driveApi } from '../rtk/driveApi';
 import { userApi } from '../rtk/userApi';
@@ -12,7 +11,6 @@ const store = configureStore({
 		settings: settingsReducer,
 		user: userReducer,
 		modal: modalReducer,
-		drives: drivesReducer,
 		[driveApi.reducerPath]: driveApi.reducer,
 		[userApi.reducerPath]: userApi.reducer,
 	},
