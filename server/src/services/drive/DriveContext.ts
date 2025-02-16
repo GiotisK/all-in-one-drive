@@ -102,8 +102,9 @@ export default class DriveContext {
 
 	public async fetchDriveChanges(
 		token: string,
-		startPageToken: string
+		startPageToken: string,
+		driveId: string
 	): Promise<DriveChanges | undefined> {
-		return this.strategy.fetchDriveChanges(token, startPageToken);
+		return this.strategy.fetchDriveChanges(token, startPageToken, driveId);
 	}
 }

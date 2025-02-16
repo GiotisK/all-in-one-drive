@@ -182,7 +182,7 @@ export class DrivesService {
 		}
 
 		const { ctx, token } = ctxAndToken;
-		const changes = await ctx.fetchDriveChanges(token, startPageToken);
+		const changes = await ctx.fetchDriveChanges(token, startPageToken, driveId);
 		return changes;
 	}
 }

@@ -100,6 +100,7 @@ export type ChangedFileEntity = {
 	date: string;
 	type: FileType;
 	sharedLink: Nullable<string>;
+	driveId: string;
 };
 
 export type DriveChanges = {

@@ -343,7 +343,8 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 	public async fetchDriveChanges(
 		token: string,
-		startPageToken: string
+		startPageToken: string,
+		driveId: string
 	): Promise<DriveChanges | undefined> {
 		this.setToken(token);
 
@@ -367,6 +368,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 							? change.file.webViewLink!
 							: null,
 						type: FileType.File,
+						driveId
 					});
 				}
 			});
