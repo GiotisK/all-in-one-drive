@@ -1,23 +1,47 @@
-import { useCallback, useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '../redux/store/store';
+import { useCallback, useEffect, useState } from 'react';
+import { useAppSelector } from '../redux/store/store';
 import { useEventSource } from './useEventSource';
 import { config } from '../configs/common';
-import { getChanges } from '../redux/async-actions/drives.async.actions';
 import { useEventSourceEvents } from './useEventSourceEvents';
 import { validateEventData } from '../sse/validateEventData';
 import { isValidServerSideEventData } from '../sse/validators';
-import { useGetDrivesQuery, useWatchDriveChangesQuery } from '../redux/rtk/driveApi';
+import {
+	useGetDrivesQuery,
+	useWatchDriveChangesQuery,
+	useGetDriveChangesQuery,
+} from '../redux/rtk/driveApi';
+
+type GetChangesParams = { driveId: string; startPageToken: string };
 
 const DRIVE_NOTIFICATION_SUBSCRIPTION_URL = `${config.baseURL}/drives/subscribe`;
 
 export const useServerSideEvents = () => {
-	const dispatch = useAppDispatch();
 	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
-	const { data: drives = [], isSuccess } = useGetDrivesQuery();
+	const { data: drives = [], isSuccess: getDrivesSuccesss } = useGetDrivesQuery();
 	const { data: watchChangesChannels = [] } = useWatchDriveChangesQuery(
 		{ driveIds: drives.map(drive => drive.id) },
 		{ skip: !isUserAuthenticated || drives.length === 0 }
 	);
+	const [driveChangesParams, setDriveChangesParams] = useState<GetChangesParams | null>(null);
+	const { isSuccess: driveChangesSuccess, refetch } = useGetDriveChangesQuery(
+		{
+			driveId: driveChangesParams?.driveId ?? '',
+			startPageToken: driveChangesParams?.startPageToken ?? '',
+		},
+		{ skip: driveChangesParams === null }
+	);
+
+	useEffect(() => {
+		if (driveChangesSuccess) {
+			setDriveChangesParams(null);
+		}
+	}, [driveChangesSuccess]);
+
+	useEffect(() => {
+		if (driveChangesParams !== null) {
+			refetch();
+		}
+	}, [driveChangesParams, refetch]);
 
 	const handleServerSideEvent = useCallback(
 		(event: MessageEvent<string>) => {
@@ -32,18 +56,19 @@ export const useServerSideEvents = () => {
 					channel => channel.driveId === eventData.driveId
 				);
 				if (!channel) {
+					console.log('===no channel');
 					return;
 				}
+				console.log('[SSE]-[change]:', eventData);
+				console.log('===dispatching');
 
-				dispatch(
-					getChanges({
-						driveId: channel.driveId,
-						startPageToken: channel.startPageToken ?? '-',
-					})
-				);
+				setDriveChangesParams({
+					driveId: channel.driveId,
+					startPageToken: channel.startPageToken,
+				});
 			}
 		},
-		[dispatch, watchChangesChannels]
+		[watchChangesChannels]
 	);
 
 	const { eventSource, openStream } = useEventSource({
@@ -70,8 +95,8 @@ export const useServerSideEvents = () => {
 	});
 
 	useEffect(() => {
-		if (isUserAuthenticated && isSuccess) {
+		if (isUserAuthenticated && getDrivesSuccesss) {
 			openStream();
 		}
-	}, [isSuccess, isUserAuthenticated, openStream]);
+	}, [getDrivesSuccesss, isUserAuthenticated, openStream]);
 };

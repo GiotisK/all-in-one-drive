@@ -345,7 +345,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		token: string,
 		startPageToken: string,
 		driveId: string
-	): Promise<DriveChanges | undefined> {
+	): Promise<Nullable<DriveChanges>> {
 		this.setToken(token);
 
 		try {
@@ -353,22 +353,23 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				data: { changes = [], newStartPageToken },
 			} = await this.drive.changes.list({
 				pageToken: startPageToken,
-				fields: 'newStartPageToken, changes(file(id, name, permissions, webViewLink), time)',
-			});
+				fields: 'newStartPageToken, changes(file(id, name, permissions, webViewLink), time, removed)',
+			}); //todo: fix removed not working currently, it always returns false
 
 			const results: ChangedFileEntity[] = [];
+
 			changes.forEach(change => {
 				if (change.file) {
 					results.push({
 						id: change.file.id!,
-						removed: change.removed!,
-						name: change.file.name!,
+						removed: change.removed ?? false,
+						name: change.file.name ?? '',
 						date: change.time?.substring(0, 10) ?? '-',
 						sharedLink: this.isFilePubliclyShared(change.file)
 							? change.file.webViewLink!
 							: null,
 						type: FileType.File,
-						driveId
+						driveId,
 					});
 				}
 			});
@@ -383,6 +384,8 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 					(err as Error).message
 				})`
 			);
+
+			return null;
 		}
 	}
 
@@ -390,7 +393,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		token: string,
 		id: string,
 		resourceId: string
-	): Promise<void> {
+	): Promise<boolean> {
 		this.setToken(token);
 		try {
 			await this.drive.channels.stop({
@@ -400,12 +403,15 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				},
 			});
 			console.log(`Stopped drive notifications for channel id: ${id}`);
+			return true;
 		} catch (err) {
 			console.error(
 				`An error occured while trying to unsubscribe for changes.\nError: ${
 					(err as Error).message
 				}`
 			);
+
+			return false;
 		}
 	}
 

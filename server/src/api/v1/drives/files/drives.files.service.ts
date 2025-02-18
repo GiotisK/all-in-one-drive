@@ -83,7 +83,6 @@ export class FilesService {
 	): Promise<boolean> {
 		const drive = await DatabaseService.getDrive(userEmail, driveId);
 
-		//TODO: use early return everywhere or sthhhh
 		if (drive) {
 			const { driveType, token: encryptedToken } = drive;
 			const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);

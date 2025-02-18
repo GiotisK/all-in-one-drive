@@ -96,7 +96,7 @@ export default class DriveContext {
 		token: string,
 		id: string,
 		resourceId: string
-	): Promise<void> {
+	): Promise<boolean> {
 		return this.strategy.unsubscribeForChanges(token, id, resourceId);
 	}
 
@@ -104,7 +104,7 @@ export default class DriveContext {
 		token: string,
 		startPageToken: string,
 		driveId: string
-	): Promise<DriveChanges | undefined> {
+	): Promise<Nullable<DriveChanges>> {
 		return this.strategy.fetchDriveChanges(token, startPageToken, driveId);
 	}
 }

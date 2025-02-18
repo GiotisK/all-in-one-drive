@@ -3,6 +3,7 @@ import { DriveSchema } from '../../../models/user.model';
 import DatabaseService from '../../../services/database/mongodb.service';
 import EncryptionService from '../../../services/encryption/encryption.service';
 import {
+	DriveChanges,
 	DriveEntity,
 	DriveQuota,
 	DriveType,
@@ -148,41 +149,43 @@ export class DrivesService {
 		driveId: string,
 		id: string,
 		resourceId: string
-	): Promise<void> {
+	): Promise<boolean> {
 		const drive = await DatabaseService.getDrive(userEmail, driveId);
 		if (!drive) {
-			return;
+			return false;
 		}
 
 		const { driveType, token: encryptedToken } = drive;
 		const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
 		if (!ctxAndToken) {
-			return;
+			return false;
 		}
 
 		const { ctx, token } = ctxAndToken;
-		const watchChangesChannel = await ctx.unsubscribeForChanges(token, id, resourceId);
-		return watchChangesChannel;
+		const success = await ctx.unsubscribeForChanges(token, id, resourceId);
+
+		return success;
 	}
 
 	public async fetchDriveChanges(
 		driveId: string,
 		userEmail: string,
 		startPageToken: string
-	): Promise<any> {
+	): Promise<Nullable<DriveChanges>> {
 		const drive = await DatabaseService.getDrive(userEmail, driveId);
 		if (!drive) {
-			return;
+			return null;
 		}
 
 		const { driveType, token: encryptedToken } = drive;
 		const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
 		if (!ctxAndToken) {
-			return;
+			return null;
 		}
 
 		const { ctx, token } = ctxAndToken;
 		const changes = await ctx.fetchDriveChanges(token, startPageToken, driveId);
+
 		return changes;
 	}
 }

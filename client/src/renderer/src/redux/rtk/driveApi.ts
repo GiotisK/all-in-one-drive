@@ -1,5 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {
+	DriveChanges,
 	DriveEntity,
 	DriveType,
 	FileEntity,
@@ -13,13 +14,13 @@ export const driveApi = createApi({
 	endpoints: builder => ({
 		getDriveRootFiles: builder.query<FileEntity[], void>({
 			query: () => ({ url: '/files' }),
-			providesTags: ['Files', 'Drives'],
+			providesTags: ['Files'],
 		}),
 		getDriveFolderFiles: builder.query<FileEntity[], { driveId?: string; folderId?: string }>({
 			query: ({ driveId, folderId }) => ({
 				url: `${driveId}/folders/${folderId}/files`,
 			}),
-			providesTags: ['Drives', 'Files'],
+			providesTags: ['Files'],
 		}),
 		deleteFile: builder.mutation<void, { driveId: string; fileId: string }>({
 			query: ({ driveId, fileId }) => ({
@@ -134,6 +135,65 @@ export const driveApi = createApi({
 				body: { driveIds },
 			}),
 		}),
+		getDriveChanges: builder.query<DriveChanges, { driveId: string; startPageToken: string }>({
+			query: ({ driveId, startPageToken }) => ({
+				url: `/${driveId}/changes?startPageToken=${startPageToken}`,
+			}),
+			async onQueryStarted(args, { dispatch, queryFulfilled }) {
+				try {
+					const { driveId } = args;
+					const { data } = await queryFulfilled;
+					dispatch(
+						driveApi.util.updateQueryData('getDriveRootFiles', undefined, draft => {
+							data.changes.forEach(changedFileEntity => {
+								const index = draft.findIndex(
+									fileEntity => fileEntity.id === changedFileEntity.id
+								);
+								if (index !== -1) {
+									if (changedFileEntity.removed) {
+										draft.splice(index, 1);
+									} else {
+										draft[index].name = changedFileEntity.name;
+										draft[index] = {
+											...draft[index],
+											name: changedFileEntity.name,
+											sharedLink: changedFileEntity.sharedLink,
+											date: changedFileEntity.date,
+										};
+									}
+								}
+							});
+						})
+					);
+
+					dispatch(
+						driveApi.util.updateQueryData(
+							'watchDriveChanges',
+							{ driveIds: [driveId] },
+							draft => {
+								const index = draft.findIndex(
+									channel => channel.driveId === driveId
+								);
+
+								console.log('===driveIdParam', driveId);
+								draft.forEach(channel =>
+									console.log('===draft found drive id', channel.driveId)
+								);
+
+								if (index !== -1) {
+									console.log('===-found');
+									console.log('===before', draft[index].startPageToken);
+									console.log('===after', data.startPageToken);
+									draft[index].startPageToken = data.startPageToken;
+								}
+							}
+						)
+					);
+				} catch (e) {
+					console.error('Error updating the files', e);
+				}
+			},
+		}),
 	}),
 	tagTypes: ['Drives', 'Files'],
 });
@@ -156,4 +216,5 @@ export const {
 	useConnectDriveMutation,
 	useGetAuthLinkQuery,
 	useWatchDriveChangesQuery,
+	useGetDriveChangesQuery,
 } = driveApi;

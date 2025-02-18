@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import DrivesService from './drives.service';
 import {
 	ConnectDriveRequestBody,
+	DriveChanges,
 	DriveEntity,
 	DriveQuota,
 	DriveType,
@@ -111,42 +112,41 @@ class DrivesController {
 			return;
 		}
 
-		try {
-			await DrivesService.unsubscribeForDriveChanges(email, driveId, id, resourceId);
-			res.status(Status.OK).end();
-		} catch (err) {
-			res.status(Status.INTERNAL_SERVER_ERROR).send((err as Error).message);
+		const success = await DrivesService.unsubscribeForDriveChanges(
+			email,
+			driveId,
+			id,
+			resourceId
+		);
+
+		if (success) {
+		} else {
+			res.status(Status.INTERNAL_SERVER_ERROR).end();
 		}
 	}
 
 	public getChanges = async (
 		req: Request<{ driveId: string }, void, void, { startPageToken?: string }>,
-		res: Response<string, AuthLocals>
-	): Promise<void> => {
+		res: Response<DriveChanges, AuthLocals>
+	) => {
 		const { email: userEmail } = res.locals;
 		const { driveId } = req.params;
 		const { startPageToken } = req.query;
 
 		if (!startPageToken) {
-			res.status(Status.BAD_REQUEST).send('StartPageToken was not provided.');
+			res.status(Status.BAD_REQUEST).end();
 			return;
 		}
 
-		try {
-			const changes = await DrivesService.fetchDriveChanges(
-				driveId,
-				userEmail,
-				startPageToken
-			);
-			res.status(Status.OK).json(changes);
-		} catch (error) {
-			console.error('Error fetching drive changes:', error);
-			res.status(Status.INTERNAL_SERVER_ERROR).send('Failed to fetch drive changes.');
+		const changes = await DrivesService.fetchDriveChanges(driveId, userEmail, startPageToken);
+
+		if (changes) {
+			res.status(Status.OK).send(changes);
+		} else {
+			res.status(Status.INTERNAL_SERVER_ERROR).end();
 		}
 	};
 
-	//TODO: Fix name
-	//TODO: Maybe refactor move to another controller?
 	public driveSubscription = (req: Request, res: Response) => {
 		this.sseManager.addClient(req, res);
 	};
