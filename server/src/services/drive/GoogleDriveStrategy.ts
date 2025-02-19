@@ -28,7 +28,6 @@ const PUBLIC_SHARED_LINK_BASE_URL = 'https://drive.google.com/open?id=';
 const PUBLIC_SHARED_PERMISSION_TYPE = 'anyone';
 
 const WEBHOOK_EXPIRATION_TIME_IN_MS = 24 * 60 * 60 * 1000; // 24hours
-const WEBHOOK_UUID = generateUUID();
 const WEBHOOK_ENDPOINT = `${LOCALTUNNEL_URL}/drives/webhook`;
 
 export default class GoogleDriveStrategy implements IDriveStrategy {
@@ -449,7 +448,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 	private async registerForDriveChanges(driveId: string): Promise<WatchChangesChannel | null> {
 		try {
 			const watchChangesRequest = await this.createChangesWatchRequest(
-				WEBHOOK_UUID,
+				generateUUID(),
 				WEBHOOK_ENDPOINT,
 				driveId
 			);
@@ -458,8 +457,9 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				WEBHOOK_ENDPOINT
 			);
 			const response = await this.drive.changes.watch(watchChangesRequest);
-			console.log('[GoogleDriveStrategy::registerForDriveChanges]');
-			console.log(response.data);
+			console.log(
+				'[GoogleDriveStrategy::registerForDriveChanges]: registered for changes successfully'
+			);
 
 			return {
 				id: response.data.id ?? '',
