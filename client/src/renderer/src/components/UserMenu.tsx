@@ -18,8 +18,8 @@ const CircleButtonContainer = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 60px;
-	width: 60px;
+	height: 40px;
+	width: 40px;
 	border-radius: 35px;
 	margin-right: 10px;
 	box-shadow: ${({ theme }) => theme.colors.boxShadow};
@@ -37,7 +37,7 @@ const CircleButtonContainer = styled.div`
 
 const CircleButtonLetter = styled.p`
 	user-select: none;
-	font-size: 30px;
+	font-size: 24px;
 	color: white;
 `;
 

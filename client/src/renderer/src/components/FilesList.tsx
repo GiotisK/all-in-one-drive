@@ -12,7 +12,7 @@ const NoFilesText = styled.p`
 	margin: 0;
 	margin-top: 5%;
 	color: gray;
-	font-size: 20px;
+	font-size: 16px;
 `;
 
 export const FilesList = () => {

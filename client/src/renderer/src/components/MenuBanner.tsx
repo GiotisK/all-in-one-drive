@@ -28,7 +28,7 @@ const BackButtonContainer = styled.div`
 const TabTitle = styled.p`
 	margin: 0;
 	color: ${({ theme }) => theme.colors.textPrimary};
-	font-size: 20px;
+	font-size: 16px;
 	user-select: none;
 `;
 

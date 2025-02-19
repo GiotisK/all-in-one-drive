@@ -58,7 +58,7 @@ const Text = styled.p`
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	font-size: 16px;
+	font-size: 14px;
 	margin-right: 5%;
 	color: ${({ theme }) => theme.colors.textPrimary};
 `;

@@ -13,8 +13,8 @@ const Container = styled.div<{
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	height: 72px;
-	width: 72px;
+	height: 50px;
+	width: 50px;
 	border-radius: 50%;
 	box-shadow: ${({ theme }) => theme.boxShadow};
 	cursor: pointer;
@@ -50,9 +50,9 @@ const FloatingAddButton = ({
 		<Container $backgroundColor={color} $animation={animation} onClick={onClick}>
 			{children}
 			{isLoading ? (
-				<Loader size={20} backgroundColor='transparent' borderColor='white' />
+				<Loader size={15} backgroundColor='transparent' borderColor='white' />
 			) : (
-				createSvg(icon, 35, 'white')
+				createSvg(icon, 25, 'white')
 			)}
 		</Container>
 	);

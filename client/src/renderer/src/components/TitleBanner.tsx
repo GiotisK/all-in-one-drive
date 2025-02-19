@@ -17,7 +17,7 @@ const BannerContainer = styled.div`
 	justify-content: space-between;
 	top: 0;
 	width: 100%;
-	height: 50px;
+	height: 35px;
 	background-color: ${({ theme }) => theme.colors.bluePrimary};
 	box-shadow: ${({ theme }) => theme.colors.boxShadow};
 	z-index: 2;
@@ -32,13 +32,12 @@ const LogoMenuContainer = styled.div`
 
 const LogoTitle = styled.p`
 	font-family: 'Arciform';
-	font-size: 50px;
 	color: white;
 	padding-left: 10px;
 	padding-top: 5px;
 	margin: 0;
 	margin-bottom: 3px;
-	font-size: 32px;
+	font-size: 24px;
 	user-select: none;
 	cursor: pointer;
 `;
@@ -114,7 +113,7 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 			<LogoMenuContainer>
 				{!isInsideFolder && (
 					<BurgerMenuButton onClick={props.onBurgerMenuClick}>
-						{createSvg(SvgNames.Burger, 30, 'white')}
+						{createSvg(SvgNames.Burger, 24, 'white')}
 					</BurgerMenuButton>
 				)}
 				<LogoTitle onClick={navigateToDrivePath}>aio drive</LogoTitle>
