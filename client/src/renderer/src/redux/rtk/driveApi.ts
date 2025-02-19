@@ -175,15 +175,7 @@ export const driveApi = createApi({
 									channel => channel.driveId === driveId
 								);
 
-								console.log('===driveIdParam', driveId);
-								draft.forEach(channel =>
-									console.log('===draft found drive id', channel.driveId)
-								);
-
 								if (index !== -1) {
-									console.log('===-found');
-									console.log('===before', draft[index].startPageToken);
-									console.log('===after', data.startPageToken);
 									draft[index].startPageToken = data.startPageToken;
 								}
 							}

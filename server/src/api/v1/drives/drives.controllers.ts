@@ -90,8 +90,6 @@ class DrivesController {
 
 		const watchChangesChannels = await DrivesService.subscribeForDriveChanges(email, driveIds);
 
-		console.log({ watchChangesChannels });
-
 		if (watchChangesChannels) {
 			res.status(Status.OK).send(watchChangesChannels);
 		} else {
@@ -152,7 +150,6 @@ class DrivesController {
 	};
 
 	public driveNotification = (req: Request, res: Response): void => {
-		console.log('Notification received:', req.headers);
 		const notificationDetails: ServerSideEventData = {
 			driveType: DriveType.GoogleDrive,
 			driveId: req.headers['x-goog-channel-token'] as string,

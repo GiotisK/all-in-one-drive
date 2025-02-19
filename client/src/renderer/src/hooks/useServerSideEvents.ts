@@ -56,11 +56,10 @@ export const useServerSideEvents = () => {
 					channel => channel.driveId === eventData.driveId
 				);
 				if (!channel) {
-					console.log('===no channel');
 					return;
 				}
+
 				console.log('[SSE]-[change]:', eventData);
-				console.log('===dispatching');
 
 				setDriveChangesParams({
 					driveId: channel.driveId,
