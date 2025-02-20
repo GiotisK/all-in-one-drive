@@ -17,6 +17,7 @@ import { LOCALTUNNEL_URL } from '../../tunnel/subdomain';
 import mime from 'mime';
 import fs from 'fs';
 import FilesystemService from '../filesystem/filesystem.service';
+import SSEManager from '../sse/SSEManager';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
@@ -436,6 +437,22 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				{ responseType: 'stream' }
 			);
 
+			let downloadedSize = 0;
+			let lastLoggedPercent = 0;
+
+			res.data.on('data', chunk => {
+				downloadedSize += chunk.length;
+				const percent = Math.floor((downloadedSize / metadata.size) * 100);
+				if (percent >= lastLoggedPercent + 10) {
+					lastLoggedPercent = percent;
+					SSEManager.sendNotification('dowload-progress', { fileId, percent });
+				}
+			});
+
+			res.data.on('end', () => {
+				SSEManager.sendNotification('dowload-progress', { fileId, percent: 100 });
+			});
+
 			return {
 				fileData: res.data,
 				name: metadata.name,
@@ -518,12 +535,16 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 	private async getFileMetadata(fileId: string) {
 		try {
-			const metadataRes = await this.drive.files.get({ fileId, fields: 'name, mimeType' });
+			const metadataRes = await this.drive.files.get({
+				fileId,
+				fields: 'name, mimeType, size',
+			});
 
+			const size = parseInt(metadataRes.data.size ?? '0', 10);
 			const name = metadataRes.data.name ?? 'file';
 			const extension = mime.getExtension(metadataRes.data.mimeType ?? '');
 
-			return { name, extension };
+			return { name, extension, size };
 		} catch {
 			return null;
 		}

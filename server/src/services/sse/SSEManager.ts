@@ -66,3 +66,5 @@ export class SseManager {
 		});
 	}
 }
+
+export default new SseManager();

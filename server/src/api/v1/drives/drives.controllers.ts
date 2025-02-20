@@ -13,13 +13,10 @@ import {
 	WatchChangesChannel,
 } from '../../../types/global.types';
 import { AuthLocals } from '../../../types/types';
-import { SseManager } from '../../../services/sse/SSEManager';
+
+import SSEManager from '../../../services/sse/SSEManager';
 
 class DrivesController {
-	constructor(private readonly sseManager: SseManager) {
-		this.sseManager = sseManager;
-	}
-
 	public async authLink(
 		req: Request<{ drive: DriveType }>,
 		res: Response<string>
@@ -146,7 +143,7 @@ class DrivesController {
 	};
 
 	public driveSubscription = (req: Request, res: Response) => {
-		this.sseManager.addClient(req, res);
+		SSEManager.addClient(req, res);
 	};
 
 	public driveNotification = (req: Request, res: Response): void => {
@@ -156,10 +153,10 @@ class DrivesController {
 			change: req.headers['x-goog-resource-state'] as 'sync' | 'change',
 		};
 
-		this.sseManager.sendNotification('update-event', notificationDetails);
+		SSEManager.sendNotification('update-event', notificationDetails);
 
 		res.status(Status.OK).end();
 	};
 }
 
-export default new DrivesController(new SseManager());
+export default new DrivesController();
