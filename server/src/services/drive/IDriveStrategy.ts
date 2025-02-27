@@ -27,7 +27,7 @@ export interface IDriveStrategy {
 		dbEntityDriveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>>;
-	downloadFile(token: string, fileId: string): Promise<boolean>;
+	downloadFile(token: string, fileId: string, driveId: string): Promise<boolean>;
 	uploadFile(
 		token: string,
 		file: Express.Multer.File,

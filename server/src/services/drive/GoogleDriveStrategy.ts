@@ -10,6 +10,7 @@ import {
 	FileEntity,
 	FileType,
 	Nullable,
+	ServerSideEventProgressData,
 	Status,
 	WatchChangesChannel,
 } from '../../types/global.types';
@@ -18,6 +19,7 @@ import mime from 'mime';
 import fs from 'fs';
 import FilesystemService from '../filesystem/filesystem.service';
 import SSEManager from '../sse/SSEManager';
+import internal from 'stream';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
@@ -175,11 +177,11 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	public async downloadFile(token: string, fileId: string): Promise<boolean> {
+	public async downloadFile(token: string, fileId: string, driveId: string): Promise<boolean> {
 		try {
 			this.setToken(token);
 
-			const data = await this.downloadFileInternal(fileId);
+			const data = await this.downloadFileInternal(fileId, driveId, true);
 
 			if (data) {
 				FilesystemService.saveFileToDownloads(data.fileData, data.name);
@@ -424,7 +426,11 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		return watchChangesChannel;
 	}
 
-	private async downloadFileInternal(fileId: string) {
+	private async downloadFileInternal(
+		fileId: string,
+		driveId?: string,
+		shouldSendProgress: boolean = false
+	) {
 		try {
 			const metadata = await this.getFileMetadata(fileId);
 
@@ -437,21 +443,9 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				{ responseType: 'stream' }
 			);
 
-			let downloadedSize = 0;
-			let lastLoggedPercent = 0;
-
-			res.data.on('data', chunk => {
-				downloadedSize += chunk.length;
-				const percent = Math.floor((downloadedSize / metadata.size) * 100);
-				if (percent >= lastLoggedPercent + 10) {
-					lastLoggedPercent = percent;
-					SSEManager.sendNotification('dowload-progress', { fileId, percent });
-				}
-			});
-
-			res.data.on('end', () => {
-				SSEManager.sendNotification('dowload-progress', { fileId, percent: 100 });
-			});
+			if (shouldSendProgress) {
+				this.sendDownloadProgressEvents(res.data, driveId!, fileId, metadata.size);
+			}
 
 			return {
 				fileData: res.data,
@@ -460,6 +454,41 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		} catch {
 			return null;
 		}
+	}
+
+	private async sendDownloadProgressEvents(
+		data: internal.Readable,
+		driveId: string,
+		fileId: string,
+		size: number
+	) {
+		let downloadedSize = 0;
+		let lastLoggedPercent = 0;
+
+		data.on('data', chunk => {
+			downloadedSize += chunk.length;
+			const percent = Math.floor((downloadedSize / size) * 100);
+			if (percent >= lastLoggedPercent + 10) {
+				lastLoggedPercent = percent;
+				const progressData: ServerSideEventProgressData = {
+					fileId,
+					driveId,
+					type: 'download',
+					percentage: percent,
+				};
+				SSEManager.sendNotification('download-progress-event', progressData);
+			}
+		});
+
+		data.on('end', () => {
+			const progressData: ServerSideEventProgressData = {
+				fileId,
+				driveId,
+				type: 'download',
+				percentage: 100,
+			};
+			SSEManager.sendNotification('download-progress-event', progressData);
+		});
 	}
 
 	private async registerForDriveChanges(driveId: string): Promise<WatchChangesChannel | null> {

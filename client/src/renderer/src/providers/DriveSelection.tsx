@@ -1,4 +1,5 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+import { useGetDrivesQuery } from '../redux/rtk/driveApi';
 
 export interface DriveSelectionContextType {
 	selectedDriveIds: string[];
@@ -10,7 +11,12 @@ export const DriveSelectionContext = createContext<DriveSelectionContextType | u
 );
 
 export const DriveSelectionProvider = ({ children }: { children: React.ReactNode }) => {
+	const { data: drives = [] } = useGetDrivesQuery();
 	const [selectedDriveIds, setSelectedDriveIds] = useState<string[]>([]);
+
+	useEffect(() => {
+		setSelectedDriveIds(drives.map(drive => drive.id));
+	}, [drives]);
 
 	return (
 		<DriveSelectionContext.Provider value={{ selectedDriveIds, setSelectedDriveIds }}>

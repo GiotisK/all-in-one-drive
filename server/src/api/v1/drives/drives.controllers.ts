@@ -6,7 +6,7 @@ import {
 	DriveEntity,
 	DriveQuota,
 	DriveType,
-	ServerSideEventData,
+	ServerSideEventChangeData,
 	Status,
 	SubscribeForChangesRequestBody,
 	UnsubscribeForChangesRequestBody,
@@ -147,7 +147,7 @@ class DrivesController {
 	};
 
 	public driveNotification = (req: Request, res: Response): void => {
-		const notificationDetails: ServerSideEventData = {
+		const notificationDetails: ServerSideEventChangeData = {
 			driveType: DriveType.GoogleDrive,
 			driveId: req.headers['x-goog-channel-token'] as string,
 			change: req.headers['x-goog-resource-state'] as 'sync' | 'change',

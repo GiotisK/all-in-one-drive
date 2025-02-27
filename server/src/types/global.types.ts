@@ -120,8 +120,15 @@ export enum FileType {
 	File = 'file',
 }
 
-export type ServerSideEventData = {
+export type ServerSideEventChangeData = {
 	driveType: string;
 	driveId: string;
 	change: 'sync' | 'change';
+};
+
+export type ServerSideEventProgressData = {
+	fileId: string;
+	driveId: string;
+	type: 'download' | 'upload';
+	percentage: number;
 };

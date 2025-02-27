@@ -68,8 +68,8 @@ export default class DriveContext {
 		return this.strategy.createFile(token, fileType, dbEntityDriveId, parentFolderId);
 	}
 
-	public async downloadFile(token: string, fileId: string): Promise<boolean> {
-		return this.strategy.downloadFile(token, fileId);
+	public async downloadFile(token: string, fileId: string, driveId: string): Promise<boolean> {
+		return this.strategy.downloadFile(token, fileId, driveId);
 	}
 
 	public async uploadFile(

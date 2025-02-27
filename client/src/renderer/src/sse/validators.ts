@@ -1,8 +1,11 @@
-import { ServerSideEventData } from '../shared/types/global.types';
+import {
+	ServerSideEventChangeData,
+	ServerSideEventProgressData,
+} from '../shared/types/global.types';
 
 export type Validator<T> = (data: unknown) => data is T;
 
-export const isValidServerSideEventData = (data: unknown): data is ServerSideEventData => {
+export const isServerSideEventChangeData = (data: unknown): data is ServerSideEventChangeData => {
 	return (
 		data !== null &&
 		typeof data === 'object' &&
@@ -13,5 +16,23 @@ export const isValidServerSideEventData = (data: unknown): data is ServerSideEve
 		'change' in data &&
 		typeof data.change === 'string' &&
 		['change', 'sync'].includes(data.change)
+	);
+};
+
+export const isServerSideEventProgressData = (
+	data: unknown
+): data is ServerSideEventProgressData => {
+	return (
+		data !== null &&
+		typeof data === 'object' &&
+		'fileId' in data &&
+		typeof data.fileId === 'string' &&
+		'driveId' in data &&
+		typeof data.driveId === 'string' &&
+		'type' in data &&
+		typeof data.type === 'string' &&
+		['upload', 'download']?.includes(data.type) &&
+		'percentage' in data &&
+		typeof data.percentage === 'number'
 	);
 };

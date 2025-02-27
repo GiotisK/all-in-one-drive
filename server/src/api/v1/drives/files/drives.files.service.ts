@@ -164,7 +164,7 @@ export class FilesService {
 
 			if (ctxAndToken) {
 				const { ctx, token } = ctxAndToken;
-				return ctx.downloadFile(token, fileId);
+				return ctx.downloadFile(token, fileId, driveId);
 			}
 		}
 		return true;
