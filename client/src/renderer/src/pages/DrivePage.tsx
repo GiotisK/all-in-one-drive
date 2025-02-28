@@ -40,7 +40,6 @@ export const DrivePage = (): JSX.Element => {
 	const isInsideFolder = useIsInsideFolder();
 
 	useHandleAuthCodeFromUrl();
-
 	useServerSideEvents();
 
 	return isUserAuthenticated ? (

@@ -8,23 +8,26 @@ import { Route, BrowserRouter, Routes } from 'react-router-dom';
 import { HomePage } from './pages/HomePage';
 import { routes } from './shared/constants/routes';
 import { ThemedToastContainer } from './components/ThemedToastContainer';
+import { PendingFilesProvider } from './providers/PendingFilesProvider';
 
 function App() {
 	return (
 		<>
 			<BrowserRouter>
 				<Provider store={store}>
-					<Theme>
-						<ThemedToastContainer />
-						<Routes>
-							<Route path={routes.home} element={<HomePage />} />
-							<Route path={routes.login} element={<LandingPage />} />
-							<Route path={routes.drive} element={<DrivePage />}>
-								<Route path={':driveId/:folderId'} element={<DrivePage />} />
-							</Route>
-							<Route path='*' element={<ErrorPage />} />
-						</Routes>
-					</Theme>
+					<PendingFilesProvider>
+						<Theme>
+							<ThemedToastContainer />
+							<Routes>
+								<Route path={routes.home} element={<HomePage />} />
+								<Route path={routes.login} element={<LandingPage />} />
+								<Route path={routes.drive} element={<DrivePage />}>
+									<Route path={':driveId/:folderId'} element={<DrivePage />} />
+								</Route>
+								<Route path='*' element={<ErrorPage />} />
+							</Routes>
+						</Theme>
+					</PendingFilesProvider>
 				</Provider>
 			</BrowserRouter>
 		</>

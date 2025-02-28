@@ -1,5 +1,5 @@
-import { useState } from 'react';
 import styled, { keyframes } from 'styled-components';
+import { usePendingFilesContext } from '../hooks/usePendingFilesContext';
 
 const slideInFromBottom = keyframes`
   0% {
@@ -59,32 +59,20 @@ const ProgressText = styled.p`
 	font-size: 13px;
 `;
 
-export const LoadingBar = (): JSX.Element => {
-	const uploadState = {
-		percentage: 10,
-		loaded: 10,
-		total: 20,
-		totalFilesBeingUploaded: 5,
-		currentFileNumBeingUploaded: 3,
-	};
-
-	const { percentage, loaded, total, totalFilesBeingUploaded, currentFileNumBeingUploaded } =
-		uploadState;
-
-	const [isUploading] = useState(true);
-
-	return (
-		<LoadingBarContainer className={isUploading ? '' : 'slide-out'}>
+export const LoadingBar = () => {
+	const { currentFileDownloading } = usePendingFilesContext();
+	return currentFileDownloading ? (
+		<LoadingBarContainer className={currentFileDownloading ? '' : 'slide-out'}>
 			<RelativeContainer>
-				<ProgressBar style={{ width: (400 * percentage) / 100 }}>
+				<ProgressBar style={{ width: (400 * currentFileDownloading.percentage) / 100 }}>
 					<ProgressText>
-						{percentage}% ({loaded}/{total} MB)
-						{totalFilesBeingUploaded > 0
+						{currentFileDownloading.percentage}% -{currentFileDownloading.fileId}
+						{/* 	{downloadPendingFiles> 0
 							? ` - ${currentFileNumBeingUploaded}/${totalFilesBeingUploaded} files`
-							: null}
+							: null} */}
 					</ProgressText>
 				</ProgressBar>
 			</RelativeContainer>
 		</LoadingBarContainer>
-	);
+	) : null;
 };

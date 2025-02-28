@@ -11,12 +11,14 @@ export const DriveSelectionContext = createContext<DriveSelectionContextType | u
 );
 
 export const DriveSelectionProvider = ({ children }: { children: React.ReactNode }) => {
-	const { data: drives = [] } = useGetDrivesQuery();
+	const { data: drives = [], isSuccess: drivesSuccess } = useGetDrivesQuery();
 	const [selectedDriveIds, setSelectedDriveIds] = useState<string[]>([]);
 
 	useEffect(() => {
-		setSelectedDriveIds(drives.map(drive => drive.id));
-	}, [drives]);
+		if (drivesSuccess) {
+			setSelectedDriveIds(drives.map(drive => drive.id));
+		}
+	}, [drives, drivesSuccess]);
 
 	return (
 		<DriveSelectionContext.Provider value={{ selectedDriveIds, setSelectedDriveIds }}>

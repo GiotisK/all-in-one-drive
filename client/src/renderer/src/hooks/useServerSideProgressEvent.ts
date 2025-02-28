@@ -1,28 +1,34 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { validateEventData } from '../sse/validateEventData';
 import { isServerSideEventProgressData } from '../sse/validators';
 import { useEventSourceEvents } from './useEventSourceEvents';
+import { usePendingFilesContext } from './usePendingFilesContext';
 
 export const useServerSideProgressEvent = (eventSource: EventSource | null) => {
-	const handleProgressServerSideEvent = useCallback((eventData: string) => {
-		console.log('[SSE]-[progress]:', eventData);
+	const { downloadPendingFiles, handleNewPendingFile } = usePendingFilesContext();
 
-		const validationResultForProgressData = validateEventData(
-			eventData,
-			isServerSideEventProgressData
-		);
+	useEffect(() => {
+		console.log('downloadpendingfiles', downloadPendingFiles);
+	}, [downloadPendingFiles]);
 
-		if (!validationResultForProgressData.isValid) {
-			return;
-		}
+	const handleProgressServerSideEvent = useCallback(
+		(eventData: string) => {
+			console.log('[SSE]-[progress]:', eventData);
 
-		const { driveId, percentage, type, fileId } = validationResultForProgressData.data;
+			const validationResultForProgressData = validateEventData(
+				eventData,
+				isServerSideEventProgressData
+			);
 
-		console.log(driveId, percentage, type, fileId);
+			if (!validationResultForProgressData.isValid) {
+				return;
+			}
 
-		//todo handle percentages here
-	}, []);
+			handleNewPendingFile(validationResultForProgressData.data);
+		},
+		[handleNewPendingFile]
+	);
 
 	useEventSourceEvents({
 		eventSource,
