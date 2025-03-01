@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { validateEventData } from '../sse/validateEventData';
 import { isServerSideEventProgressData } from '../sse/validators';
@@ -6,11 +6,7 @@ import { useEventSourceEvents } from './useEventSourceEvents';
 import { usePendingFilesContext } from './usePendingFilesContext';
 
 export const useServerSideProgressEvent = (eventSource: EventSource | null) => {
-	const { downloadPendingFiles, handleNewPendingFile } = usePendingFilesContext();
-
-	useEffect(() => {
-		console.log('downloadpendingfiles', downloadPendingFiles);
-	}, [downloadPendingFiles]);
+	const { handleNewPendingFile } = usePendingFilesContext();
 
 	const handleProgressServerSideEvent = useCallback(
 		(eventData: string) => {

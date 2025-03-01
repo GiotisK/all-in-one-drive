@@ -17,33 +17,47 @@ export const PendingFilesProvider = ({ children }: { children: React.ReactNode }
 	const [downloadPendingFiles, setDownloadPendingFiles] = useState<PendingFile[]>([]);
 	const [currentFileDownloadingId, setCurrentFileDownloadingId] = useState<string>('');
 
-	useEffect(() => {
-		downloadPendingFiles.forEach(f => {
-			if (f.percentage === 100) {
-				setTimeout(() => {
-					toast.success('File downloaded successfully' + f.fileId);
+	useEffect(
+		function updatePendingFiles() {
+			downloadPendingFiles.forEach(f => {
+				if (f.percentage === 100) {
+					setTimeout(() => {
+						// prevent duplicate toast pops
+						if (!toast.isActive(f.downloadId)) {
+							toast.success('Downloaded success: ' + f.name, {
+								toastId: f.downloadId,
+							});
+						}
 
-					setDownloadPendingFiles(prevFiles =>
-						prevFiles.filter(f => f.fileId !== f.fileId)
-					);
-					setCurrentFileDownloadingId('');
-				}, 2000);
-			}
-		});
-	}, [downloadPendingFiles]);
+						setDownloadPendingFiles(prevFiles =>
+							prevFiles.filter(prevF => prevF.downloadId !== f.downloadId)
+						);
+						setCurrentFileDownloadingId('');
+					}, 2000);
+				}
+			});
+		},
+		[downloadPendingFiles]
+	);
 
-	const handleNewPendingFile = (file: PendingFile) => {
+	const handleNewPendingFile = (newPendingfile: PendingFile) => {
+		//append new file or update existing progress
 		setDownloadPendingFiles(prevFiles => {
 			const existingFile = prevFiles.find(
-				f => f.fileId === file.fileId && f.driveId === file.driveId
+				f =>
+					f.downloadId === newPendingfile.downloadId &&
+					f.driveId === newPendingfile.driveId
 			);
 			if (existingFile) {
 				return prevFiles.map(f =>
-					f.fileId === file.fileId && f.driveId === file.driveId ? file : f
+					f.downloadId === newPendingfile.downloadId &&
+					f.driveId === newPendingfile.driveId
+						? newPendingfile
+						: f
 				);
 			}
-			setCurrentFileDownloadingId(file.fileId);
-			return [...prevFiles, file];
+			setCurrentFileDownloadingId(newPendingfile.downloadId);
+			return [...prevFiles, newPendingfile];
 		});
 	};
 
@@ -54,7 +68,8 @@ export const PendingFilesProvider = ({ children }: { children: React.ReactNode }
 				handleNewPendingFile,
 				areFilesPending: downloadPendingFiles.some(f => f.percentage > 0),
 				currentFileDownloading:
-					downloadPendingFiles.find(f => f.fileId === currentFileDownloadingId) ?? null,
+					downloadPendingFiles.find(f => f.downloadId === currentFileDownloadingId) ??
+					null,
 			}}
 		>
 			{children}

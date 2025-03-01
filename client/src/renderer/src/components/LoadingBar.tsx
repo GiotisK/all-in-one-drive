@@ -66,10 +66,7 @@ export const LoadingBar = () => {
 			<RelativeContainer>
 				<ProgressBar style={{ width: (400 * currentFileDownloading.percentage) / 100 }}>
 					<ProgressText>
-						{currentFileDownloading.percentage}% -{currentFileDownloading.fileId}
-						{/* 	{downloadPendingFiles> 0
-							? ` - ${currentFileNumBeingUploaded}/${totalFilesBeingUploaded} files`
-							: null} */}
+						{currentFileDownloading.percentage}% - {currentFileDownloading.name}
 					</ProgressText>
 				</ProgressBar>
 			</RelativeContainer>

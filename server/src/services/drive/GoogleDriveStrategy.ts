@@ -444,7 +444,13 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			);
 
 			if (shouldSendProgress) {
-				this.sendDownloadProgressEvents(res.data, driveId!, fileId, metadata.size);
+				this.sendDownloadProgressEvents(
+					res.data,
+					driveId!,
+					fileId,
+					metadata.size,
+					metadata.name
+				);
 			}
 
 			return {
@@ -460,17 +466,20 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		data: internal.Readable,
 		driveId: string,
 		fileId: string,
-		size: number
+		size: number,
+		name: string
 	) {
 		let downloadedSize = 0;
 		let lastLoggedPercent = 0;
-
+		const downloadId = generateUUID();
 		data.on('data', chunk => {
 			downloadedSize += chunk.length;
 			const percent = Math.floor((downloadedSize / size) * 100);
 			if (percent >= lastLoggedPercent + 10) {
 				lastLoggedPercent = percent;
 				const progressData: ServerSideEventProgressData = {
+					name,
+					downloadId,
 					fileId,
 					driveId,
 					type: 'download',
@@ -482,6 +491,8 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 		data.on('end', () => {
 			const progressData: ServerSideEventProgressData = {
+				name,
+				downloadId,
 				fileId,
 				driveId,
 				type: 'download',

@@ -127,6 +127,8 @@ export type ServerSideEventChangeData = {
 };
 
 export type ServerSideEventProgressData = {
+	downloadId: string;
+	name: string;
 	fileId: string;
 	driveId: string;
 	type: 'download' | 'upload';
