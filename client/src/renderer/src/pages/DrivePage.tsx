@@ -35,7 +35,11 @@ const RowsScrollview = styled.div`
 `;
 
 export const DrivePage = (): JSX.Element => {
-	const [sideMenuVisible, setSideMenuVisible] = useState(true);
+	const isSideMenuVisible =
+		localStorage.getItem('sideMenuVisible') === null
+			? true
+			: localStorage.getItem('sideMenuVisible') === 'true';
+	const [sideMenuVisible, setSideMenuVisible] = useState(isSideMenuVisible);
 	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
 	const isInsideFolder = useIsInsideFolder();
 
@@ -51,6 +55,7 @@ export const DrivePage = (): JSX.Element => {
 					<RowsScrollview>
 						<TitleBanner
 							onBurgerMenuClick={() => {
+								localStorage.setItem('sideMenuVisible', String(!sideMenuVisible));
 								setSideMenuVisible(prevVisible => !prevVisible);
 							}}
 						/>
