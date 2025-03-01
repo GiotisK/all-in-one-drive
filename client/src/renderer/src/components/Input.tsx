@@ -4,7 +4,6 @@ import styled from 'styled-components';
 const InputFieldDiv = styled.div`
 	display: flex;
 	flex-direction: column;
-	margin-top: 2%;
 	margin-left: 5%;
 	margin-right: 5%;
 `;
@@ -12,8 +11,8 @@ const InputFieldDiv = styled.div`
 const InputFieldContainer = styled.input`
 	border: 1px solid ${({ theme }) => theme.colors.border};
 	padding-left: 2%;
-	height: 40px;
-	font-size: 15px;
+	height: 30px;
+	font-size: 12px;
 	border-radius: 8px;
 	outline: none;
 	background-color: ${({ theme }) => theme.colors.background};
@@ -25,7 +24,7 @@ const InputFieldContainer = styled.input`
 `;
 
 const InputLabel = styled.label`
-	font-size: 18px;
+	font-size: 14px;
 	color: ${({ theme }) => theme.colors.textPrimary};
 `;
 

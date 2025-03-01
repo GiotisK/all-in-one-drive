@@ -17,8 +17,8 @@ const FormContainer = styled.form`
 	display: flex;
 	flex-direction: column;
 	box-shadow: ${({ theme }) => theme.colors.boxShadow};
-	height: 380px;
-	width: 430px;
+	height: 300px;
+	width: 400px;
 	border-radius: 5px;
 	background-color: ${({ theme }) => theme.colors.backgroundSecondary};
 `;
@@ -58,8 +58,8 @@ const ActiveTabContainer = styled(TabContainer)`
 `;
 
 const TabText = styled.p`
-	font-size: 18px;
-	margin: 5%;
+	font-size: 14px;
+	margin: 2%;
 	padding: 2px;
 `;
 

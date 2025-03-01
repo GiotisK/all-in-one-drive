@@ -6,8 +6,8 @@ interface ButtonWrapperProps {
 }
 
 const ButtonWrapper = styled.button<ButtonWrapperProps>`
-	width: 80px;
-	height: 50px;
+	width: 60px;
+	height: 40px;
 	background-color: ${({ $type, theme }) =>
 		$type === 'primary' ? theme.colors.bluePrimary : theme.colors.background};
 	border-style: solid;
@@ -38,7 +38,7 @@ const ButtonText = styled.p`
 	margin: 0;
 	padding-top: 20%;
 	padding-bottom: 20%;
-	font-size: 15px;
+	font-size: 12px;
 `;
 
 interface IProps {

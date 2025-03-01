@@ -99,6 +99,7 @@ const MenuRowText = styled.p`
 	margin: 0;
 	padding: 3% 3% 3% 5%;
 	border-radius: 4px;
+	font-size: 14px;
 
 	&:hover {
 		background-color: ${({ theme }) => theme.colors.blueSecondary};
