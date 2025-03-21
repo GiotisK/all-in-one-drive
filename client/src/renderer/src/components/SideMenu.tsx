@@ -112,7 +112,7 @@ export const SideMenu = (): JSX.Element => {
 
 			{areDrivesLoading ? (
 				<LoaderContainer>
-					<Loader size={25} />
+					<Loader size={15} />
 				</LoaderContainer>
 			) : !drives.length ? (
 				<>

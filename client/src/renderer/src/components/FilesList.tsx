@@ -23,7 +23,7 @@ export const FilesList = () => {
 
 	return isLoading ? (
 		<LoaderContainer>
-			<Loader size={25} />
+			<Loader size={15} />
 		</LoaderContainer>
 	) : shouldShowEmptyState ? (
 		<NoFilesText>No files exist...</NoFilesText>
