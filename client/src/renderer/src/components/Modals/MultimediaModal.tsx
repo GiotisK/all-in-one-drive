@@ -30,7 +30,9 @@ interface IProps {
 }
 
 export const MultimediaModal = ({ state }: IProps): JSX.Element => {
-	const { multiMediaType } = state;
+	const { mimeType, url } = state;
+
+	const multiMediaType = mimeType.split('/')[0];
 
 	return (
 		<BaseModal>
@@ -50,11 +52,7 @@ export const MultimediaModal = ({ state }: IProps): JSX.Element => {
 						type={mimeTypes[props.openFileLink.extension]} */
 				/>
 			)}
-			{multiMediaType === 'image' && (
-				<Image
-				/* src={props.openFileLink.src} */
-				/>
-			)}
+			{multiMediaType === 'image' && <Image src={url} />}
 		</BaseModal>
 	);
 };

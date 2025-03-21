@@ -87,7 +87,7 @@ export const driveApi = createApi({
 				method: 'GET',
 			}),
 		}),
-		openDriveFile: builder.mutation<void, { driveId: string; fileId: string }>({
+		openDriveFile: builder.query<void, { driveId: string; fileId: string }>({
 			query: ({ driveId, fileId }) => ({
 				url: `${driveId}/files/${fileId}/open`,
 				method: 'GET',
@@ -202,7 +202,7 @@ export const {
 	useRenameDriveFileMutation,
 	useUploadDriveFileMutation,
 	useDownloadDriveFileMutation,
-	useOpenDriveFileMutation,
+	useLazyOpenDriveFileQuery,
 	useCreateDriveFileMutation,
 	useExportGoogleDriveFileMutation,
 	useConnectDriveMutation,

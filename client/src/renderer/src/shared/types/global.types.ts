@@ -91,6 +91,7 @@ export type FileEntity = {
 	date: string;
 	extension: string;
 	sharedLink: Nullable<string>;
+	sizeBytes: number;
 };
 
 export type ChangedFileEntity = {
@@ -134,3 +135,5 @@ export type ServerSideEventProgressData = {
 	type: 'download' | 'upload';
 	percentage: number;
 };
+
+export type MultimediaType = 'audio' | 'video' | 'image';

@@ -1,5 +1,5 @@
 import { FileEntity, FileType, Nullable } from '../../../shared/types/global.types';
-import { Entity, MultiMediaType } from '../../../shared/types/types';
+import { Entity } from '../../../shared/types/types';
 
 export type DeleteModalState = {
 	entity: Nullable<Entity>;
@@ -12,7 +12,8 @@ export type ExportFormatModalState = {
 };
 
 export type MultimediaModalState = {
-	multiMediaType: Nullable<MultiMediaType>;
+	mimeType: string;
+	url: string;
 };
 
 export type RenameModalState = {

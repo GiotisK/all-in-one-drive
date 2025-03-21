@@ -50,3 +50,17 @@ export const getDriveTypeFromString = (driveType: string): Nullable<DriveType> =
 export const isNativeGoogleDriveFile = (fileExtension: string): boolean => {
 	return fileExtension === 'gdoc' || fileExtension === 'gsheet';
 };
+
+const audioExtensions = ['mp3', 'wav', 'ogg', 'm4a'];
+const videoExtensions = ['mp4', 'avi', 'mov', 'mkv', 'webm'];
+const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'svg', 'webp'];
+const MinimumFileSize = 20 * 1024 * 1024; // 20MB
+
+export const canBeOpenedOnline = (fileExtension: string, size: number): boolean => {
+	return (
+		size <= MinimumFileSize &&
+		(audioExtensions.includes(fileExtension) ||
+			videoExtensions.includes(fileExtension) ||
+			imageExtensions.includes(fileExtension))
+	);
+};

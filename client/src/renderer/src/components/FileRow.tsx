@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FileElement } from './FileElement';
 import { SvgNames } from '../shared/utils/svg-utils';
-import { CreateDriveSvg, isNativeGoogleDriveFile } from '../shared/utils/utils';
+import { canBeOpenedOnline, CreateDriveSvg, isNativeGoogleDriveFile } from '../shared/utils/utils';
 import { IconButton } from './IconButton';
 import { styled, useTheme } from 'styled-components';
 import { useOutsideClicker } from '../hooks';
@@ -15,7 +15,7 @@ import { toast } from 'react-toastify';
 import {
 	useDownloadDriveFileMutation,
 	useGetGoogleDriveFileExportFormatsQuery,
-	useOpenDriveFileMutation,
+	useLazyOpenDriveFileQuery,
 	useShareDriveFileMutation,
 } from '../redux/rtk/driveApi';
 
@@ -131,7 +131,8 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
-	const { driveId, id, type, extension, date, drive, email, name, size, sharedLink } = file;
+	const { driveId, id, type, extension, date, drive, email, name, size, sharedLink, sizeBytes } =
+		file;
 	const isGoogleDriveFile = isNativeGoogleDriveFile(extension);
 
 	const { data: formats = [], isLoading: exportFormatsLoading } =
@@ -144,9 +145,15 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		);
 	const [shareDriveFile, { isLoading: shareDriveFileLoading }] = useShareDriveFileMutation();
 	const [downloadDriveFile] = useDownloadDriveFileMutation();
-	const [openDriveFile] = useOpenDriveFileMutation();
+	const [trigger, { isSuccess: isOpenFileSuccess }] = useLazyOpenDriveFileQuery();
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
+
+	useEffect(() => {
+		if (isOpenFileSuccess) {
+			toast.info('File opening initiated successfully');
+		}
+	}, [isOpenFileSuccess]);
 
 	const onDeleteClick = () => {
 		dispatch(openModal({ kind: ModalKind.Delete, state: { entity: file } }));
@@ -168,8 +175,14 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		if (type === FileType.Folder) {
 			navigate(`${driveId}/${id}`);
 		} else if (type === FileType.File) {
-			openDriveFile({ driveId, fileId: id });
-			toast.info('File opening initiated successfully');
+			if (!canBeOpenedOnline(extension, sizeBytes)) {
+				toast.info(
+					`File cannot be opened online. Either too large or not supported format - extension: ${extension}, size: ${size}`
+				);
+				return;
+			}
+
+			trigger({ driveId, fileId: id });
 		}
 	};
 

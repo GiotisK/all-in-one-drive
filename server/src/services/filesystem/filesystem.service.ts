@@ -48,7 +48,7 @@ class FileSystemService {
 	private getTempSavePathForFile(fileName: string, fileExtension: string) {
 		const fileExtensionWithDot = fileExtension ? '.' + fileExtension : '';
 
-		return os.tmpdir() + '/' + fileName + fileExtensionWithDot;
+		return os.tmpdir() + '\\' + fileName + fileExtensionWithDot;
 	}
 
 	private getDownloadsSavePathForFile(fileName: string, fileExtension: string) {

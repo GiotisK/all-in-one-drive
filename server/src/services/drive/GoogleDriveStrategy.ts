@@ -245,8 +245,6 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		try {
 			this.setToken(token);
 
-			this.setToken(token);
-
 			const data = await this.downloadFileInternal(fileId);
 
 			if (data) {
@@ -602,6 +600,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const extension = file.mimeType ? mime.getExtension(file.mimeType) : '-';
 			const isPubliclyShared = this.isFilePubliclyShared(file);
 			const sharedLink = isPubliclyShared && file.webViewLink ? file.webViewLink : null;
+			const sizeBytes = parseInt(file.size ?? '0', 10);
 
 			return {
 				id: file.id ?? '',
@@ -614,6 +613,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				date: normalizedDate,
 				extension: extension || '-',
 				sharedLink,
+				sizeBytes,
 			};
 		});
 
