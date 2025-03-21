@@ -87,10 +87,11 @@ export const driveApi = createApi({
 				method: 'GET',
 			}),
 		}),
-		openDriveFile: builder.query<void, { driveId: string; fileId: string }>({
+		openDriveFile: builder.query<Blob, { driveId: string; fileId: string }>({
 			query: ({ driveId, fileId }) => ({
 				url: `${driveId}/files/${fileId}/open`,
 				method: 'GET',
+				responseHandler: res => res.blob(),
 			}),
 		}),
 		createDriveFile: builder.mutation<

@@ -136,4 +136,6 @@ export type ServerSideEventProgressData = {
 	percentage: number;
 };
 
-export type MultimediaType = 'audio' | 'video' | 'image';
+export type ServerSideEventOpenFileData = {
+	blob: any;
+};

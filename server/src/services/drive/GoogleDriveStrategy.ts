@@ -241,20 +241,25 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	public async openFile(token: string, fileId: string): Promise<boolean> {
+	public async openFile(token: string, fileId: string): Promise<Nullable<string>> {
 		try {
 			this.setToken(token);
 
 			const data = await this.downloadFileInternal(fileId);
 
 			if (data) {
-				FilesystemService.saveFileToTemp(data.fileData, data.name, '', true);
-				return true;
+				const path = await FilesystemService.saveFileToTemp(
+					data.fileData,
+					data.name,
+					'',
+					false
+				);
+				return path;
 			}
 
-			return false;
+			return null;
 		} catch {
-			return false;
+			return null;
 		}
 	}
 

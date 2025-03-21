@@ -191,7 +191,11 @@ export class FilesService {
 		return null;
 	}
 
-	public async openFile(driveId: string, userEmail: string, fileId: string): Promise<boolean> {
+	public async openFile(
+		driveId: string,
+		userEmail: string,
+		fileId: string
+	): Promise<Nullable<string>> {
 		const drive = await DatabaseService.getDrive(userEmail, driveId);
 
 		if (drive) {
@@ -204,7 +208,7 @@ export class FilesService {
 			}
 		}
 
-		return false;
+		return null;
 	}
 }
 

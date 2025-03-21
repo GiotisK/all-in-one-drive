@@ -38,20 +38,10 @@ export const MultimediaModal = ({ state }: IProps): JSX.Element => {
 		<BaseModal>
 			{multiMediaType === 'audio' && (
 				<SoundContent>
-					<audio
-						controls
-						/* src={props.openFileLink.src}
-							type={mimeTypes[props.openFileLink.extension]} */
-					/>
+					<audio controls src={url} />
 				</SoundContent>
 			)}
-			{multiMediaType === 'video' && (
-				<Video
-					controls
-					/* 	src={props.openFileLink.src}
-						type={mimeTypes[props.openFileLink.extension]} */
-				/>
-			)}
+			{multiMediaType === 'video' && <Video controls src={url} />}
 			{multiMediaType === 'image' && <Image src={url} />}
 		</BaseModal>
 	);

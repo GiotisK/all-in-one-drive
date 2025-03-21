@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { FileElement } from './FileElement';
 import { SvgNames } from '../shared/utils/svg-utils';
 import { canBeOpenedOnline, CreateDriveSvg, isNativeGoogleDriveFile } from '../shared/utils/utils';
@@ -145,15 +145,9 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		);
 	const [shareDriveFile, { isLoading: shareDriveFileLoading }] = useShareDriveFileMutation();
 	const [downloadDriveFile] = useDownloadDriveFileMutation();
-	const [trigger, { isSuccess: isOpenFileSuccess }] = useLazyOpenDriveFileQuery();
+	const [trigger] = useLazyOpenDriveFileQuery();
 
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
-
-	useEffect(() => {
-		if (isOpenFileSuccess) {
-			toast.info('File opening initiated successfully');
-		}
-	}, [isOpenFileSuccess]);
 
 	const onDeleteClick = () => {
 		dispatch(openModal({ kind: ModalKind.Delete, state: { entity: file } }));
@@ -176,13 +170,27 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 			navigate(`${driveId}/${id}`);
 		} else if (type === FileType.File) {
 			if (!canBeOpenedOnline(extension, sizeBytes)) {
-				toast.info(
+				toast.error(
 					`File cannot be opened online. Either too large or not supported format - extension: ${extension}, size: ${size}`
 				);
 				return;
 			}
 
-			trigger({ driveId, fileId: id });
+			toast.info('File opening initiated successfully');
+
+			try {
+				const blob = await trigger({ driveId, fileId: id }).unwrap();
+				const blobUrl = window.URL.createObjectURL(blob);
+
+				dispatch(
+					openModal({
+						kind: ModalKind.MultiMedia,
+						state: { mimeType: blob.type, url: blobUrl },
+					})
+				);
+			} catch (e) {
+				toast.error('Error opening file');
+			}
 		}
 	};
 

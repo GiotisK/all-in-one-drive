@@ -24,24 +24,29 @@ class FileSystemService {
 		data: internal.Readable,
 		name: string,
 		extension?: string,
-		shouldOpen?: boolean
-	) {
-		const tempPath = this.getTempSavePathForFile(name, extension ?? '');
-		const writeStream = fs.createWriteStream(tempPath);
+		shouldOpenNative?: boolean
+	): Promise<string> {
+		return new Promise((resolve, reject) => {
+			const tempPath = this.getTempSavePathForFile(name, extension ?? '');
+			const writeStream = fs.createWriteStream(tempPath);
 
-		data.pipe(writeStream);
+			data.pipe(writeStream);
 
-		writeStream.on('finish', function () {
-			if (shouldOpen) {
-				open(tempPath);
-			}
+			writeStream.on('finish', function () {
+				if (shouldOpenNative) {
+					open(tempPath);
+				}
 
-			//todo: send event to frontend
-			writeStream.end();
-		});
-		writeStream.on('error', function () {
-			//todo: send event to frontend
-			writeStream.end();
+				//todo: send event to frontend
+				writeStream.end();
+				resolve(tempPath);
+			});
+
+			writeStream.on('error', function () {
+				//todo: send event to frontend
+				writeStream.end();
+				reject(null);
+			});
 		});
 	}
 

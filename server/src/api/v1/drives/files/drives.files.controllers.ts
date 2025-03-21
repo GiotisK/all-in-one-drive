@@ -175,11 +175,13 @@ class FilesController {
 		const { email: userEmail } = res.locals;
 		const { driveId, fileId } = req.params;
 
-		const success = await FilesService.openFile(driveId, userEmail, fileId);
+		const filePath = await FilesService.openFile(driveId, userEmail, fileId);
 
-		const status = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
-
-		res.status(status).end();
+		if (filePath) {
+			res.download(filePath);
+		} else {
+			res.status(Status.INTERNAL_SERVER_ERROR).end();
+		}
 	}
 }
 

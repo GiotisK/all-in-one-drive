@@ -81,7 +81,7 @@ export default class DriveContext {
 		return this.strategy.uploadFile(token, file, driveId, parentFolderId);
 	}
 
-	public async openFile(token: string, fileId: string): Promise<boolean> {
+	public async openFile(token: string, fileId: string): Promise<Nullable<string>> {
 		return this.strategy.openFile(token, fileId);
 	}
 
