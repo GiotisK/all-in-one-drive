@@ -37,13 +37,11 @@ class FileSystemService {
 					open(tempPath);
 				}
 
-				//todo: send event to frontend
 				writeStream.end();
 				resolve(tempPath);
 			});
 
 			writeStream.on('error', function () {
-				//todo: send event to frontend
 				writeStream.end();
 				reject(null);
 			});

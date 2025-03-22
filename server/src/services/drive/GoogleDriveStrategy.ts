@@ -8,6 +8,7 @@ import {
 	DriveQuota,
 	DriveType,
 	FileEntity,
+	FileOperationType,
 	FileType,
 	Nullable,
 	ServerSideEventProgressData,
@@ -203,10 +204,17 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		try {
 			this.setToken(token);
 
+			const fileSize = fs.statSync(file.path).size;
+
+			const fileStream = fs.createReadStream(file.path);
+
+			// Create a readable stream and monitor progress
+			this.sendUploadProgressEvents(fileStream, driveId, '', fileSize, file.originalname);
+
 			const res = await this.drive.files.create({
 				media: {
 					mimeType: file.mimetype,
-					body: fs.createReadStream(file.path),
+					body: fileStream,
 				},
 				requestBody: {
 					parents: parentFolderId ? [parentFolderId] : [],
@@ -465,6 +473,16 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
+	private async sendUploadProgressEvents(
+		data: internal.Readable,
+		driveId: string,
+		fileId: string,
+		size: number,
+		name: string
+	) {
+		this.sendProgressEvents(data, driveId, fileId, size, name, 'upload');
+	}
+
 	private async sendDownloadProgressEvents(
 		data: internal.Readable,
 		driveId: string,
@@ -472,9 +490,20 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		size: number,
 		name: string
 	) {
+		this.sendProgressEvents(data, driveId, fileId, size, name, 'download');
+	}
+
+	private async sendProgressEvents(
+		data: internal.Readable,
+		driveId: string,
+		fileId: string,
+		size: number,
+		name: string,
+		type: FileOperationType
+	) {
 		let downloadedSize = 0;
 		let lastLoggedPercent = 0;
-		const downloadId = generateUUID();
+		const operationUuid = generateUUID();
 		data.on('data', chunk => {
 			downloadedSize += chunk.length;
 			const percent = Math.floor((downloadedSize / size) * 100);
@@ -482,26 +511,26 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				lastLoggedPercent = percent;
 				const progressData: ServerSideEventProgressData = {
 					name,
-					downloadId,
+					operationUuid,
 					fileId,
 					driveId,
-					type: 'download',
+					type,
 					percentage: percent,
 				};
-				SSEManager.sendNotification('download-progress-event', progressData);
+				SSEManager.sendNotification(type + '-progress-event', progressData);
 			}
 		});
 
 		data.on('end', () => {
 			const progressData: ServerSideEventProgressData = {
 				name,
-				downloadId,
+				operationUuid,
 				fileId,
 				driveId,
-				type: 'download',
+				type,
 				percentage: 100,
 			};
-			SSEManager.sendNotification('download-progress-event', progressData);
+			SSEManager.sendNotification(type + '-progress-event', progressData);
 		});
 	}
 

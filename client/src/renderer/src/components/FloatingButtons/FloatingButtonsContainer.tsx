@@ -18,7 +18,7 @@ import { useCreateDriveFileMutation, useUploadDriveFileMutation } from '../../re
 
 const Container = styled.div`
 	position: absolute;
-	bottom: 5%;
+	bottom: 8%;
 	right: 5%;
 `;
 

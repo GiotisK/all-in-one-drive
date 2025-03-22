@@ -128,14 +128,12 @@ export type ServerSideEventChangeData = {
 };
 
 export type ServerSideEventProgressData = {
-	downloadId: string;
+	operationUuid: string;
 	name: string;
 	fileId: string;
 	driveId: string;
-	type: 'download' | 'upload';
+	type: FileOperationType;
 	percentage: number;
 };
 
-export type ServerSideEventOpenFileData = {
-	blob: any;
-};
+export type FileOperationType = 'download' | 'upload';

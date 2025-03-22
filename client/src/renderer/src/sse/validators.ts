@@ -31,8 +31,8 @@ export const isServerSideEventProgressData = (
 		typeof data.driveId === 'string' &&
 		'name' in data &&
 		typeof data.name === 'string' &&
-		'downloadId' in data &&
-		typeof data.downloadId === 'string' &&
+		'operationUuid' in data &&
+		typeof data.operationUuid === 'string' &&
 		'type' in data &&
 		typeof data.type === 'string' &&
 		['upload', 'download']?.includes(data.type) &&

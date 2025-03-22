@@ -128,12 +128,12 @@ export type ServerSideEventChangeData = {
 };
 
 export type ServerSideEventProgressData = {
-	downloadId: string;
+	operationUuid: string;
 	name: string;
 	fileId: string;
 	driveId: string;
-	type: 'download' | 'upload';
+	type: FileOperationType;
 	percentage: number;
 };
 
-export type MultimediaType = 'audio' | 'video' | 'image';
+export type FileOperationType = 'download' | 'upload';

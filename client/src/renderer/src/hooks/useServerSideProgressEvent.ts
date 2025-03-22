@@ -36,6 +36,13 @@ export const useServerSideProgressEvent = (eventSource: EventSource | null) => {
 					handleProgressServerSideEvent(event.data);
 				},
 			},
+			{
+				eventName: 'upload-progress-event',
+				listener: (event: MessageEvent<string>) => {
+					console.log('[SSE]-[upload-progress-event]:', JSON.parse(event.data));
+					handleProgressServerSideEvent(event.data);
+				},
+			},
 		],
 	});
 };

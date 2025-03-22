@@ -9,6 +9,7 @@ export interface PendingFilesContextType {
 	handleNewPendingFile: (file: PendingFile) => void;
 	areFilesPending: boolean;
 	currentFileDownloading: Nullable<PendingFile>;
+	currentFileUploading: Nullable<PendingFile>;
 }
 
 export const PendingFilesContext = createContext<PendingFilesContextType | undefined>(undefined);
@@ -17,20 +18,23 @@ export const PendingFilesProvider = ({ children }: { children: React.ReactNode }
 	const [downloadPendingFiles, setDownloadPendingFiles] = useState<PendingFile[]>([]);
 	const [currentFileDownloadingId, setCurrentFileDownloadingId] = useState<string>('');
 
+	const [uploadPendingFiles, setUploadPendingFiles] = useState<PendingFile[]>([]);
+	const [currentFileUploadingId, setCurrentFileUploadingId] = useState<string>('');
+
 	useEffect(
 		function updatePendingFiles() {
 			downloadPendingFiles.forEach(f => {
 				if (f.percentage === 100) {
 					setTimeout(() => {
 						// prevent duplicate toast pops
-						if (!toast.isActive(f.downloadId)) {
+						if (!toast.isActive(f.operationUuid)) {
 							toast.success('Downloaded success: ' + f.name, {
-								toastId: f.downloadId,
+								toastId: f.operationUuid,
 							});
 						}
 
 						setDownloadPendingFiles(prevFiles =>
-							prevFiles.filter(prevF => prevF.downloadId !== f.downloadId)
+							prevFiles.filter(prevF => prevF.operationUuid !== f.operationUuid)
 						);
 						setCurrentFileDownloadingId('');
 					}, 2000);
@@ -40,25 +44,60 @@ export const PendingFilesProvider = ({ children }: { children: React.ReactNode }
 		[downloadPendingFiles]
 	);
 
-	const handleNewPendingFile = (newPendingfile: PendingFile) => {
-		//append new file or update existing progress
-		setDownloadPendingFiles(prevFiles => {
-			const existingFile = prevFiles.find(
-				f =>
-					f.downloadId === newPendingfile.downloadId &&
-					f.driveId === newPendingfile.driveId
-			);
-			if (existingFile) {
-				return prevFiles.map(f =>
-					f.downloadId === newPendingfile.downloadId &&
-					f.driveId === newPendingfile.driveId
-						? newPendingfile
-						: f
+	useEffect(
+		function updatePendingFiles() {
+			uploadPendingFiles.forEach(f => {
+				if (f.percentage === 100) {
+					setTimeout(() => {
+						// prevent duplicate toast pops
+						if (!toast.isActive(f.operationUuid)) {
+							toast.success('Upload success: ' + f.name, {
+								toastId: f.operationUuid,
+							});
+						}
+
+						setUploadPendingFiles(prevFiles =>
+							prevFiles.filter(prevF => prevF.operationUuid !== f.operationUuid)
+						);
+						setCurrentFileUploadingId('');
+					}, 2000);
+				}
+			});
+		},
+		[uploadPendingFiles]
+	);
+
+	const handleNewPendingFile = (newPendingFile: PendingFile) => {
+		const updatePendingFiles = (
+			setPendingFiles: React.Dispatch<React.SetStateAction<PendingFile[]>>,
+			setCurrentFileId: React.Dispatch<React.SetStateAction<string>>
+		) => {
+			setPendingFiles(prevFiles => {
+				const existingFile = prevFiles.find(
+					f =>
+						f.operationUuid === newPendingFile.operationUuid &&
+						f.driveId === newPendingFile.driveId
 				);
-			}
-			setCurrentFileDownloadingId(newPendingfile.downloadId);
-			return [...prevFiles, newPendingfile];
-		});
+
+				if (existingFile) {
+					return prevFiles.map(f =>
+						f.operationUuid === newPendingFile.operationUuid &&
+						f.driveId === newPendingFile.driveId
+							? newPendingFile
+							: f
+					);
+				}
+
+				setCurrentFileId(newPendingFile.operationUuid);
+				return [...prevFiles, newPendingFile];
+			});
+		};
+
+		if (newPendingFile.type === 'download') {
+			updatePendingFiles(setDownloadPendingFiles, setCurrentFileDownloadingId);
+		} else if (newPendingFile.type === 'upload') {
+			updatePendingFiles(setUploadPendingFiles, setCurrentFileUploadingId);
+		}
 	};
 
 	return (
@@ -68,7 +107,10 @@ export const PendingFilesProvider = ({ children }: { children: React.ReactNode }
 				handleNewPendingFile,
 				areFilesPending: downloadPendingFiles.some(f => f.percentage > 0),
 				currentFileDownloading:
-					downloadPendingFiles.find(f => f.downloadId === currentFileDownloadingId) ??
+					downloadPendingFiles.find(f => f.operationUuid === currentFileDownloadingId) ??
+					null,
+				currentFileUploading:
+					uploadPendingFiles.find(f => f.operationUuid === currentFileUploadingId) ??
 					null,
 			}}
 		>
