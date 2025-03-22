@@ -116,7 +116,9 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 
 	const onFileLoad = (): void => {
 		const file = uploaderRef.current?.files?.[0];
+		dispatch(closeModals());
 		if (file && selectedDrive) {
+			toast.info('File uploading initiated...');
 			uploadDriveFile({ driveId: selectedDrive.id, file });
 		}
 	};

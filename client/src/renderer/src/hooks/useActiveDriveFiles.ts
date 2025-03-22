@@ -19,19 +19,35 @@ export const useActiveDriveFiles = () => {
 	} = useGetDriveRootFilesQuery(undefined, { skip: !!folderId || !drives.length });
 
 	const {
-		data: folderFiles = [],
 		isLoading: folderFilesLoading,
+		currentData: folderFilesCurrentData,
 		isSuccess: folderFilesSuccess,
 		isUninitialized: folderFilesUninitialized,
-	} = useGetDriveFolderFilesQuery({ driveId, folderId }, { skip: !folderId || !driveId });
+	} = useGetDriveFolderFilesQuery(
+		{ driveId, folderId },
+		{ skip: !folderId || !driveId, refetchOnMountOrArgChange: true }
+	);
 
 	const { selectedDriveIds } = useDriveSelectionContext();
 
 	const isInsideFolder = useIsInsideFolder();
 
+	// workaround for the following case where rtk is limiting us.
+	// If we enter a folder, isLoading will be false but isRefetching will be true
+	// However if we use isRefetching, then we will have loader also when we rename
+	// because of the cache invalidation. To show a loader only when we enter a folder
+	// we need this workaround
+	const shouldShowLoaderWhenEnteringFolderForTheFirstTime =
+		folderFilesCurrentData === undefined && isInsideFolder ? true : false;
+
 	return {
-		files: isInsideFolder ? folderFiles : filterFiles(rootFiles, drives, selectedDriveIds),
-		isLoading: rootFilesLoading || folderFilesLoading,
+		files: isInsideFolder
+			? folderFilesCurrentData ?? []
+			: filterFiles(rootFiles, drives, selectedDriveIds),
+		isLoading:
+			rootFilesLoading ||
+			folderFilesLoading ||
+			shouldShowLoaderWhenEnteringFolderForTheFirstTime,
 		isSuccess: rootFilesSuccess || folderFilesSuccess,
 		isUninitialized: rootFilesUninitialized && folderFilesUninitialized,
 	};
