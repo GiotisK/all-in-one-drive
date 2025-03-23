@@ -1,6 +1,13 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useState } from 'react';
 import { styled } from 'styled-components';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
+import { useParams } from 'react-router-dom';
+import { useIsInsideFolder } from '../hooks/useIsInsideFolder';
+import { useUploadDriveFileMutation } from '../redux/rtk/driveApi';
+import { useAppDispatch } from '../redux/store/store';
+import { openModal } from '../redux/slices/modal/modalSlice';
+import { ModalKind } from '../redux/slices/modal/types';
+import { FileType } from '../shared/types/global.types';
 
 const Container = styled.div`
 	display: flex;
@@ -47,27 +54,74 @@ const DropZoneBackdrop = styled.div`
 	pointer-events: none;
 `;
 
-interface IProps {
-	onDrop?: (DragEvent: React.DragEvent<HTMLDivElement>) => void;
-	onDragOver?: (DragEvent: React.DragEvent<HTMLDivElement>) => void;
-	onDragEnter?: (DragEvent: React.DragEvent<HTMLDivElement>) => void;
-	onDragLeave?: (DragEvent: React.DragEvent<HTMLDivElement>) => void;
-}
-export const DropZone = ({
-	onDrop,
-	onDragEnter,
-	onDragOver,
-	onDragLeave,
-	children,
-}: PropsWithChildren<IProps>) => {
-	const isDragging = false;
+const ContainerId = 'dropzonecontainer';
+
+export const DropZone = ({ children }: PropsWithChildren) => {
+	const [isDragging, setIsDragging] = useState(false);
+	const { folderId, driveId } = useParams();
+	const isInsideFolder = useIsInsideFolder();
+	const [uploadDriveFile] = useUploadDriveFileMutation();
+	const dispatch = useAppDispatch();
+
+	let storedTarget: EventTarget | null = null;
+
+	const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+	};
+
+	const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+	};
+
+	const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		event.stopPropagation();
+		if (event.currentTarget.id === ContainerId) {
+			storedTarget = event.currentTarget;
+			setIsDragging(true);
+		}
+	};
+
+	const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+		event.stopPropagation();
+		event.preventDefault();
+		if (storedTarget === event.target) {
+			storedTarget = null;
+			setIsDragging(false);
+		}
+	};
+
+	const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+		event.preventDefault();
+		setIsDragging(false);
+
+		if (!event.dataTransfer.files.length) {
+			return;
+		}
+
+		if (isInsideFolder && driveId && folderId) {
+			uploadDriveFile({
+				driveId: driveId,
+				parentFolderId: folderId,
+				file: event.dataTransfer.files[0],
+			});
+			return;
+		} else {
+			//todo: pass the actual file for upload
+			dispatch(openModal({ kind: ModalKind.Upload, state: { fileType: FileType.File } }));
+		}
+	};
 
 	return (
 		<Container
-			onDrop={onDrop}
-			onDragOver={onDragOver}
-			onDragEnter={onDragEnter}
-			onDragLeave={onDragLeave}
+			id={ContainerId}
+			onDrop={handleDrop}
+			onDragStart={handleDragStart}
+			onDragEnter={handleDragEnter}
+			onDragOver={handleDragOver}
+			onDragLeave={handleDragLeave}
 		>
 			{children}
 			{isDragging && (
