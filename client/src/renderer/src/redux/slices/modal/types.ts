@@ -22,6 +22,7 @@ export type RenameModalState = {
 
 export type UploadModalState = {
 	fileType: Nullable<FileType>;
+	droppedFile?: File;
 };
 
 export enum ModalKind {

@@ -79,7 +79,7 @@ interface IProps {
 export const UploadModal = ({ state }: IProps): JSX.Element => {
 	const dispatch = useAppDispatch();
 	const uploaderRef = useRef<Nullable<HTMLInputElement>>(null);
-	const { fileType } = state;
+	const { fileType, droppedFile } = state;
 	const [selectedDrive, setSelectedDrive] = useState<Nullable<DriveEntity>>(null);
 	const { data: drives = [] } = useGetDrivesQuery();
 	const [uploadDriveFile] = useUploadDriveFileMutation();
@@ -101,6 +101,11 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 		const { id: driveId } = drive;
 		setSelectedDrive(drive);
 
+		if (droppedFile) {
+			triggerFileUpload(drive, droppedFile);
+			return;
+		}
+
 		if (fileType === FileType.File) {
 			openFilePicker();
 		} else if (fileType === FileType.Folder) {
@@ -110,16 +115,21 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 		}
 	};
 
+	const triggerFileUpload = (selectedDrive: DriveEntity, file: File) => {
+		toast.info('File uploading initiated...');
+		uploadDriveFile({ driveId: selectedDrive.id, file });
+		dispatch(closeModals());
+	};
+
 	const openFilePicker = (): void => {
 		uploaderRef.current?.click();
 	};
 
 	const onFileLoad = (): void => {
 		const file = uploaderRef.current?.files?.[0];
-		dispatch(closeModals());
+
 		if (file && selectedDrive) {
-			toast.info('File uploading initiated...');
-			uploadDriveFile({ driveId: selectedDrive.id, file });
+			triggerFileUpload(selectedDrive, file);
 		}
 	};
 

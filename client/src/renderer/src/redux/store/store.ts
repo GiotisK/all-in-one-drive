@@ -15,7 +15,10 @@ const store = configureStore({
 		[userApi.reducerPath]: userApi.reducer,
 	},
 	middleware: getDefaultMiddleware =>
-		getDefaultMiddleware().concat(driveApi.middleware, userApi.middleware),
+		getDefaultMiddleware({ serializableCheck: false }).concat(
+			driveApi.middleware,
+			userApi.middleware
+		),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
