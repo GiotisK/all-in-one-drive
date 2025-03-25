@@ -33,19 +33,6 @@ export const formatBytes = (bytes: number, decimals = 2) => {
 	return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
 
-export const getDriveTypeFromString = (driveType: string): Nullable<DriveType> => {
-	switch (driveType) {
-		case DriveType.Dropbox:
-			return DriveType.Dropbox;
-		case DriveType.GoogleDrive:
-			return DriveType.GoogleDrive;
-		case DriveType.OneDrive:
-			return DriveType.OneDrive;
-		default:
-			return null;
-	}
-};
-
 //todo: add the rest of the types
 export const isNativeGoogleDriveFile = (fileExtension: string): boolean => {
 	return fileExtension === 'gdoc' || fileExtension === 'gsheet';
