@@ -1,4 +1,4 @@
-import DatabaseService from '../../../../services/database/mongodb.service';
+import DatabaseService from '../../../../services/database/DatabaseFactory';
 import { FileEntity, FileType, Nullable } from '../../../../types/global.types';
 import { getDriveContextAndToken } from '../drives.helpers';
 
@@ -67,6 +67,7 @@ export class FilesService {
 
 		const { driveType, token: encryptedToken } = drive;
 		const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
+
 		if (ctxAndToken) {
 			const { ctx, token } = ctxAndToken;
 			return ctx.deleteFile(token, fileId);

@@ -1,6 +1,6 @@
 import { isAcceptablePasswordLength, isEmailFormat } from './user.helpers';
 import EncryptionService from '../../../services/encryption/encryption.service';
-import DatabaseService from '../../../services/database/mongodb.service';
+import DatabaseService from '../../../services/database/DatabaseFactory';
 
 export class UserService {
 	async registerUser(email: string, password: string): Promise<boolean> {

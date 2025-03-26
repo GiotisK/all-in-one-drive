@@ -1,6 +1,5 @@
-import { drive } from '@googleapis/drive';
 import { DriveSchema } from '../../../models/user.model';
-import DatabaseService from '../../../services/database/mongodb.service';
+import DatabaseService from '../../../services/database/DatabaseFactory';
 import EncryptionService from '../../../services/encryption/encryption.service';
 import {
 	DriveChanges,

@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieparser from 'cookie-parser';
 import { userRouter, drivesRouter, drivesFilesRouter, googleDriveFilesRouter } from './src/api/v1/';
-import { connectDB } from './src/configs/database/database.config';
 import { createTunnel } from './src/tunnel/localtunnel';
+import DatabaseService from './src/services/database/DatabaseFactory';
 
 dotenv.config();
 
@@ -27,6 +27,6 @@ app.listen(port, () => {
 	console.log(`[server]: Server is running at http://localhost:${port}`);
 });
 
-connectDB();
+DatabaseService.connect();
 
 module.exports = app;

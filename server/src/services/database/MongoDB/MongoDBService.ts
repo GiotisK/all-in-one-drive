@@ -1,8 +1,20 @@
-import { generateUUID } from '../../helpers/helpers';
-import User, { DriveSchema } from '../../models/user.model';
-import { DriveType, Nullable } from '../../types/global.types';
+import mongoose from 'mongoose';
+import { generateUUID } from '../../../helpers/helpers';
+import User, { DriveSchema, UserSchema } from '../../../models/user.model';
+import { DriveType, Nullable } from '../../../types/global.types';
+import { IDatabaseService } from '../IDatabaseService';
 
-export class DatabaseService {
+export class MongoDBService implements IDatabaseService {
+	public async connect() {
+		try {
+			await mongoose.connect(process.env.MONGO_URI!);
+			console.log('[database]: MongoDB is now connected');
+		} catch (error: any) {
+			console.log(error.message);
+			process.exit(1);
+		}
+	}
+
 	public async saveUser(email: string, password: string): Promise<boolean> {
 		try {
 			const user = new User({ email, password });
@@ -14,7 +26,14 @@ export class DatabaseService {
 	}
 
 	public async getUser(email: string) {
-		return User.findOne({ email }).exec();
+		try {
+			const user = await User.findOne({ email }).exec();
+			if (!user) return null;
+
+			return user;
+		} catch {
+			return null;
+		}
 	}
 
 	public async saveDrive(
@@ -103,9 +122,7 @@ export class DatabaseService {
 
 			return result.modifiedCount > 0;
 		} catch {
-			return null;
+			return false;
 		}
 	}
 }
-
-export default new DatabaseService();

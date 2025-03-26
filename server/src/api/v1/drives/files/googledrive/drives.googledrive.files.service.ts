@@ -1,4 +1,4 @@
-import DatabaseService from '../../../../../services/database/mongodb.service';
+import DatabaseService from '../../../../../services/database/DatabaseFactory';
 import GoogleDriveStrategy from '../../../../../services/drive/GoogleDriveStrategy';
 import { DriveType, Nullable } from '../../../../../types/global.types';
 import { getDriveContextAndToken } from '../../drives.helpers';
