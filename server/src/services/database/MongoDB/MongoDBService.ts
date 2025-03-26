@@ -64,28 +64,6 @@ export class MongoDBService implements IDatabaseService {
 		}
 	}
 
-	public async getEncryptedTokenAsString(
-		userEmail: string,
-		driveId: string
-	): Promise<Nullable<string>> {
-		try {
-			const user = await User.findOne({ email: userEmail }).exec();
-			if (!user) {
-				return null;
-			}
-
-			const drives: DriveSchema[] | undefined = user?.drives;
-			if (!drives) {
-				return null;
-			}
-
-			const tokenData = drives.find(drive => drive.id === driveId);
-			return tokenData?.token ?? null;
-		} catch {
-			return null;
-		}
-	}
-
 	public async getAllDrives(userEmail: string): Promise<Nullable<DriveSchema[]>> {
 		try {
 			const user = await User.findOne({ email: userEmail }).exec();

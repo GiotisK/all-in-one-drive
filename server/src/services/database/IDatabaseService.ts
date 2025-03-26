@@ -11,7 +11,6 @@ export interface IDatabaseService {
 		userEmail: string,
 		drive: DriveType
 	): Promise<boolean>;
-	getEncryptedTokenAsString(userEmail: string, driveId: string): Promise<Nullable<string>>;
 	getAllDrives(userEmail: string): Promise<Nullable<DriveSchema[]>>;
 	getDrive(userEmail: string, driveId: string): Promise<Nullable<DriveSchema>>;
 	deleteDrive(userEmail: string, driveId: string): Promise<boolean>;

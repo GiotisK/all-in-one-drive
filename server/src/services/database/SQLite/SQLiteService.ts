@@ -82,31 +82,12 @@ export class SqliteDBService implements IDatabaseService {
 			const insertDriveQuery = this.db.prepare<
 				[string, number, string, string, DriveType],
 				DriveSchema
-			>(
-				`INSERT INTO drives (id, user_id, email, token, driveType) 
-				VALUES (?, ?, ?, ?, ?)`
-			);
+			>('INSERT INTO drives (id, user_id, email, token, driveType) VALUES (?, ?, ?, ?, ?)');
 			insertDriveQuery.run(driveId, user.id, driveEmail, encryptedTokenData, drive);
 
 			return true;
 		} catch {
 			return false;
-		}
-	}
-
-	public async getEncryptedTokenAsString(
-		userEmail: string,
-		driveId: string
-	): Promise<Nullable<string>> {
-		try {
-			const getTokenQuery = this.db.prepare<[string, string], string>(
-				'SELECT token FROM drives WHERE user_email = ? AND id = ?'
-			);
-			const token = getTokenQuery.get(userEmail, driveId);
-
-			return token ?? null;
-		} catch {
-			return null;
 		}
 	}
 
