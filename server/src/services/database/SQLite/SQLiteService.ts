@@ -1,8 +1,11 @@
 import Database from 'better-sqlite3';
 import { generateUUID } from '../../../helpers/helpers';
-import { DriveSchema, UserSchema } from '../../../models/user.model';
 import { DriveType, Nullable } from '../../../types/global.types';
 import { IDatabaseService } from '../IDatabaseService';
+import { DriveDTO, UserDTO } from '../types';
+
+type SQLiteDriveSchema = DriveDTO & { user_id: number };
+type SQLiteUserSchema = Omit<UserDTO, 'drives'>;
 
 export class SqliteDBService implements IDatabaseService {
 	private db: Database.Database;
@@ -50,9 +53,9 @@ export class SqliteDBService implements IDatabaseService {
 		}
 	}
 
-	public async getUser(email: string): Promise<Nullable<UserSchema>> {
+	public async getUser(email: string): Promise<Nullable<UserDTO>> {
 		try {
-			const getUserQuery = this.db.prepare<string, UserSchema>(
+			const getUserQuery = this.db.prepare<string, SQLiteUserSchema>(
 				'SELECT * FROM users WHERE email = ?'
 			);
 			const user = getUserQuery.get(email);
@@ -72,17 +75,16 @@ export class SqliteDBService implements IDatabaseService {
 		try {
 			const driveId = generateUUID();
 
-			const getUserQuery = this.db.prepare<string, UserSchema>(
+			const getUserQuery = this.db.prepare<string, SQLiteUserSchema>(
 				'SELECT * FROM users WHERE email = ?'
 			);
 			const user = getUserQuery.get(userEmail);
 
 			if (!user) return false;
 
-			const insertDriveQuery = this.db.prepare<
-				[string, number, string, string, DriveType],
-				DriveSchema
-			>('INSERT INTO drives (id, user_id, email, token, driveType) VALUES (?, ?, ?, ?, ?)');
+			const insertDriveQuery = this.db.prepare<[string, number, string, string, DriveType]>(
+				'INSERT INTO drives (id, user_id, email, token, driveType) VALUES (?, ?, ?, ?, ?)'
+			);
 			insertDriveQuery.run(driveId, user.id, driveEmail, encryptedTokenData, drive);
 
 			return true;
@@ -91,9 +93,9 @@ export class SqliteDBService implements IDatabaseService {
 		}
 	}
 
-	public async getAllDrives(userEmail: string): Promise<Nullable<DriveSchema[]>> {
+	public async getAllDrives(userEmail: string): Promise<Nullable<DriveDTO[]>> {
 		try {
-			const getDrivesOfUserQuery = this.db.prepare<string, DriveSchema>(
+			const getDrivesOfUserQuery = this.db.prepare<string, SQLiteDriveSchema>(
 				'SELECT * FROM users JOIN drives ON users.id = drives.user_id WHERE users.email = ?'
 			);
 
@@ -105,9 +107,9 @@ export class SqliteDBService implements IDatabaseService {
 		}
 	}
 
-	public async getDrive(_userEmail: string, driveId: string): Promise<Nullable<DriveSchema>> {
+	public async getDrive(_userEmail: string, driveId: string): Promise<Nullable<DriveDTO>> {
 		try {
-			const getDriveQuery = this.db.prepare<[string], DriveSchema>(
+			const getDriveQuery = this.db.prepare<[string], SQLiteDriveSchema>(
 				'SELECT * FROM drives WHERE id = ?'
 			);
 			const drive = getDriveQuery.get(driveId);

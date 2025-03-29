@@ -109,7 +109,6 @@ export const DropZone = ({ children }: PropsWithChildren) => {
 			});
 			return;
 		} else {
-			//todo: pass the actual file for upload
 			dispatch(
 				openModal({
 					kind: ModalKind.Upload,

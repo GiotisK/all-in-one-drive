@@ -1,5 +1,5 @@
-import { DriveSchema } from '../../../models/user.model';
 import DatabaseService from '../../../services/database/DatabaseFactory';
+import { DriveDTO } from '../../../services/database/types';
 import EncryptionService from '../../../services/encryption/encryption.service';
 import {
 	DriveChanges,
@@ -111,7 +111,7 @@ export class DrivesService {
 		driveIds: string[]
 	): Promise<WatchChangesChannel[] | null> {
 		try {
-			const drivesPromises: Promise<Nullable<DriveSchema>>[] = [];
+			const drivesPromises: Promise<Nullable<DriveDTO>>[] = [];
 
 			driveIds.forEach(driveId => {
 				drivesPromises.push(DatabaseService.getDrive(userEmail, driveId));

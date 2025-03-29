@@ -1,8 +1,25 @@
 import mongoose from 'mongoose';
 import { generateUUID } from '../../../helpers/helpers';
-import User, { DriveSchema, UserSchema } from '../../../models/user.model';
 import { DriveType, Nullable } from '../../../types/global.types';
 import { IDatabaseService } from '../IDatabaseService';
+import { DriveDTO, UserDTO } from '../types';
+
+type MongoDBUserSchema = UserDTO & { drives: DriveDTO[] };
+
+const userSchema = new mongoose.Schema<MongoDBUserSchema>({
+	email: { type: String, required: true, unique: true },
+	password: { type: String },
+	drives: [
+		{
+			email: String,
+			virtualFolderId: { type: String, default: '' },
+			token: String,
+			driveType: String,
+		},
+	],
+});
+
+const User = mongoose.model<MongoDBUserSchema>('User', userSchema);
 
 export class MongoDBService implements IDatabaseService {
 	public async connect() {
@@ -43,7 +60,7 @@ export class MongoDBService implements IDatabaseService {
 		drive: DriveType
 	): Promise<boolean> {
 		try {
-			const drives: DriveSchema = {
+			const drives: DriveDTO = {
 				id: generateUUID(),
 				email: driveEmail,
 				token: encryptedTokenData,
@@ -64,7 +81,7 @@ export class MongoDBService implements IDatabaseService {
 		}
 	}
 
-	public async getAllDrives(userEmail: string): Promise<Nullable<DriveSchema[]>> {
+	public async getAllDrives(userEmail: string): Promise<Nullable<DriveDTO[]>> {
 		try {
 			const user = await User.findOne({ email: userEmail }).exec();
 			return user ? user.drives : null;
@@ -73,7 +90,7 @@ export class MongoDBService implements IDatabaseService {
 		}
 	}
 
-	public async getDrive(userEmail: string, driveId: string): Promise<Nullable<DriveSchema>> {
+	public async getDrive(userEmail: string, driveId: string): Promise<Nullable<DriveDTO>> {
 		try {
 			const user = await User.findOne({
 				email: userEmail,

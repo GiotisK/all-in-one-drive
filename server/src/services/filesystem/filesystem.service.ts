@@ -11,11 +11,9 @@ class FileSystemService {
 		data.pipe(writeStream);
 
 		writeStream.on('finish', function () {
-			//todo: send event to frontend
 			writeStream.end();
 		});
 		writeStream.on('error', function () {
-			//todo: send event to frontend
 			writeStream.end();
 		});
 	}
