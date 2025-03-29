@@ -19,7 +19,7 @@ export default class DriveContext {
 		this.strategy = strategy;
 	}
 
-	public getAuthLink(): string {
+	public getAuthLink(): Nullable<string> {
 		return this.strategy.getAuthLink();
 	}
 

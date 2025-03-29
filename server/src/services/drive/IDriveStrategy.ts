@@ -8,7 +8,7 @@ import {
 } from '../../types/global.types';
 
 export interface IDriveStrategy {
-	getAuthLink(): string;
+	getAuthLink(): Nullable<string>;
 	generateOAuth2token(authCode: string): Promise<string>;
 	getUserDriveEmail(token: string): Promise<string>;
 	getDriveQuota(token: string): Promise<Nullable<DriveQuota>>;

@@ -12,12 +12,14 @@ import {
 import { getDriveContextAndToken } from './drives.helpers';
 
 export class DrivesService {
+	// todo make it nullable
 	getAuthLink(drive: string): string | undefined {
 		const ctxAndToken = getDriveContextAndToken(drive);
 		if (ctxAndToken) {
 			const { ctx } = ctxAndToken;
 			const authLink = ctx.getAuthLink();
-			return authLink;
+
+			return authLink ?? undefined;
 		}
 	}
 

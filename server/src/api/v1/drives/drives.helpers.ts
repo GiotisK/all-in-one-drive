@@ -1,4 +1,5 @@
 import DriveContext from '../../../services/drive/DriveContext';
+import DropboxStrategy from '../../../services/drive/DropboxStrategy';
 import GoogleDriveStrategy from '../../../services/drive/GoogleDriveStrategy';
 import { IDriveStrategy } from '../../../services/drive/IDriveStrategy';
 import EncryptionService from '../../../services/encryption/encryption.service';
@@ -8,6 +9,8 @@ export const getDriveStrategyFromString = (drive: string): Nullable<IDriveStrate
 	switch (drive) {
 		case DriveType.GoogleDrive:
 			return new GoogleDriveStrategy();
+		case DriveType.Dropbox:
+			return new DropboxStrategy();
 		default:
 			return null;
 	}
