@@ -49,7 +49,7 @@ export const LandingPage = (): JSX.Element => {
 				<ThemeToggle />
 			</ThemeToggleWrapper>
 			<Banner />
-			{isAuthenticated === null ? <Loader size={50} /> : <CredentialsBox />}
+			{isAuthenticated === null ? <Loader size={35} /> : <CredentialsBox />}
 		</LandingPageContainer>
 	);
 };

@@ -41,12 +41,12 @@ const NoDrivesText = styled.p`
 	margin: 0;
 	margin-top: 5%;
 	color: gray;
-	font-size: 20px;
+	font-size: 16px;
 `;
 
 const NoDrivesTextClickable = styled(NoDrivesText)`
 	cursor: pointer;
-	font-size: 17px;
+	font-size: 14px;
 	text-decoration: underline;
 `;
 
