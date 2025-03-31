@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { generateUUID } from '../../../helpers/helpers';
 import { DriveType, Nullable } from '../../../types/global.types';
 import { IDatabaseService } from '../IDatabaseService';
 import { DriveDTO, UserDTO } from '../types';
@@ -57,11 +56,12 @@ export class MongoDBService implements IDatabaseService {
 		encryptedTokenData: string,
 		driveEmail: string,
 		userEmail: string,
-		drive: DriveType
+		drive: DriveType,
+		driveId: string
 	): Promise<boolean> {
 		try {
 			const drives: DriveDTO = {
-				id: generateUUID(),
+				id: driveId,
 				email: driveEmail,
 				token: encryptedTokenData,
 				driveType: drive,
@@ -119,5 +119,10 @@ export class MongoDBService implements IDatabaseService {
 		} catch {
 			return false;
 		}
+	}
+
+	updateToken(driveId: string, encryptedTokenData: string): Promise<boolean> {
+		//todo: implement method so mongodb works aswell
+		throw new Error('Method not implemented yet!!! TODO: Implement this method');
 	}
 }

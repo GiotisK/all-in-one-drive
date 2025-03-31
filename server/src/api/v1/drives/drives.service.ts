@@ -1,3 +1,4 @@
+import { generateUUID } from '../../../helpers/helpers';
 import DatabaseService from '../../../services/database/DatabaseFactory';
 import { DriveDTO } from '../../../services/database/types';
 import EncryptionService from '../../../services/encryption/encryption.service';
@@ -32,7 +33,8 @@ export class DrivesService {
 
 		if (ctxAndToken) {
 			const { ctx } = ctxAndToken;
-			const tokenData = await ctx.generateOAuth2token(authCode);
+			const driveId = generateUUID();
+			const tokenData = await ctx.generateOAuth2token(authCode, driveId);
 
 			if (tokenData) {
 				const encryptedTokenData = EncryptionService.encrypt(tokenData);
@@ -41,7 +43,8 @@ export class DrivesService {
 					encryptedTokenData,
 					driveEmail,
 					userEmail,
-					drive
+					drive,
+					driveId
 				);
 				return success;
 			}

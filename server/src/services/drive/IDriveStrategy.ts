@@ -9,7 +9,7 @@ import {
 
 export interface IDriveStrategy {
 	getAuthLink(): Nullable<string>;
-	generateOAuth2token(authCode: string): Promise<string>;
+	generateOAuth2token(authCode: string, driveId: string): Promise<string>;
 	getUserDriveEmail(token: string): Promise<string>;
 	getDriveQuota(token: string): Promise<Nullable<DriveQuota>>;
 	getDriveFiles(

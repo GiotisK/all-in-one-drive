@@ -9,9 +9,11 @@ export interface IDatabaseService {
 		encryptedTokenData: string,
 		driveEmail: string,
 		userEmail: string,
-		drive: DriveType
+		drive: DriveType,
+		driveId: string
 	): Promise<boolean>;
 	getAllDrives(userEmail: string): Promise<Nullable<DriveDTO[]>>;
 	getDrive(userEmail: string, driveId: string): Promise<Nullable<DriveDTO>>;
 	deleteDrive(userEmail: string, driveId: string): Promise<boolean>;
+	updateToken(driveId: string, encryptedTokenData: string): Promise<boolean>;
 }

@@ -55,7 +55,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		return authLink ?? null;
 	}
 
-	public async generateOAuth2token(authCode: string): Promise<string> {
+	public async generateOAuth2token(authCode: string, _driveId: string): Promise<string> {
 		try {
 			const tokenData = (await this.oAuth2Client.getToken(authCode)).tokens;
 

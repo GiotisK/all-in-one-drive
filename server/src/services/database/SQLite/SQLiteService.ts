@@ -1,5 +1,4 @@
 import Database from 'better-sqlite3';
-import { generateUUID } from '../../../helpers/helpers';
 import { DriveType, Nullable } from '../../../types/global.types';
 import { IDatabaseService } from '../IDatabaseService';
 import { DriveDTO, UserDTO } from '../types';
@@ -70,11 +69,10 @@ export class SqliteDBService implements IDatabaseService {
 		encryptedTokenData: string,
 		driveEmail: string,
 		userEmail: string,
-		drive: DriveType
+		drive: DriveType,
+		driveId: string
 	): Promise<boolean> {
 		try {
-			const driveId = generateUUID();
-
 			const getUserQuery = this.db.prepare<string, SQLiteUserSchema>(
 				'SELECT * FROM users WHERE email = ?'
 			);
@@ -124,6 +122,19 @@ export class SqliteDBService implements IDatabaseService {
 		try {
 			const deleteDriveQuery = this.db.prepare<[string]>('DELETE FROM drives WHERE id = ?');
 			const result = deleteDriveQuery.run(driveId);
+
+			return result.changes > 0;
+		} catch {
+			return false;
+		}
+	}
+
+	public async updateToken(driveId: string, encryptedTokenData: string): Promise<boolean> {
+		try {
+			const updateTokenQuery = this.db.prepare<[string, string]>(
+				'UPDATE drives SET token = ? WHERE id = ?'
+			);
+			const result = updateTokenQuery.run(encryptedTokenData, driveId);
 
 			return result.changes > 0;
 		} catch {

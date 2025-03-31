@@ -23,8 +23,8 @@ export default class DriveContext {
 		return this.strategy.getAuthLink();
 	}
 
-	public async generateOAuth2token(authCode: string): Promise<string> {
-		return this.strategy.generateOAuth2token(authCode);
+	public async generateOAuth2token(authCode: string, driveId: string): Promise<string> {
+		return this.strategy.generateOAuth2token(authCode, driveId);
 	}
 
 	public async getUserDriveEmail(token: string): Promise<string> {
