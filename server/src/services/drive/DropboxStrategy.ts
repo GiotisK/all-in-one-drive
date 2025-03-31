@@ -1,4 +1,4 @@
-import { bytesToGigabytes } from '../../helpers/helpers';
+import { bytesToGigabytes, normalizeBytes } from '../../helpers/helpers';
 import {
 	Nullable,
 	DriveQuota,
@@ -6,6 +6,7 @@ import {
 	FileType,
 	WatchChangesChannel,
 	DriveChanges,
+	DriveType,
 } from '../../types/global.types';
 import DatabaseService from '../database/DatabaseFactory';
 import EncryptionService from '../encryption/encryption.service';
@@ -77,7 +78,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 	}
 	getDriveFiles(
 		token: string,
-		dbEntityDriveId: string,
+		driveId: string,
 		folderId?: string
 	): Promise<Nullable<FileEntity[]>> {
 		return new Promise(resolve => {
@@ -89,11 +90,11 @@ export default class DropboxStrategy implements IDriveStrategy {
 					parameters: {
 						path: folderId ?? '',
 						recursive: false,
-						include_media_info: false,
 						include_deleted: false,
 						include_has_explicit_shared_members: false,
 						include_mounted_folders: true,
 						include_non_downloadable_files: true,
+						limit: 2000,
 					},
 				},
 				async (err, result, response) => {
@@ -101,9 +102,15 @@ export default class DropboxStrategy implements IDriveStrategy {
 						resolve(null);
 					}
 
-					console.log('result', result.entries);
+					const driveEmail = await this.getUserDriveEmail(token);
 
-					resolve([]);
+					const filesEntities = this.mapToUniversalFileEntityFormat(
+						result.entries,
+						driveEmail,
+						driveId
+					);
+
+					resolve(filesEntities);
 				}
 			);
 		});
@@ -123,7 +130,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 	createFile(
 		token: string,
 		fileType: FileType,
-		dbEntityDriveId: string,
+		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>> {
 		throw new Error('Method not implemented.');
@@ -221,9 +228,53 @@ export default class DropboxStrategy implements IDriveStrategy {
 
 		return JSON.stringify(tokenData);
 	}
+
+	private mapToUniversalFileEntityFormat(
+		files: DropboxFile[],
+		driveEmail: string,
+		driveId: string
+	): FileEntity[] {
+		const fileEntities: FileEntity[] = files.map(file => {
+			const fileName = file.name;
+			const fileType = file['.tag'] === 'folder' ? FileType.Folder : FileType.File;
+			const size = fileType === FileType.File ? normalizeBytes('' + file.size) : '';
+			const normalizedDate = file.client_modified?.substring(0, 10) ?? '-';
+			const extension =
+				fileType === FileType.File ? fileName.substring(fileName.lastIndexOf('.')) : '-';
+
+			//todo: add shared link info
+			const isPubliclyShared = false; //todo: fix
+			const sharedLink = /* isPubliclyShared && file.webViewLink ? file.webViewLink : */ null;
+			const sizeBytes = file.size ?? 0;
+
+			return {
+				id: file.id ?? '',
+				name: file.name ?? '-',
+				drive: DriveType.Dropbox,
+				driveId: driveId,
+				email: driveEmail,
+				type: fileType,
+				size: size,
+				date: normalizedDate,
+				extension: extension,
+				sharedLink,
+				sizeBytes,
+			};
+		});
+
+		return fileEntities;
+	}
 }
 
 // Self defined types since dropbox-v2-api doesn't provide ts support
+type DropboxFile = {
+	'.tag': 'folder' | 'file';
+	id: string;
+	name: string;
+	path_lower: string;
+	client_modified?: string;
+	size?: number;
+};
 type TokenResult = { access_token: string; refresh_token: string; expires_in: number };
 type Dropbox = {
 	authenticate: (options: {
@@ -243,7 +294,7 @@ type Dropbox = {
 		callback: (
 			err: any,
 			result: {
-				entries(arg0: string, entries: any): unknown;
+				entries: DropboxFile[];
 				email: string;
 				used: number;
 				allocation: { allocated: number };

@@ -14,7 +14,7 @@ export interface IDriveStrategy {
 	getDriveQuota(token: string): Promise<Nullable<DriveQuota>>;
 	getDriveFiles(
 		token: string,
-		dbEntityDriveId: string,
+		driveId: string,
 		folderId?: string
 	): Promise<Nullable<FileEntity[]>>;
 	deleteFile(token: string, fileId: string): Promise<boolean>;
@@ -24,7 +24,7 @@ export interface IDriveStrategy {
 	createFile(
 		token: string,
 		fileType: FileType,
-		dbEntityDriveId: string,
+		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>>;
 	downloadFile(token: string, fileId: string, driveId: string): Promise<boolean>;
