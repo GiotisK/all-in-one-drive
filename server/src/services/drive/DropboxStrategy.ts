@@ -34,7 +34,13 @@ export default class DropboxStrategy implements IDriveStrategy {
 	public async generateOAuth2token(authCode: string, driveId: string): Promise<string> {
 		return new Promise(resolve => {
 			this.dropbox.getToken(authCode, (err, result) => {
-				const tokenDataStr = this.createDropboxToken(result, driveId);
+				const { access_token, expires_in, refresh_token } = result;
+				const tokenDataStr = this.createDropboxToken(
+					access_token,
+					expires_in,
+					refresh_token,
+					driveId
+				);
 				resolve(err ? '' : tokenDataStr);
 			});
 		});
@@ -165,7 +171,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 
 	private async setToken(tokenStr: string) {
 		try {
-			const tokenData = JSON.parse(tokenStr);
+			const tokenData: DropboxToken = JSON.parse(tokenStr);
 
 			if (!isDropboxToken(tokenData)) {
 				console.log('[DropboxStrategy]: Not valid dropbox token format', tokenData);
@@ -209,19 +215,30 @@ export default class DropboxStrategy implements IDriveStrategy {
 					resolve(null);
 				}
 
-				const tokenDataStr = this.createDropboxToken(result, driveId);
+				const tokenDataStr = this.createDropboxToken(
+					result.access_token,
+					result.expires_in,
+					refreshToken,
+					driveId
+				);
 				resolve(tokenDataStr);
 			});
 		});
 	}
 
-	private createDropboxToken(result: TokenResult, driveId: string): string {
+	private createDropboxToken(
+		accessToken: string,
+		expiresIn: number,
+		refreshToken: string,
+		driveId: string
+	): string {
 		const currentDate = new Date();
-		const expirationDate = new Date(currentDate.getTime() + result.expires_in * 1000);
+		const expirationDate = new Date(currentDate.getTime() + expiresIn * 1000);
 		const expirationDateInIsoFormat = expirationDate.toISOString();
+
 		const tokenData: DropboxToken = {
-			access_token: result.access_token,
-			refresh_token: result.refresh_token,
+			access_token: accessToken,
+			refresh_token: refreshToken,
 			expirationDateIso: expirationDateInIsoFormat,
 			driveId,
 		};
@@ -275,7 +292,6 @@ type DropboxFile = {
 	client_modified?: string;
 	size?: number;
 };
-type TokenResult = { access_token: string; refresh_token: string; expires_in: number };
 type Dropbox = {
 	authenticate: (options: {
 		client_id: string;
@@ -283,10 +299,20 @@ type Dropbox = {
 		redirect_uri: string;
 	}) => Promise<string>;
 	generateAuthUrl: () => string;
-	getToken: (code: string, callback: (err: any, result: TokenResult) => void) => void;
+	getToken: (
+		code: string,
+		callback: (
+			err: any,
+			result: { access_token: string; refresh_token: string; expires_in: number }
+		) => void
+	) => void;
 	refreshToken: (
 		token: string,
-		callback: (err: any, result: TokenResult, response: any) => void
+		callback: (
+			err: any,
+			result: { access_token: string; expires_in: number },
+			response: any
+		) => void
 	) => void;
 } & {
 	(
