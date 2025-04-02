@@ -49,7 +49,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 		return new Promise(async resolve => {
 			await this.setToken(token);
 
-			this.dropbox(
+			this.dropbox<AccountResult>(
 				{
 					resource: 'users/get_current_account',
 				},
@@ -63,7 +63,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 		return new Promise(async resolve => {
 			await this.setToken(token);
 
-			this.dropbox(
+			this.dropbox<AllocationResult>(
 				{
 					resource: 'users/get_space_usage',
 				},
@@ -91,7 +91,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 		return new Promise(async resolve => {
 			await this.setToken(token);
 
-			this.dropbox(
+			this.dropbox<ListFilesResult>(
 				{
 					resource: 'files/list_folder',
 					parameters: {
@@ -122,11 +122,52 @@ export default class DropboxStrategy implements IDriveStrategy {
 			);
 		});
 	}
+
 	deleteFile(token: string, fileId: string): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		return new Promise(async resolve => {
+			await this.setToken(token);
+
+			this.dropbox(
+				{
+					resource: 'files/delete_v2',
+					parameters: {
+						path: fileId,
+					},
+				},
+				err => {
+					resolve(err ? false : true);
+				}
+			);
+		});
 	}
+
 	renameFile(token: string, fileId: string, name: string): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		return new Promise(async resolve => {
+			await this.setToken(token);
+
+			const res = await this.getFileMetadata(token, fileId);
+
+			if (!res) {
+				resolve(false);
+				return;
+			}
+
+			const parentFolder = res.path_lower.substring(0, res.path_lower.lastIndexOf('/'));
+			const newPath = `${parentFolder}/${name}`;
+
+			this.dropbox(
+				{
+					resource: 'files/move_v2',
+					parameters: {
+						from_path: fileId,
+						to_path: newPath,
+					},
+				},
+				err => {
+					resolve(err ? false : true);
+				}
+			);
+		});
 	}
 	shareFile(token: string, fileId: string): Promise<Nullable<string>> {
 		throw new Error('Method not implemented.');
@@ -288,6 +329,24 @@ export default class DropboxStrategy implements IDriveStrategy {
 
 		return fileEntities;
 	}
+
+	private getFileMetadata(token: string, fileId: string) {
+		return new Promise<Nullable<DropboxFile>>(async resolve => {
+			await this.setToken(token);
+
+			this.dropbox<MetadataResult>(
+				{
+					resource: 'files/get_metadata',
+					parameters: {
+						path: fileId,
+					},
+				},
+				(err, result) => {
+					resolve(err ? null : result);
+				}
+			);
+		});
+	}
 }
 
 // Self defined types since dropbox-v2-api doesn't provide ts support
@@ -322,18 +381,9 @@ type Dropbox = {
 		) => void
 	) => void;
 } & {
-	(
+	<T>(
 		options: { resource: string; parameters?: {} },
-		callback: (
-			err: any,
-			result: {
-				entries: DropboxFile[];
-				email: string;
-				used: number;
-				allocation: { allocated: number };
-			},
-			response?: any
-		) => void
+		callback: (err: any, result: T, response?: any) => void
 	): void;
 };
 
@@ -343,6 +393,11 @@ type DropboxToken = {
 	expirationDateIso: string;
 	driveId: string;
 };
+
+type AllocationResult = { allocation: { allocated: number }; used: number };
+type ListFilesResult = { entries: DropboxFile[] };
+type AccountResult = { email: string };
+type MetadataResult = DropboxFile;
 
 const isDropboxToken = (token: unknown): token is DropboxToken => {
 	return (
