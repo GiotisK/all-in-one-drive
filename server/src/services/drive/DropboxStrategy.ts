@@ -35,19 +35,19 @@ export default class DropboxStrategy implements IDriveStrategy {
 		return new Promise(resolve => {
 			this.dropbox.getToken(authCode, (err, result) => {
 				const { access_token, expires_in, refresh_token } = result;
-				const tokenDataStr = this.createDropboxToken(
+				const tokenData = this.createDropboxToken(
 					access_token,
 					expires_in,
 					refresh_token,
 					driveId
 				);
-				resolve(err ? '' : tokenDataStr);
+				resolve(err ? '' : JSON.stringify(tokenData));
 			});
 		});
 	}
 	getUserDriveEmail(token: string): Promise<string> {
-		return new Promise(resolve => {
-			this.setToken(token);
+		return new Promise(async resolve => {
+			await this.setToken(token);
 
 			this.dropbox(
 				{
@@ -60,8 +60,8 @@ export default class DropboxStrategy implements IDriveStrategy {
 		});
 	}
 	getDriveQuota(token: string): Promise<Nullable<DriveQuota>> {
-		return new Promise(resolve => {
-			this.setToken(token);
+		return new Promise(async resolve => {
+			await this.setToken(token);
 
 			this.dropbox(
 				{
@@ -82,13 +82,14 @@ export default class DropboxStrategy implements IDriveStrategy {
 			);
 		});
 	}
+
 	getDriveFiles(
 		token: string,
 		driveId: string,
 		folderId?: string
 	): Promise<Nullable<FileEntity[]>> {
-		return new Promise(resolve => {
-			this.setToken(token);
+		return new Promise(async resolve => {
+			await this.setToken(token);
 
 			this.dropbox(
 				{
@@ -103,7 +104,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 						limit: 2000,
 					},
 				},
-				async (err, result, response) => {
+				async (err, result) => {
 					if (err) {
 						resolve(null);
 					}
@@ -170,43 +171,49 @@ export default class DropboxStrategy implements IDriveStrategy {
 	}
 
 	private async setToken(tokenStr: string) {
-		try {
-			const tokenData: DropboxToken = JSON.parse(tokenStr);
+		return new Promise<void>(async resolve => {
+			try {
+				const tokenData: DropboxToken = JSON.parse(tokenStr);
 
-			if (!isDropboxToken(tokenData)) {
-				console.log('[DropboxStrategy]: Not valid dropbox token format', tokenData);
-				return;
-			}
-
-			const { access_token, refresh_token, expirationDateIso, driveId } = tokenData;
-
-			const tokenHasExpired = new Date() > new Date(expirationDateIso);
-
-			let newToken: Nullable<string> = null;
-			if (tokenHasExpired) {
-				newToken = await this.refreshToken(refresh_token, driveId);
-
-				if (newToken) {
-					//todo: think this, how to avoid using other services here
-					const encryptedTokenData = EncryptionService.encrypt(newToken);
-					DatabaseService.updateToken(driveId, encryptedTokenData);
-				} else {
-					console.log(
-						'[DropboxStrategy]: Did not manage to refresh token, aborting setToken'
-					);
+				if (!isDropboxToken(tokenData)) {
+					console.log('[DropboxStrategy]: Not valid dropbox token format', tokenData);
 					return;
 				}
-			}
 
-			this.dropbox = dropboxV2Api.authenticate({
-				token: newToken ?? access_token,
-			});
-		} catch (err) {
-			console.error(err);
-		}
+				const { access_token, refresh_token, expirationDateIso, driveId } = tokenData;
+
+				const tokenHasExpired = new Date() > new Date(expirationDateIso);
+
+				let newToken: Nullable<DropboxToken> = null;
+				if (tokenHasExpired) {
+					newToken = await this.refreshToken(refresh_token, driveId);
+
+					if (newToken) {
+						//todo: think this, how to avoid using other services here
+						const encryptedTokenData = EncryptionService.encrypt(
+							JSON.stringify(newToken)
+						);
+						DatabaseService.updateToken(driveId, encryptedTokenData);
+					} else {
+						console.log(
+							'[DropboxStrategy]: Did not manage to refresh token, aborting setToken'
+						);
+						resolve();
+					}
+				}
+
+				this.dropbox = dropboxV2Api.authenticate({
+					token: newToken?.access_token ?? access_token,
+				});
+
+				resolve();
+			} catch (err) {
+				resolve();
+			}
+		});
 	}
 
-	private refreshToken(refreshToken: string, driveId: string): Promise<Nullable<string>> {
+	private refreshToken(refreshToken: string, driveId: string): Promise<Nullable<DropboxToken>> {
 		return new Promise(resolve => {
 			this.dropbox.refreshToken(refreshToken, (err, result, response) => {
 				if (err) {
@@ -215,13 +222,13 @@ export default class DropboxStrategy implements IDriveStrategy {
 					resolve(null);
 				}
 
-				const tokenDataStr = this.createDropboxToken(
+				const tokenData = this.createDropboxToken(
 					result.access_token,
 					result.expires_in,
 					refreshToken,
 					driveId
 				);
-				resolve(tokenDataStr);
+				resolve(tokenData);
 			});
 		});
 	}
@@ -231,7 +238,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 		expiresIn: number,
 		refreshToken: string,
 		driveId: string
-	): string {
+	): DropboxToken {
 		const currentDate = new Date();
 		const expirationDate = new Date(currentDate.getTime() + expiresIn * 1000);
 		const expirationDateInIsoFormat = expirationDate.toISOString();
@@ -243,7 +250,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 			driveId,
 		};
 
-		return JSON.stringify(tokenData);
+		return tokenData;
 	}
 
 	private mapToUniversalFileEntityFormat(
