@@ -12,8 +12,8 @@ export const driveApi = createApi({
 	reducerPath: 'driveApi',
 	baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8000/drives', credentials: 'include' }),
 	endpoints: builder => ({
-		getDriveRootFiles: builder.query<FileEntity[], void>({
-			query: () => ({ url: '/files' }),
+		getDriveRootFiles: builder.query<FileEntity[], { driveIds: string[] }>({
+			query: ({ driveIds }) => ({ url: '/files', method: 'POST', body: { driveIds } }),
 			providesTags: ['Files'],
 		}),
 		getDriveFolderFiles: builder.query<FileEntity[], { driveId?: string; folderId?: string }>({
@@ -145,26 +145,30 @@ export const driveApi = createApi({
 					const { driveId } = args;
 					const { data } = await queryFulfilled;
 					dispatch(
-						driveApi.util.updateQueryData('getDriveRootFiles', undefined, draft => {
-							data.changes.forEach(changedFileEntity => {
-								const index = draft.findIndex(
-									fileEntity => fileEntity.id === changedFileEntity.id
-								);
-								if (index !== -1) {
-									if (changedFileEntity.removed) {
-										draft.splice(index, 1);
-									} else {
-										draft[index].name = changedFileEntity.name;
-										draft[index] = {
-											...draft[index],
-											name: changedFileEntity.name,
-											sharedLink: changedFileEntity.sharedLink,
-											date: changedFileEntity.date,
-										};
+						driveApi.util.updateQueryData(
+							'getDriveRootFiles',
+							{ driveIds: [driveId] },
+							draft => {
+								data.changes.forEach(changedFileEntity => {
+									const index = draft.findIndex(
+										fileEntity => fileEntity.id === changedFileEntity.id
+									);
+									if (index !== -1) {
+										if (changedFileEntity.removed) {
+											draft.splice(index, 1);
+										} else {
+											draft[index].name = changedFileEntity.name;
+											draft[index] = {
+												...draft[index],
+												name: changedFileEntity.name,
+												sharedLink: changedFileEntity.sharedLink,
+												date: changedFileEntity.date,
+											};
+										}
 									}
-								}
-							});
-						})
+								});
+							}
+						)
 					);
 
 					dispatch(

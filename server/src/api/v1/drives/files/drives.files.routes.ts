@@ -4,11 +4,11 @@ import upload from '../../../../middleware/multer-upload';
 import FilesController from './drives.files.controllers';
 
 const router: Router = express.Router();
-router.get('/files', authorize, FilesController.getRootFiles);
 router.get('/:driveId/folders/:folderId/files', authorize, FilesController.getFolderFiles);
 router.get('/:driveId/files/:fileId/download', authorize, FilesController.downloadFile);
 router.get('/:driveId/files/:fileId/open', authorize, FilesController.openFile);
 
+router.post('/files', authorize, FilesController.getRootFiles);
 router.post('/:driveId/files', authorize, FilesController.createFile);
 router.post('/:driveId/files/upload', authorize, upload.single('file'), FilesController.uploadFile);
 

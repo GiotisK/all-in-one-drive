@@ -3,16 +3,18 @@ import { FileEntity, FileType, Nullable } from '../../../../types/global.types';
 import { getDriveContextAndToken } from '../drives.helpers';
 
 export class FilesService {
-	async getRootFiles(userEmail: string): Promise<Nullable<FileEntity[]>> {
+	async getRootFiles(userEmail: string, driveIds: string[]): Promise<Nullable<FileEntity[]>> {
 		const fileEntities: Array<FileEntity[]> = [];
-		const driveProperties = await DatabaseService.getAllDrives(userEmail);
+		const allDrives = await DatabaseService.getAllDrives(userEmail);
 
-		if (driveProperties) {
+		const filteredDrives = allDrives?.filter(drive => driveIds.includes(drive.id));
+
+		if (filteredDrives) {
 			const promiseArr: Promise<Nullable<FileEntity[]>>[] = [];
 
 			try {
-				driveProperties.forEach(async properties => {
-					const { token: encryptedTokenStr, driveType, id: driveId } = properties;
+				filteredDrives.forEach(async drive => {
+					const { token: encryptedTokenStr, driveType, id: driveId } = drive;
 					const ctxAndToken = getDriveContextAndToken(driveType, encryptedTokenStr);
 
 					if (ctxAndToken) {

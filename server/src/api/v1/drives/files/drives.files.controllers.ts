@@ -12,12 +12,13 @@ import {
 
 class FilesController {
 	public async getRootFiles(
-		_req: Request,
+		req: Request<never, void, { driveIds: string[] }>,
 		res: Response<FileEntity[], AuthLocals>
 	): Promise<void> {
 		const { email } = res.locals;
+		const { driveIds } = req.body;
 
-		const files = await FilesService.getRootFiles(email);
+		const files = await FilesService.getRootFiles(email, driveIds);
 
 		if (files) {
 			res.status(Status.OK).send(files);
