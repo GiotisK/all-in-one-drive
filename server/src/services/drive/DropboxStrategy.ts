@@ -110,11 +110,13 @@ export default class DropboxStrategy implements IDriveStrategy {
 					}
 
 					const driveEmail = await this.getUserDriveEmail(token);
+					const sharedLinks = await this.getSharedLinks(token);
 
 					const filesEntities = this.mapToUniversalFileEntityFormat(
 						result.entries,
 						driveEmail,
-						driveId
+						driveId,
+						sharedLinks ?? {}
 					);
 
 					resolve(filesEntities);
@@ -170,11 +172,54 @@ export default class DropboxStrategy implements IDriveStrategy {
 		});
 	}
 	shareFile(token: string, fileId: string): Promise<Nullable<string>> {
-		throw new Error('Method not implemented.');
+		return new Promise(async resolve => {
+			await this.setToken(token);
+
+			this.dropbox<ShareFileResult>(
+				{
+					resource: 'sharing/create_shared_link_with_settings',
+					parameters: {
+						path: fileId,
+						settings: {
+							requested_visibility: 'public',
+							audience: 'public',
+							access: 'viewer',
+						},
+					},
+				},
+				(err, result) => {
+					resolve(err ? null : result.url);
+				}
+			);
+		});
 	}
+
 	unshareFile(token: string, fileId: string): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		return new Promise(async resolve => {
+			await this.setToken(token);
+
+			const sharedLinks = await this.getSharedLinks(token, fileId);
+			const sharedLink = sharedLinks?.[fileId];
+
+			if (!sharedLink) {
+				resolve(false);
+				return;
+			}
+
+			this.dropbox(
+				{
+					resource: 'sharing/revoke_shared_link',
+					parameters: {
+						url: sharedLink,
+					},
+				},
+				err => {
+					resolve(err ? false : true);
+				}
+			);
+		});
 	}
+
 	createFile(
 		token: string,
 		fileType: FileType,
@@ -183,9 +228,11 @@ export default class DropboxStrategy implements IDriveStrategy {
 	): Promise<Nullable<FileEntity>> {
 		throw new Error('Method not implemented.');
 	}
+
 	downloadFile(token: string, fileId: string, driveId: string): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
+
 	uploadFile(
 		token: string,
 		file: Express.Multer.File,
@@ -194,15 +241,19 @@ export default class DropboxStrategy implements IDriveStrategy {
 	): Promise<Nullable<FileEntity>> {
 		throw new Error('Method not implemented.');
 	}
+
 	openFile(token: string, fileId: string): Promise<Nullable<string>> {
 		throw new Error('Method not implemented.');
 	}
+
 	subscribeForChanges(token: string, driveId: string): Promise<WatchChangesChannel | null> {
 		throw new Error('Method not implemented.');
 	}
+
 	unsubscribeForChanges(token: string, id: string, resourceId: string): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
+
 	fetchDriveChanges(
 		token: string,
 		driveEmail: string,
@@ -297,7 +348,8 @@ export default class DropboxStrategy implements IDriveStrategy {
 	private mapToUniversalFileEntityFormat(
 		files: DropboxFile[],
 		driveEmail: string,
-		driveId: string
+		driveId: string,
+		sharedLinks: SharedLinksMap
 	): FileEntity[] {
 		const fileEntities: FileEntity[] = files.map(file => {
 			const fileName = file.name;
@@ -307,9 +359,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 			const extension =
 				fileType === FileType.File ? fileName.substring(fileName.lastIndexOf('.')) : '-';
 
-			//todo: add shared link info
-			const isPubliclyShared = false; //todo: fix
-			const sharedLink = /* isPubliclyShared && file.webViewLink ? file.webViewLink : */ null;
+			const sharedLink = sharedLinks[file.id] ?? null;
 			const sizeBytes = file.size ?? 0;
 
 			return {
@@ -343,6 +393,33 @@ export default class DropboxStrategy implements IDriveStrategy {
 				},
 				(err, result) => {
 					resolve(err ? null : result);
+				}
+			);
+		});
+	}
+
+	private getSharedLinks(token: string, fileId?: string): Promise<Nullable<SharedLinksMap>> {
+		return new Promise(async resolve => {
+			await this.setToken(token);
+			const parameters = fileId ? { path: fileId } : {};
+
+			this.dropbox<SharedLinksResult>(
+				{
+					resource: 'sharing/list_shared_links',
+					parameters,
+				},
+				(err, result, response) => {
+					if (err) {
+						resolve(null);
+					} else {
+						const sharedLinks: SharedLinksMap = {};
+
+						result.links.forEach(link => {
+							sharedLinks[link.id] = link.url;
+						});
+
+						resolve(sharedLinks);
+					}
 				}
 			);
 		});
@@ -394,10 +471,19 @@ type DropboxToken = {
 	driveId: string;
 };
 
+type SharedLink = {
+	id: string;
+	url: string;
+};
+
+type SharedLinksMap = Record<string, string>;
+
 type AllocationResult = { allocation: { allocated: number }; used: number };
 type ListFilesResult = { entries: DropboxFile[] };
 type AccountResult = { email: string };
 type MetadataResult = DropboxFile;
+type ShareFileResult = { url: string };
+type SharedLinksResult = { links: SharedLink[] };
 
 const isDropboxToken = (token: unknown): token is DropboxToken => {
 	return (
