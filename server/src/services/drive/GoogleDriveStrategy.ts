@@ -454,10 +454,10 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				{ responseType: 'stream' }
 			);
 
-			if (shouldSendProgress) {
+			if (shouldSendProgress && driveId) {
 				this.sendDownloadProgressEvents(
 					res.data,
-					driveId!,
+					driveId,
 					fileId,
 					metadata.size,
 					metadata.name
