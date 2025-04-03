@@ -28,7 +28,7 @@ export const PendingFilesProvider = ({ children }: { children: React.ReactNode }
 					setTimeout(() => {
 						// prevent duplicate toast pops
 						if (!toast.isActive(f.operationUuid)) {
-							toast.success('Downloaded success: ' + f.name, {
+							toast.success('Download success: ' + f.name, {
 								toastId: f.operationUuid,
 							});
 						}

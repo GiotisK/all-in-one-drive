@@ -97,13 +97,20 @@ export const CredentialsBox = (): JSX.Element => {
 		confirmedPassword: '',
 	});
 	const [loginUser, { isError: isLoginUserError }] = useLoginUserMutation();
-	const [registerUser, { isError: isRegisterUserError }] = useRegisterUserMutation();
+	const [registerUser, { isError: registerUserError, isSuccess: isRegisterUserSuccess }] =
+		useRegisterUserMutation();
 
 	useEffect(() => {
-		if (isRegisterUserError || isLoginUserError) {
+		if (isRegisterUserSuccess) {
+			toast.success('User registered successfully');
+		}
+	}, [isRegisterUserSuccess]);
+
+	useEffect(() => {
+		if (registerUserError || isLoginUserError) {
 			toast.error('Something went wrong');
 		}
-	}, [isRegisterUserError, isLoginUserError]);
+	}, [registerUserError, isLoginUserError]);
 
 	function onInputChange(event: React.ChangeEvent<HTMLInputElement>): void {
 		const { name, value } = event.target;

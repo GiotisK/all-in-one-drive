@@ -6,7 +6,7 @@ import { UploadModalState } from '../../redux/slices/modal/types';
 import { useAppDispatch } from '../../redux/store/store';
 import { closeModals } from '../../redux/slices/modal/modalSlice';
 import { toast } from 'react-toastify';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
 	useCreateDriveFileMutation,
 	useGetDrivesQuery,
@@ -83,7 +83,16 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 	const [selectedDrive, setSelectedDrive] = useState<Nullable<DriveEntity>>(null);
 	const { data: drives = [] } = useGetDrivesQuery();
 	const [uploadDriveFile] = useUploadDriveFileMutation();
-	const [createDriveFile, { isLoading: createDriveFileLoading }] = useCreateDriveFileMutation();
+	const [
+		createDriveFile,
+		{ isLoading: createDriveFileLoading, isSuccess: createDriveFileSuccess },
+	] = useCreateDriveFileMutation();
+
+	useEffect(() => {
+		if (createDriveFileSuccess) {
+			toast.success('Folder created successfully');
+		}
+	}, [createDriveFileSuccess]);
 
 	const getTitle = (): string => {
 		switch (fileType) {
@@ -110,8 +119,6 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 			openFilePicker();
 		} else if (fileType === FileType.Folder) {
 			createDriveFile({ driveId, fileType: FileType.Folder });
-			//todo: fix toast, it always show success
-			toast.success('Folder created successfully');
 			dispatch(closeModals());
 		}
 	};
