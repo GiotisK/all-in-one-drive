@@ -377,7 +377,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 						id: change.file.id!,
 						removed: change.removed ?? false,
 						name: change.file.name ?? '',
-						date: change.time?.substring(0, 10) ?? '-',
+						date: change.time?.substring(0, 10) ?? '',
 						sharedLink: this.isFilePubliclyShared(change.file)
 							? change.file.webViewLink!
 							: null,

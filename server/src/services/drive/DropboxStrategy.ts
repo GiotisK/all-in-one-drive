@@ -226,7 +226,65 @@ export default class DropboxStrategy implements IDriveStrategy {
 		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>> {
-		throw new Error('Method not implemented.');
+		return new Promise(async resolve => {
+			await this.setToken(token);
+
+			if (fileType === FileType.File) {
+				// dropbox doesnt support file creation
+				resolve(null);
+				return;
+			}
+
+			let path = '/New Folder';
+
+			if (parentFolderId) {
+				const metadata = await this.getFileMetadata(token, parentFolderId);
+
+				if (!metadata) {
+					resolve(null);
+					return;
+				}
+
+				path = metadata.path_lower + path;
+			}
+
+			this.dropbox<CreateFolderResult>(
+				{
+					resource: 'files/create_folder',
+					parameters: {
+						path,
+						autorename: true,
+					},
+				},
+				async (err, result) => {
+					if (err) {
+						resolve(null);
+						return;
+					}
+
+					const metadata = await this.getFileMetadata(token, result.id);
+					const driveEmail = await this.getUserDriveEmail(token);
+
+					if (!metadata) {
+						resolve(null);
+						return;
+					}
+
+					const fileEntities = this.mapToUniversalFileEntityFormat(
+						[metadata],
+						driveEmail,
+						driveId,
+						{}
+					);
+
+					if (fileEntities.length > 0) {
+						resolve(fileEntities[0]);
+					} else {
+						resolve(null);
+					}
+				}
+			);
+		});
 	}
 
 	downloadFile(token: string, fileId: string, driveId: string): Promise<boolean> {
@@ -355,7 +413,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 			const fileName = file.name;
 			const fileType = file['.tag'] === 'folder' ? FileType.Folder : FileType.File;
 			const size = fileType === FileType.File ? normalizeBytes('' + file.size) : '';
-			const normalizedDate = file.client_modified?.substring(0, 10) ?? '-';
+			const normalizedDate = file.client_modified?.substring(0, 10) ?? '';
 			const extension =
 				fileType === FileType.File ? fileName.substring(fileName.lastIndexOf('.')) : '-';
 
@@ -484,6 +542,7 @@ type AccountResult = { email: string };
 type MetadataResult = DropboxFile;
 type ShareFileResult = { url: string };
 type SharedLinksResult = { links: SharedLink[] };
+type CreateFolderResult = { id: string; name: string; path_lower: string; path_display: string };
 
 const isDropboxToken = (token: unknown): token is DropboxToken => {
 	return (

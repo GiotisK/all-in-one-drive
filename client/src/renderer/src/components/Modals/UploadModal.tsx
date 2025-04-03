@@ -110,6 +110,7 @@ export const UploadModal = ({ state }: IProps): JSX.Element => {
 			openFilePicker();
 		} else if (fileType === FileType.Folder) {
 			createDriveFile({ driveId, fileType: FileType.Folder });
+			//todo: fix toast, it always show success
 			toast.success('Folder created successfully');
 			dispatch(closeModals());
 		}

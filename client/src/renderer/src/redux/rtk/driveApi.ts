@@ -99,7 +99,7 @@ export const driveApi = createApi({
 			{ driveId: string; fileType: FileType; parentFolderId?: string }
 		>({
 			query: ({ driveId, fileType, parentFolderId }) => ({
-				url: `${driveId}/folders`,
+				url: `${driveId}/files`,
 				method: 'POST',
 				body: { parentFolderId, type: fileType },
 			}),
