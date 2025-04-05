@@ -16,6 +16,7 @@ import * as dropboxV2Api from 'dropbox-v2-api';
 import FilesystemService from '../filesystem/filesystem.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
 import fs from 'fs';
+import { dropboxLogger } from '../../logger/logger';
 
 export default class DropboxStrategy implements IDriveStrategy {
 	private dropbox: Dropbox;
@@ -31,7 +32,14 @@ export default class DropboxStrategy implements IDriveStrategy {
 	}
 
 	public getAuthLink(): Nullable<string> {
-		return this.dropbox.generateAuthUrl() ?? null;
+		const authCode = this.dropbox.generateAuthUrl();
+
+		if (authCode) {
+			return authCode;
+		} else {
+			dropboxLogger('getAuthLink: Error generating auth link');
+			return null;
+		}
 	}
 
 	public async generateOAuth2token(authCode: string, driveId: string): Promise<string> {
@@ -44,10 +52,17 @@ export default class DropboxStrategy implements IDriveStrategy {
 					refresh_token,
 					driveId
 				);
-				resolve(err ? '' : JSON.stringify(tokenData));
+
+				if (err) {
+					dropboxLogger('generateOAuth2token', err);
+					resolve('');
+				} else {
+					resolve(JSON.stringify(tokenData));
+				}
 			});
 		});
 	}
+
 	getUserDriveEmail(token: string): Promise<string> {
 		return new Promise(async resolve => {
 			await this.setToken(token);
@@ -57,11 +72,17 @@ export default class DropboxStrategy implements IDriveStrategy {
 					resource: 'users/get_current_account',
 				},
 				(err, result, _response) => {
-					resolve(err ? '' : result.email);
+					if (err) {
+						dropboxLogger('getUserDriveEmail', err);
+						resolve('');
+					} else {
+						resolve(result.email);
+					}
 				}
 			);
 		});
 	}
+
 	getDriveQuota(token: string): Promise<Nullable<DriveQuota>> {
 		return new Promise(async resolve => {
 			await this.setToken(token);
@@ -72,6 +93,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				},
 				(err, result, _response) => {
 					if (err) {
+						dropboxLogger('getDriveQuota', err);
 						resolve(null);
 					} else {
 						const totalSpaceInGb: string = bytesToGigabytes(
@@ -109,6 +131,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				},
 				async (err, result) => {
 					if (err) {
+						dropboxLogger('getDriveFiles', err);
 						resolve(null);
 					}
 
@@ -140,7 +163,12 @@ export default class DropboxStrategy implements IDriveStrategy {
 					},
 				},
 				err => {
-					resolve(err ? false : true);
+					if (err) {
+						dropboxLogger('deleteFile', err);
+						resolve(false);
+					} else {
+						resolve(true);
+					}
 				}
 			);
 		});
@@ -169,7 +197,12 @@ export default class DropboxStrategy implements IDriveStrategy {
 					},
 				},
 				err => {
-					resolve(err ? false : true);
+					if (err) {
+						dropboxLogger('renameFile', err);
+						resolve(false);
+					} else {
+						resolve(true);
+					}
 				}
 			);
 		});
@@ -192,7 +225,12 @@ export default class DropboxStrategy implements IDriveStrategy {
 					},
 				},
 				(err, result) => {
-					resolve(err ? null : result.url);
+					if (err) {
+						dropboxLogger('shareFile', err);
+						resolve(null);
+					} else {
+						resolve(result.url);
+					}
 				}
 			);
 		});
@@ -218,7 +256,12 @@ export default class DropboxStrategy implements IDriveStrategy {
 					},
 				},
 				err => {
-					resolve(err ? false : true);
+					if (err) {
+						dropboxLogger('unshareFile', err);
+						resolve(false);
+					} else {
+						resolve(true);
+					}
 				}
 			);
 		});
@@ -234,7 +277,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 			await this.setToken(token);
 
 			if (fileType === FileType.File) {
-				// dropbox doesnt support file creation
+				dropboxLogger('createFile: Dropbox does not support file creation');
 				resolve(null);
 				return;
 			}
@@ -262,6 +305,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				},
 				async (err, result) => {
 					if (err) {
+						dropboxLogger('createFile', err);
 						resolve(null);
 						return;
 					}
@@ -284,6 +328,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (fileEntities.length > 0) {
 						resolve(fileEntities[0]);
 					} else {
+						dropboxLogger('createFile: Failed to create file. "fileEntities" is empty');
 						resolve(null);
 					}
 				}
@@ -311,6 +356,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				},
 				(err, _result, _response) => {
 					if (err) {
+						dropboxLogger('openFile', err);
 						resolve(null);
 						return;
 					}
@@ -324,6 +370,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				return;
 			}
 
+			dropboxLogger('openFile: Failed to open file. "data" is empty');
 			resolve(null);
 		});
 	}
@@ -350,6 +397,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				},
 				(err, _result, _response) => {
 					if (err) {
+						dropboxLogger('downloadFile', err);
 						resolve(false);
 						return;
 					}
@@ -370,6 +418,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				return;
 			}
 
+			dropboxLogger('downloadFile: Failed to download file. "data" is empty');
 			resolve(false);
 		});
 	}
@@ -404,24 +453,24 @@ export default class DropboxStrategy implements IDriveStrategy {
 						path,
 					},
 				},
-				(err, result) => {
+				err => {
 					if (err) {
-						resolve(null);
-					} else {
-						console.log(result);
+						dropboxLogger('uploadFile', err);
 						resolve(null);
 					}
 				}
 			);
 
 			if (data) {
-				fs.createReadStream(file.path).pipe(data);
 				FileProgressHelper.sendFileProgressEvent(data, 'upload', {
 					driveId,
 					fileId: '',
 					name: file.originalname,
 					size: fileSize,
 				});
+				fs.createReadStream(file.path).pipe(data);
+			} else {
+				dropboxLogger('uploadFile: Failed to upload file. "data" is empty');
 			}
 		});
 	}
@@ -448,7 +497,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				const tokenData: DropboxToken = JSON.parse(tokenStr);
 
 				if (!isDropboxToken(tokenData)) {
-					console.log('[DropboxStrategy]: Not valid dropbox token format', tokenData);
+					dropboxLogger('setToken: Not valid dropbox token format', tokenData);
 					return;
 				}
 
@@ -458,6 +507,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 
 				let newToken: Nullable<DropboxToken> = null;
 				if (tokenHasExpired) {
+					dropboxLogger('setToken: Token has expired, refreshing', {}, 'info');
 					newToken = await this.refreshToken(refresh_token, driveId);
 
 					if (newToken) {
@@ -467,9 +517,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 						);
 						DatabaseService.updateToken(driveId, encryptedTokenData);
 					} else {
-						console.log(
-							'[DropboxStrategy]: Did not manage to refresh token, aborting setToken'
-						);
+						dropboxLogger('setToken: Failed to refresh token. New token is empty');
 						resolve();
 					}
 				}
@@ -480,6 +528,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 
 				resolve();
 			} catch (err) {
+				dropboxLogger('setToken: Failed to set token', { error: err });
 				resolve();
 			}
 		});
@@ -489,8 +538,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 		return new Promise(resolve => {
 			this.dropbox.refreshToken(refreshToken, (err, result, response) => {
 				if (err) {
-					//todo: add winston for error logs
-					console.log('[DropboxStrategy]: Error refreshing token', err);
+					dropboxLogger('refreshToken', err, 'error');
 					resolve(null);
 				}
 
@@ -574,7 +622,12 @@ export default class DropboxStrategy implements IDriveStrategy {
 					},
 				},
 				(err, result) => {
-					resolve(err ? null : result);
+					if (err) {
+						dropboxLogger('getFileMetadata', err);
+						resolve(null);
+					} else {
+						resolve(result);
+					}
 				}
 			);
 		});
@@ -592,6 +645,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				},
 				(err, result) => {
 					if (err) {
+						dropboxLogger('getSharedLinks', err);
 						resolve(null);
 					} else {
 						const sharedLinks: SharedLinksMap = {};
@@ -668,6 +722,12 @@ type ShareFileResult = { url: string };
 type SharedLinksResult = { links: SharedLink[] };
 type CreateFolderResult = { id: string; name: string; path_lower: string; path_display: string };
 type UploadResult = DropboxFile;
+
+type DropboxError = {
+	error_summary: string;
+	error: object;
+	code: number;
+};
 
 const isDropboxToken = (token: unknown): token is DropboxToken => {
 	return (
