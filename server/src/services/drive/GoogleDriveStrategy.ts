@@ -263,6 +263,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 					'',
 					false
 				);
+
 				return path;
 			}
 

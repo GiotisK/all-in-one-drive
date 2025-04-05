@@ -174,6 +174,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 			);
 		});
 	}
+
 	shareFile(token: string, fileId: string): Promise<Nullable<string>> {
 		return new Promise(async resolve => {
 			await this.setToken(token);
@@ -290,6 +291,43 @@ export default class DropboxStrategy implements IDriveStrategy {
 		});
 	}
 
+	openFile(token: string, fileId: string): Promise<Nullable<string>> {
+		return new Promise(async resolve => {
+			const metadata = await this.getFileMetadata(token, fileId);
+
+			if (!metadata) {
+				resolve(null);
+				return;
+			}
+
+			const { name } = metadata;
+
+			const data: any = this.dropbox(
+				{
+					resource: 'files/download',
+					parameters: {
+						path: fileId,
+					},
+				},
+				(err, _result, _response) => {
+					if (err) {
+						resolve(null);
+						return;
+					}
+				}
+			);
+
+			if (data) {
+				const path = await FilesystemService.saveFileToTemp(data, name);
+
+				resolve(path);
+				return;
+			}
+
+			resolve(null);
+		});
+	}
+
 	downloadFile(token: string, fileId: string, driveId: string): Promise<boolean> {
 		return new Promise(async resolve => {
 			await this.setToken(token);
@@ -386,10 +424,6 @@ export default class DropboxStrategy implements IDriveStrategy {
 				});
 			}
 		});
-	}
-
-	openFile(token: string, fileId: string): Promise<Nullable<string>> {
-		throw new Error('Method not implemented.');
 	}
 
 	subscribeForChanges(token: string, driveId: string): Promise<WatchChangesChannel | null> {
@@ -503,7 +537,9 @@ export default class DropboxStrategy implements IDriveStrategy {
 			const size = fileType === FileType.File ? normalizeBytes('' + file.size) : '';
 			const normalizedDate = file.client_modified?.substring(0, 10) ?? '';
 			const extension =
-				fileType === FileType.File ? fileName.substring(fileName.lastIndexOf('.')) : '-';
+				fileType === FileType.File
+					? fileName.substring(fileName.lastIndexOf('.') + 1)
+					: '-';
 
 			const sharedLink = sharedLinks[file.id] ?? null;
 			const sizeBytes = file.size ?? 0;
@@ -554,7 +590,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					resource: 'sharing/list_shared_links',
 					parameters,
 				},
-				(err, result, response) => {
+				(err, result) => {
 					if (err) {
 						resolve(null);
 					} else {
