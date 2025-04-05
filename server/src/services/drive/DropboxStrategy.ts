@@ -56,6 +56,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				if (err) {
 					dropboxLogger('generateOAuth2token', err);
 					resolve('');
+					return;
 				} else {
 					resolve(JSON.stringify(tokenData));
 				}
@@ -75,6 +76,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (err) {
 						dropboxLogger('getUserDriveEmail', err);
 						resolve('');
+						return;
 					} else {
 						resolve(result.email);
 					}
@@ -95,6 +97,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (err) {
 						dropboxLogger('getDriveQuota', err);
 						resolve(null);
+						return;
 					} else {
 						const totalSpaceInGb: string = bytesToGigabytes(
 							'' + result.allocation.allocated
@@ -133,6 +136,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (err) {
 						dropboxLogger('getDriveFiles', err);
 						resolve(null);
+						return;
 					}
 
 					const driveEmail = await this.getUserDriveEmail(token);
@@ -166,6 +170,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (err) {
 						dropboxLogger('deleteFile', err);
 						resolve(false);
+						return;
 					} else {
 						resolve(true);
 					}
@@ -200,6 +205,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (err) {
 						dropboxLogger('renameFile', err);
 						resolve(false);
+						return;
 					} else {
 						resolve(true);
 					}
@@ -228,6 +234,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (err) {
 						dropboxLogger('shareFile', err);
 						resolve(null);
+						return;
 					} else {
 						resolve(result.url);
 					}
@@ -259,6 +266,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (err) {
 						dropboxLogger('unshareFile', err);
 						resolve(false);
+						return;
 					} else {
 						resolve(true);
 					}
@@ -457,6 +465,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (err) {
 						dropboxLogger('uploadFile', err);
 						resolve(null);
+						return;
 					}
 				}
 			);
@@ -539,6 +548,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				if (err) {
 					dropboxLogger('refreshToken', err, 'error');
 					resolve(null);
+					return;
 				}
 
 				const tokenData = this.createDropboxToken(
@@ -624,6 +634,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (err) {
 						dropboxLogger('getFileMetadata', err);
 						resolve(null);
+						return;
 					} else {
 						resolve(result);
 					}
@@ -646,6 +657,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					if (err) {
 						dropboxLogger('getSharedLinks', err);
 						resolve(null);
+						return;
 					} else {
 						const sharedLinks: SharedLinksMap = {};
 
