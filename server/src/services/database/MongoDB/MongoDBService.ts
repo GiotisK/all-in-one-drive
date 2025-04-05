@@ -10,6 +10,7 @@ const userSchema = new mongoose.Schema<MongoDBUserSchema>({
 	password: { type: String },
 	drives: [
 		{
+			_id: String,
 			email: String,
 			virtualFolderId: { type: String, default: '' },
 			token: String,
@@ -56,21 +57,21 @@ export class MongoDBService implements IDatabaseService {
 		encryptedTokenData: string,
 		driveEmail: string,
 		userEmail: string,
-		drive: DriveType,
+		driveType: DriveType,
 		driveId: string
 	): Promise<boolean> {
 		try {
-			const drives: DriveDTO = {
-				id: driveId,
+			const drive = {
+				_id: driveId,
 				email: driveEmail,
 				token: encryptedTokenData,
-				driveType: drive,
+				driveType: driveType,
 			};
 
 			const updatedUser = await User.findOneAndUpdate(
 				{ email: userEmail },
 				{
-					$push: { drives },
+					$push: { drives: drive },
 				},
 				{ upsert: true, new: true }
 			).exec();
@@ -121,8 +122,26 @@ export class MongoDBService implements IDatabaseService {
 		}
 	}
 
-	updateToken(driveId: string, encryptedTokenData: string): Promise<boolean> {
-		//todo: implement method so mongodb works aswell
-		throw new Error('Method not implemented yet!!! TODO: Implement this method');
+	public async updateToken(driveId: string, encryptedTokenData: string): Promise<boolean> {
+		try {
+			const updatedUser = await User.findOneAndUpdate(
+				{ 'drives._id': driveId }, // Find the user where the drive's _id matches the driveId
+				{
+					$set: { 'drives.$.token': encryptedTokenData },
+				},
+				{ new: true }
+			).exec();
+
+			if (updatedUser) {
+				console.log('Token updated successfully:', updatedUser);
+				return true;
+			} else {
+				console.log('Drive not found');
+				return false;
+			}
+		} catch (error) {
+			console.error('Error updating token:', error);
+			return false;
+		}
 	}
 }
