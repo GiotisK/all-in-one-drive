@@ -13,6 +13,9 @@ import EncryptionService from '../encryption/encryption.service';
 import { IDriveStrategy } from './IDriveStrategy';
 //@ts-ignore -- no types for dropbox
 import * as dropboxV2Api from 'dropbox-v2-api';
+import FilesystemService from '../filesystem/filesystem.service';
+import FileProgressHelper from './helpers/FileProgressHelper';
+import fs from 'fs';
 
 export default class DropboxStrategy implements IDriveStrategy {
 	private dropbox: Dropbox;
@@ -288,7 +291,49 @@ export default class DropboxStrategy implements IDriveStrategy {
 	}
 
 	downloadFile(token: string, fileId: string, driveId: string): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		return new Promise(async resolve => {
+			await this.setToken(token);
+
+			const metadata = await this.getFileMetadata(token, fileId);
+
+			if (!metadata) {
+				resolve(false);
+				return;
+			}
+
+			const { size = 0, name } = metadata;
+
+			const data: any = this.dropbox(
+				{
+					resource: 'files/download',
+					parameters: {
+						path: fileId,
+					},
+				},
+				(err, _result, _response) => {
+					if (err) {
+						resolve(false);
+						return;
+					}
+				}
+			);
+
+			if (data) {
+				FileProgressHelper.sendFileProgressEvent(data, 'download', {
+					driveId,
+					fileId,
+					name,
+					size,
+				});
+
+				FilesystemService.saveFileToDownloads(data, name);
+
+				resolve(true);
+				return;
+			}
+
+			resolve(false);
+		});
 	}
 
 	uploadFile(
@@ -297,7 +342,50 @@ export default class DropboxStrategy implements IDriveStrategy {
 		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>> {
-		throw new Error('Method not implemented.');
+		return new Promise(async resolve => {
+			await this.setToken(token);
+
+			let path = '/' + file.filename;
+			const fileSize = fs.statSync(file.path).size;
+
+			if (parentFolderId) {
+				const metadata = await this.getFileMetadata(token, parentFolderId);
+
+				if (!metadata) {
+					resolve(null);
+					return;
+				}
+
+				path = metadata.path_lower + path;
+			}
+
+			const data: any = this.dropbox<UploadResult>(
+				{
+					resource: 'files/upload',
+					parameters: {
+						path,
+					},
+				},
+				(err, result) => {
+					if (err) {
+						resolve(null);
+					} else {
+						console.log(result);
+						resolve(null);
+					}
+				}
+			);
+
+			if (data) {
+				fs.createReadStream(file.path).pipe(data);
+				FileProgressHelper.sendFileProgressEvent(data, 'upload', {
+					driveId,
+					fileId: '',
+					name: file.originalname,
+					size: fileSize,
+				});
+			}
+		});
 	}
 
 	openFile(token: string, fileId: string): Promise<Nullable<string>> {
@@ -543,6 +631,7 @@ type MetadataResult = DropboxFile;
 type ShareFileResult = { url: string };
 type SharedLinksResult = { links: SharedLink[] };
 type CreateFolderResult = { id: string; name: string; path_lower: string; path_display: string };
+type UploadResult = DropboxFile;
 
 const isDropboxToken = (token: unknown): token is DropboxToken => {
 	return (
