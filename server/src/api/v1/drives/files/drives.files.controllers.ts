@@ -66,7 +66,6 @@ class FilesController {
 		const responseBody: PatchFileResponse = { operation: {} };
 		let isRequestSuccessful = false;
 
-		//TODO: refactor to separate functions?
 		if (name) {
 			isRequestSuccessful = await FilesService.renameFile(driveId, userEmail, fileId, name);
 			if (isRequestSuccessful) {

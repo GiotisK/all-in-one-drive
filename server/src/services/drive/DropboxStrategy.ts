@@ -511,7 +511,6 @@ export default class DropboxStrategy implements IDriveStrategy {
 					newToken = await this.refreshToken(refresh_token, driveId);
 
 					if (newToken) {
-						//todo: think this, how to avoid using other services here
 						const encryptedTokenData = EncryptionService.encrypt(
 							JSON.stringify(newToken)
 						);
