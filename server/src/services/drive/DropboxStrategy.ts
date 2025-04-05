@@ -15,7 +15,7 @@ import { IDriveStrategy } from './IDriveStrategy';
 import * as dropboxV2Api from 'dropbox-v2-api';
 import FilesystemService from '../filesystem/filesystem.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
-import fs from 'fs';
+import fs, { ReadStream } from 'fs';
 import { dropboxLogger } from '../../logger/logger';
 
 export default class DropboxStrategy implements IDriveStrategy {
@@ -440,6 +440,8 @@ export default class DropboxStrategy implements IDriveStrategy {
 		return new Promise(async resolve => {
 			await this.setToken(token);
 
+			const driveEmail = await this.getUserDriveEmail(token);
+
 			let path = '/' + file.filename;
 			const fileSize = fs.statSync(file.path).size;
 
@@ -454,30 +456,45 @@ export default class DropboxStrategy implements IDriveStrategy {
 				path = metadata.path_lower + path;
 			}
 
+			const readStream = fs.createReadStream(file.path);
+
 			const data: any = this.dropbox<UploadResult>(
 				{
 					resource: 'files/upload',
 					parameters: {
 						path,
 					},
+					readStream,
 				},
-				err => {
+				(err, result) => {
 					if (err) {
 						dropboxLogger('uploadFile', err);
 						resolve(null);
 						return;
+					} else {
+						const fileEntities = this.mapToUniversalFileEntityFormat(
+							[result],
+							driveEmail,
+							driveId,
+							{}
+						);
+
+						if (fileEntities.length > 0) {
+							resolve(fileEntities[0]);
+						} else {
+							resolve(null);
+						}
 					}
 				}
 			);
 
 			if (data) {
-				FileProgressHelper.sendFileProgressEvent(data, 'upload', {
+				FileProgressHelper.sendFileProgressEvent(readStream, 'upload', {
 					driveId,
 					fileId: '',
 					name: file.originalname,
 					size: fileSize,
 				});
-				fs.createReadStream(file.path).pipe(data);
 			} else {
 				dropboxLogger('uploadFile: Failed to upload file. "data" is empty');
 			}
@@ -706,7 +723,7 @@ type Dropbox = {
 	) => void;
 } & {
 	<T>(
-		options: { resource: string; parameters?: {} },
+		options: { resource: string; parameters?: {}; readStream?: ReadStream },
 		callback: (err: any, result: T, response?: any) => void
 	): void;
 };
@@ -733,12 +750,6 @@ type ShareFileResult = { url: string };
 type SharedLinksResult = { links: SharedLink[] };
 type CreateFolderResult = { id: string; name: string; path_lower: string; path_display: string };
 type UploadResult = DropboxFile;
-
-type DropboxError = {
-	error_summary: string;
-	error: object;
-	code: number;
-};
 
 const isDropboxToken = (token: unknown): token is DropboxToken => {
 	return (
