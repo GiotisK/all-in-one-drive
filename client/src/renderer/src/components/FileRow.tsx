@@ -4,7 +4,6 @@ import { SvgNames } from '../shared/utils/svg-utils';
 import { canBeOpenedOnline, CreateDriveSvg, isNativeGoogleDriveFile } from '../shared/utils/utils';
 import { IconButton } from './IconButton';
 import { styled, useTheme } from 'styled-components';
-import { useOutsideClicker } from '../hooks';
 import { DriveType, FileEntity, FileType } from '../shared/types/global.types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
@@ -18,6 +17,7 @@ import {
 	useLazyOpenDriveFileQuery,
 	useShareDriveFileMutation,
 } from '../redux/rtk/driveApi';
+import { useOutsideClicker } from '../hooks/useOutsideClicker';
 
 const Container = styled.div`
 	display: flex;

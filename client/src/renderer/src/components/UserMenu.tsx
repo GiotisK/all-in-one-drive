@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 import styled from 'styled-components';
-import { useOutsideClicker } from '../hooks';
 import { ModalKind } from '../redux/slices/modal/types';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { useLogoutUserMutation } from '../redux/rtk/userApi';
+import { useOutsideClicker } from '../hooks/useOutsideClicker';
 
 const PopupMenuContainer = styled.div`
 	display: flex;

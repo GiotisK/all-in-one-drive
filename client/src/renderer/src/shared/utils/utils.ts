@@ -33,7 +33,6 @@ export const formatBytes = (bytes: number, decimals = 2) => {
 	return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
 
-//todo: add the rest of the types
 export const isNativeGoogleDriveFile = (fileExtension: string): boolean => {
 	return fileExtension === 'gdoc' || fileExtension === 'gsheet';
 };

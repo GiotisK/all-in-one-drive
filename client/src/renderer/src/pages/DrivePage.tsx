@@ -7,7 +7,6 @@ import { FloatingButtonsContainer } from '../components/FloatingButtons/Floating
 import { LoadingBar } from '../components/LoadingBar';
 import { styled } from 'styled-components';
 import { ModalContainer } from '../components/Modals/ModalContainer';
-import { useHandleAuthCodeFromUrl, useServerSideEvents } from '../hooks';
 import { Navigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
 import { useAppSelector } from '../redux/store/store';
@@ -15,6 +14,8 @@ import { FilesList } from '../components/FilesList';
 import { useIsInsideFolder } from '../hooks/useIsInsideFolder';
 import { DriveSelectionProvider } from '../providers/DriveSelection';
 import { useRestoreScrollPosition } from '../hooks/useRestoreScrollPosition';
+import { useHandleAuthCodeFromUrl } from '../hooks/useHandleAuthCodeFromUrl';
+import { useServerSideEvents } from '../hooks/useServerSideEvents';
 
 const OuterContainer = styled.div`
 	display: flex;
