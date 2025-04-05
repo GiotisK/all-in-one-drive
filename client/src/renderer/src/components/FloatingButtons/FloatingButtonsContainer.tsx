@@ -18,8 +18,8 @@ import { useCreateDriveFileMutation, useUploadDriveFileMutation } from '../../re
 
 const Container = styled.div`
 	position: absolute;
-	bottom: 8%;
-	right: 5%;
+	bottom: 50px;
+	right: 50px;
 `;
 
 const FileOpenerInput = styled.input`
