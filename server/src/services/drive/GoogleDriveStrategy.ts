@@ -18,6 +18,7 @@ import mime from 'mime';
 import fs from 'fs';
 import FilesystemService from '../filesystem/filesystem.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
+import { googleDriveLogger } from '../../logger/logger';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
@@ -49,7 +50,12 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			scope: SCOPES,
 		});
 
-		return authLink ?? null;
+		if (authLink) {
+			return authLink;
+		}
+
+		googleDriveLogger('getAuthLink: Error generating auth link');
+		return '';
 	}
 
 	public async generateOAuth2token(authCode: string, _driveId: string): Promise<string> {
@@ -57,7 +63,13 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const tokenData = (await this.oAuth2Client.getToken(authCode)).tokens;
 
 			return JSON.stringify(tokenData);
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('generateOAuth2token: Error generating auth link', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
 			return '';
 		}
 	}
@@ -68,8 +80,20 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const res = await this.drive.about.get({ fields: 'user' });
 			const email = res.data.user?.emailAddress;
 
-			return email ?? '';
-		} catch {
+			if (email) {
+				return email;
+			}
+
+			googleDriveLogger('getUserDriveEmail: Error getting user drive email');
+
+			return '';
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('getUserDriveEmail', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
 			return '';
 		}
 	}
@@ -90,8 +114,16 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				};
 			}
 
+			googleDriveLogger('getDriveQuota: Error getting drive quota');
+
 			return null;
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('getDriveQuota', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
 			return null;
 		}
 	}
@@ -112,8 +144,21 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const files = res.data.files;
 			const driveEmail = await this.getUserDriveEmail(token);
 
-			return files ? this.mapToUniversalFileEntityFormat(files, driveEmail, driveId) : null;
-		} catch {
+			if (files) {
+				return this.mapToUniversalFileEntityFormat(files, driveEmail, driveId);
+			}
+
+			googleDriveLogger('getDriveFiles: Error getting drive files. "files" is undefined');
+
+			return null;
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('getDriveFiles', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return null;
 		}
 	}
@@ -124,7 +169,14 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			await this.drive.files.delete({ fileId });
 
 			return true;
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('deleteFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return false;
 		}
 	}
@@ -140,7 +192,14 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			});
 
 			return true;
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('renameFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return false;
 		}
 	}
@@ -170,7 +229,14 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const driveEmail = await this.getUserDriveEmail(token);
 
 			return this.mapToUniversalFileEntityFormat([res.data], driveEmail, driveId)[0];
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('createFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return null;
 		}
 	}
@@ -186,8 +252,17 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				return true;
 			}
 
+			googleDriveLogger('downloadFile: Error downloading file. "data" is empty');
+
 			return false;
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('downloadFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return false;
 		}
 	}
@@ -244,8 +319,16 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				return fileEntities.length > 0 ? fileEntities[0] : null;
 			}
 
+			googleDriveLogger('uploadFile: "newFileId" is empty"');
 			return null;
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('uploadFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return null;
 		}
 	}
@@ -266,6 +349,8 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 				return path;
 			}
+
+			googleDriveLogger('openFile: "data" is empty');
 
 			return null;
 		} catch {
@@ -294,8 +379,20 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				mime.getExtension(mimeType) ?? ''
 			);
 
-			return res.status === Status.OK;
-		} catch {
+			if (res.status === Status.OK) {
+				return true;
+			}
+
+			googleDriveLogger('exportFile: failed to export file');
+			return false;
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('exportFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return false;
 		}
 	}
@@ -312,7 +409,14 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			});
 
 			return PUBLIC_SHARED_LINK_BASE_URL + fileId;
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('shareFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return null;
 		}
 	}
@@ -336,8 +440,18 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				});
 				return true;
 			}
+
+			googleDriveLogger('unshareFile: "publicSharedLinkPermission" is undefined');
+
 			return false;
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('unshareFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return false;
 		}
 	}
@@ -351,7 +465,14 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			});
 
 			return res.data.exportLinks ? Object.keys(res.data.exportLinks) : [];
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('getExportFormats', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return null;
 		}
 	}
@@ -394,11 +515,12 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				startPageToken: newStartPageToken!,
 			};
 		} catch (err) {
-			console.error(
-				`An error occured while trying to fetch drive changes.\nError: ${
-					(err as Error).message
-				})`
-			);
+			if (err instanceof Error) {
+				googleDriveLogger('fetchDriveChanges', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
 
 			return null;
 		}
@@ -417,14 +539,21 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 					resourceId,
 				},
 			});
-			console.log(`Stopped drive notifications for channel id: ${id}`);
+
+			googleDriveLogger(
+				'unsubscribeForChanges: Stopped drive notifications for channel id: ' + id,
+				{},
+				'info'
+			);
+
 			return true;
 		} catch (err) {
-			console.error(
-				`An error occured while trying to unsubscribe for changes.\nError: ${
-					(err as Error).message
-				}`
-			);
+			if (err instanceof Error) {
+				googleDriveLogger('unsubscribeForChanges', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
 
 			return false;
 		}
@@ -469,7 +598,13 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				fileData: res.data,
 				name: metadata.name,
 			};
-		} catch {
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('downloadFileInternal', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
 			return null;
 		}
 	}
@@ -497,10 +632,13 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				driveId,
 			};
 		} catch (err) {
-			console.error(
-				'An error occured while trying to subscribe to watch changes.\nError: ',
-				(err as Error).message
-			);
+			if (err instanceof Error) {
+				googleDriveLogger('registerForDriveChanges', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return null;
 		}
 	}
