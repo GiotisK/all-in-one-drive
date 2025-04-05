@@ -271,7 +271,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 				<Text>{name}</Text>
 			</FirstColumn>
 			<SecondColumn>
-				{CreateDriveSvg(drive)}
+				{CreateDriveSvg(drive, 25)}
 				<Text>{email}</Text>
 			</SecondColumn>
 			<ThirdColumn>
