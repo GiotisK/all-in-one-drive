@@ -8,10 +8,8 @@ import {
 	DriveQuota,
 	DriveType,
 	FileEntity,
-	FileOperationType,
 	FileType,
 	Nullable,
-	ServerSideEventProgressData,
 	Status,
 	WatchChangesChannel,
 } from '../../types/global.types';
@@ -19,8 +17,7 @@ import { LOCALTUNNEL_URL } from '../../tunnel/subdomain';
 import mime from 'mime';
 import fs from 'fs';
 import FilesystemService from '../filesystem/filesystem.service';
-import SSEManager from '../sse/SSEManager';
-import internal from 'stream';
+import FileProgressHelper from './helpers/FileProgressHelper';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
@@ -208,8 +205,12 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 			const fileStream = fs.createReadStream(file.path);
 
-			// Create a readable stream and monitor progress
-			this.sendUploadProgressEvents(fileStream, driveId, '', fileSize, file.originalname);
+			FileProgressHelper.sendFileProgressEvent(fileStream, 'upload', {
+				driveId,
+				fileId: '',
+				size: fileSize,
+				name: file.originalname,
+			});
 
 			const res = await this.drive.files.create({
 				media: {
@@ -455,13 +456,12 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			);
 
 			if (shouldSendProgress && driveId) {
-				this.sendDownloadProgressEvents(
-					res.data,
+				FileProgressHelper.sendFileProgressEvent(res.data, 'download', {
 					driveId,
 					fileId,
-					metadata.size,
-					metadata.name
-				);
+					size: metadata.size,
+					name: metadata.name,
+				});
 			}
 
 			return {
@@ -471,67 +471,6 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		} catch {
 			return null;
 		}
-	}
-
-	private async sendUploadProgressEvents(
-		data: internal.Readable,
-		driveId: string,
-		fileId: string,
-		size: number,
-		name: string
-	) {
-		this.sendProgressEvents(data, driveId, fileId, size, name, 'upload');
-	}
-
-	private async sendDownloadProgressEvents(
-		data: internal.Readable,
-		driveId: string,
-		fileId: string,
-		size: number,
-		name: string
-	) {
-		this.sendProgressEvents(data, driveId, fileId, size, name, 'download');
-	}
-
-	private async sendProgressEvents(
-		data: internal.Readable,
-		driveId: string,
-		fileId: string,
-		size: number,
-		name: string,
-		type: FileOperationType
-	) {
-		let downloadedSize = 0;
-		let lastLoggedPercent = 0;
-		const operationUuid = generateUUID();
-		data.on('data', chunk => {
-			downloadedSize += chunk.length;
-			const percent = Math.floor((downloadedSize / size) * 100);
-			if (percent >= lastLoggedPercent + 10) {
-				lastLoggedPercent = percent;
-				const progressData: ServerSideEventProgressData = {
-					name,
-					operationUuid,
-					fileId,
-					driveId,
-					type,
-					percentage: percent,
-				};
-				SSEManager.sendNotification(type + '-progress-event', progressData);
-			}
-		});
-
-		data.on('end', () => {
-			const progressData: ServerSideEventProgressData = {
-				name,
-				operationUuid,
-				fileId,
-				driveId,
-				type,
-				percentage: 100,
-			};
-			SSEManager.sendNotification(type + '-progress-event', progressData);
-		});
 	}
 
 	private async registerForDriveChanges(driveId: string): Promise<WatchChangesChannel | null> {
