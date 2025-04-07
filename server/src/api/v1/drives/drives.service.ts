@@ -13,12 +13,11 @@ import {
 import { getDriveContextAndToken } from './drives.helpers';
 
 export class DrivesService {
-	// todo make it nullable
-	getAuthLink(drive: string): string | undefined {
+	async getAuthLink(drive: string): Promise<string | undefined> {
 		const ctxAndToken = getDriveContextAndToken(drive);
 		if (ctxAndToken) {
 			const { ctx } = ctxAndToken;
-			const authLink = ctx.getAuthLink();
+			const authLink = await ctx.getAuthLink();
 
 			return authLink ?? undefined;
 		}

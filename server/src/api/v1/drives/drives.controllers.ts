@@ -22,7 +22,7 @@ class DrivesController {
 		res: Response<string>
 	): Promise<void> {
 		const drive = req.params.drive;
-		const authLink = DrivesService.getAuthLink(drive);
+		const authLink = await DrivesService.getAuthLink(drive);
 		authLink ? res.status(Status.OK).send(authLink) : res.status(Status.BAD_REQUEST);
 	}
 

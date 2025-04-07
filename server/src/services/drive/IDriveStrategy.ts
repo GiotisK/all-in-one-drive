@@ -8,7 +8,7 @@ import {
 } from '../../types/global.types';
 
 export interface IDriveStrategy {
-	getAuthLink(): Nullable<string>;
+	getAuthLink(): Promise<Nullable<string>>;
 	generateOAuth2token(authCode: string, driveId: string): Promise<string>;
 	getUserDriveEmail(token: string): Promise<string>;
 	getDriveQuota(token: string): Promise<Nullable<DriveQuota>>;
@@ -34,7 +34,7 @@ export interface IDriveStrategy {
 		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>>;
-	openFile: (token: string, fileId: string) => Promise<Nullable<string>>;
+	openFile(token: string, fileId: string): Promise<Nullable<string>>;
 	subscribeForChanges(token: string, driveId: string): Promise<WatchChangesChannel | null>;
 	unsubscribeForChanges(token: string, id: string, resourceId: string): Promise<boolean>;
 	fetchDriveChanges(

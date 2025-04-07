@@ -31,15 +31,17 @@ export default class DropboxStrategy implements IDriveStrategy {
 		});
 	}
 
-	public getAuthLink(): Nullable<string> {
-		const authCode = this.dropbox.generateAuthUrl();
+	public getAuthLink(): Promise<Nullable<string>> {
+		return new Promise(resolve => {
+			const authCode = this.dropbox.generateAuthUrl();
 
-		if (authCode) {
-			return authCode;
-		} else {
-			dropboxLogger('getAuthLink: Error generating auth link');
-			return null;
-		}
+			if (authCode) {
+				resolve(authCode);
+			} else {
+				dropboxLogger('getAuthLink: Error generating auth link');
+				resolve(null);
+			}
+		});
 	}
 
 	public async generateOAuth2token(authCode: string, driveId: string): Promise<string> {
@@ -533,7 +535,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 
 				let newToken: Nullable<DropboxToken> = null;
 				if (tokenHasExpired) {
-					dropboxLogger('setToken: Token has expired, refreshing', {}, 'info');
+					dropboxLogger('setToken: Token has expired, refreshing', undefined, 'info');
 					newToken = await this.refreshToken(refresh_token, driveId);
 
 					if (newToken) {

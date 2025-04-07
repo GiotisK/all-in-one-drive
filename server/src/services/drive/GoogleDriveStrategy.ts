@@ -44,18 +44,21 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		this.drive = drive({ version: 'v3', auth: this.oAuth2Client });
 	}
 
-	public getAuthLink(): string {
-		const authLink = this.oAuth2Client.generateAuthUrl({
-			access_type: 'offline',
-			scope: SCOPES,
+	public getAuthLink(): Promise<Nullable<string>> {
+		return new Promise(resolve => {
+			const authLink = this.oAuth2Client.generateAuthUrl({
+				access_type: 'offline',
+				scope: SCOPES,
+			});
+
+			if (authLink) {
+				resolve(authLink);
+				return;
+			}
+
+			googleDriveLogger('getAuthLink: Error generating auth link');
+			resolve(null);
 		});
-
-		if (authLink) {
-			return authLink;
-		}
-
-		googleDriveLogger('getAuthLink: Error generating auth link');
-		return '';
 	}
 
 	public async generateOAuth2token(authCode: string, _driveId: string): Promise<string> {
