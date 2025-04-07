@@ -29,25 +29,21 @@ const logger = winston.createLogger({
 });
 
 const baseDriveLogger = (
-	strategy: 'GoogleDriveStrategy' | 'DropboxStrategy',
+	strategy: 'GoogleDriveStrategy' | 'DropboxStrategy' | 'OneDriveStrategy',
 	functionName: string,
-	details: object = {},
+	details: object | undefined,
 	type: 'info' | 'error' = 'error'
 ) => {
 	if (type === 'error') {
-		logger.error(`[${strategy}]: ${functionName}:`, {
-			...details,
-		});
+		logger.error(`[${strategy}]: ${functionName}:`, details ?? '');
 	} else {
-		logger.info(`[${strategy}]: ${functionName}:`, {
-			...details,
-		});
+		logger.info(`[${strategy}]: ${functionName}:`, details ?? '');
 	}
 };
 
 export const dropboxLogger = (
 	functionName: string,
-	details: object = {},
+	details: object | undefined = undefined,
 	type: 'info' | 'error' = 'error'
 ) => {
 	baseDriveLogger('DropboxStrategy', functionName, details, type);
@@ -55,10 +51,18 @@ export const dropboxLogger = (
 
 export const googleDriveLogger = (
 	functionName: string,
-	details: object = {},
+	details: object | undefined = undefined,
 	type: 'info' | 'error' = 'error'
 ) => {
 	baseDriveLogger('GoogleDriveStrategy', functionName, details, type);
+};
+
+export const oneDriveLogger = (
+	functionName: string,
+	details: object | undefined = undefined,
+	type: 'info' | 'error' = 'error'
+) => {
+	baseDriveLogger('OneDriveStrategy', functionName, details, type);
 };
 
 export default logger;
