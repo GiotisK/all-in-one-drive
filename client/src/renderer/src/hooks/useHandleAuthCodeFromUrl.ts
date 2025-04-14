@@ -30,9 +30,7 @@ const getDriveFromAuthCodeUrl = (authCodeUri: string): Nullable<DriveType> => {
 			return DriveType.GoogleDrive;
 		case authCodeUri.includes('dropbox'):
 			return DriveType.Dropbox;
-		case authCodeUri.includes('onedrive'):
-			return DriveType.OneDrive;
 		default:
-			return null;
+			return DriveType.OneDrive;
 	}
 };
