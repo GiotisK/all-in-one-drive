@@ -7,9 +7,10 @@ import {
 	FileType,
 	WatchChangesChannel,
 	DriveChanges,
+	DriveType,
 } from '../../types/global.types';
 import { IDriveStrategy } from './IDriveStrategy';
-import { bytesToGigabytes } from '../../helpers/helpers';
+import { bytesToGigabytes, normalizeBytes } from '../../helpers/helpers';
 
 type Credentials = {
 	client_id: string;
@@ -123,12 +124,47 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	getDriveFiles(
+	public async getDriveFiles(
 		token: string,
 		driveId: string,
 		folderId?: string
 	): Promise<Nullable<FileEntity[]>> {
-		throw new Error('Method not implemented.');
+		try {
+			const accessToken = this.getAccessToken(token);
+			const baseUrl = 'https://graph.microsoft.com/v1.0/users/me/drive';
+			const filesSuffix = folderId ? `/items/${folderId}/children` : '/root/children';
+			const url = `${baseUrl}${filesSuffix}`;
+
+			const res = await fetch(url, {
+				method: 'GET',
+				headers: {
+					Authorization: 'Bearer ' + accessToken,
+					'Content-Type': 'application/json',
+				},
+			});
+
+			const filesData = await res.json();
+
+			if (filesData.value.length === 0) return [];
+
+			const fileIds = filesData.value.map((file: OneDriveFile) => file.id);
+
+			const driveEmail = await this.getUserDriveEmail(token);
+
+			const sharedLinks = await this.getSharedLinks(accessToken, fileIds);
+			const files = this.mapToUniversalFileEntityFormat(
+				filesData.value,
+				driveEmail,
+				driveId,
+				sharedLinks
+			);
+			return files;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('getDriveFiles', { error: err.message, stack: err.stack });
+			}
+			return null;
+		}
 	}
 
 	deleteFile(token: string, fileId: string): Promise<boolean> {
@@ -193,6 +229,107 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		const parsedToken = JSON.parse(token) as OneDriveToken;
 		return parsedToken.access_token;
 	}
+
+	private mapToUniversalFileEntityFormat(
+		files: OneDriveFile[],
+		driveEmail: string,
+		driveId: string,
+		sharedLinksMap: Nullable<SharedLinksMap>
+	): FileEntity[] {
+		const fileEntities: FileEntity[] = files.map(file => {
+			const fileName = file.name;
+			const fileType = file.folder ? FileType.Folder : FileType.File;
+			const size = fileType === FileType.File ? normalizeBytes('' + file.size) : '';
+			const normalizedDate = file.createdDateTime?.substring(0, 10) ?? '';
+			const extension =
+				fileType === FileType.File
+					? fileName.substring(fileName.lastIndexOf('.') + 1)
+					: '-';
+
+			const sharedLink = sharedLinksMap?.[file.id] ?? null;
+			const sizeBytes = file.size ?? 0;
+
+			return {
+				id: file.id ?? '',
+				name: file.name ?? '-',
+				drive: DriveType.OneDrive,
+				driveId: driveId,
+				email: driveEmail,
+				type: fileType,
+				size: size,
+				date: normalizedDate,
+				extension: extension,
+				sharedLink,
+				sizeBytes,
+			};
+		});
+
+		return fileEntities;
+	}
+
+	private async getSharedLinks(
+		accessToken: string,
+		fileIds: string[]
+	): Promise<Nullable<SharedLinksMap>> {
+		try {
+			const idToFileId: Record<string, string> = {};
+
+			const batchRequests = fileIds.map((id, index) => {
+				const requestId = (index + 1).toString();
+				idToFileId[requestId] = id;
+
+				return {
+					id: requestId,
+					method: 'GET',
+					url: `/me/drive/items/${id}/permissions`,
+				};
+			});
+
+			const response = await fetch('https://graph.microsoft.com/v1.0/$batch', {
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ requests: batchRequests }),
+			});
+
+			const data: GraphBatchResponse = await response.json();
+			const links = data.responses.map((res, i: number) => {
+				if (res.status === 200) {
+					const publicLink = res.body.value.find(
+						p => p.link && p.link.scope === 'anonymous'
+					);
+					const fileId = idToFileId[res.id];
+
+					return {
+						fileId,
+						publicLink: publicLink?.link?.webUrl || null,
+					};
+				} else {
+					return {
+						fileId: fileIds[i],
+						error: `Failed with status ${res.status}`,
+					};
+				}
+			});
+
+			const sharedLinks: SharedLinksMap = {};
+
+			links.forEach(link => {
+				if (link.publicLink) {
+					sharedLinks[link.fileId] = link.publicLink;
+				}
+			});
+
+			return sharedLinks;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('getSharedLinks', { error: err.message, stack: err.stack });
+			}
+			return null;
+		}
+	}
 }
 
 type OneDriveToken = {
@@ -202,4 +339,26 @@ type OneDriveToken = {
 	refresh_token: string;
 	scope: string;
 	user_id: string;
+};
+
+type OneDriveFile = {
+	'@microsoft.graph.downloadUrl': string;
+	id: string;
+	name: string;
+	size: number;
+	file: boolean;
+	createdDateTime: string;
+	lastModifiedDateTime: string;
+	folder: unknown;
+};
+
+type SharedLinksMap = Record<string, string>;
+type GraphBatchResponse = {
+	responses: Array<{
+		'@odata.context': string;
+		id: string;
+		status: number;
+		headers: Record<string, string>;
+		body: { value: Array<{ link?: { webUrl: string; scope: string } }> };
+	}>;
 };
