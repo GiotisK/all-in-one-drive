@@ -11,6 +11,8 @@ import {
 } from '../../types/global.types';
 import { IDriveStrategy } from './IDriveStrategy';
 import { bytesToGigabytes, normalizeBytes } from '../../helpers/helpers';
+import DatabaseService from '../database/DatabaseFactory';
+import EncryptionService from '../encryption/encryption.service';
 
 type Credentials = {
 	client_id: string;
@@ -49,7 +51,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	public async generateOAuth2token(authCode: string, _driveId: string): Promise<string> {
+	public async generateOAuth2token(authCode: string, driveId: string): Promise<string> {
 		try {
 			const res = await fetch('https://login.live.com/oauth20_token.srf', {
 				method: 'POST',
@@ -61,7 +63,9 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 			const token: OneDriveToken = await res.json();
 
-			return JSON.stringify(token);
+			const extendedOneDriveToken = this.getExtendedOneDriveToken(token, driveId);
+
+			return JSON.stringify(extendedOneDriveToken);
 		} catch (err) {
 			if (err instanceof Error) {
 				oneDriveLogger('generateOAuth2token', { error: err.message, stack: err.stack });
@@ -73,7 +77,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 	public async getUserDriveEmail(token: string): Promise<string> {
 		try {
-			const accessToken = this.getAccessToken(token);
+			const accessToken = await this.getAccessToken(token);
 			const res = await fetch('https://graph.microsoft.com/v1.0/users/me', {
 				method: 'GET',
 				headers: {
@@ -96,7 +100,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 	public async getDriveQuota(token: string): Promise<Nullable<DriveQuota>> {
 		try {
-			const accessToken = this.getAccessToken(token);
+			const accessToken = await this.getAccessToken(token);
 			const res = await fetch('https://graph.microsoft.com/v1.0/users/me/drives', {
 				method: 'GET',
 				headers: {
@@ -130,7 +134,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		folderId?: string
 	): Promise<Nullable<FileEntity[]>> {
 		try {
-			const accessToken = this.getAccessToken(token);
+			const accessToken = await this.getAccessToken(token);
 			const baseUrl = 'https://graph.microsoft.com/v1.0/users/me/drive';
 			const filesSuffix = folderId ? `/items/${folderId}/children` : '/root/children';
 			const url = `${baseUrl}${filesSuffix}`;
@@ -225,9 +229,18 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		throw new Error('Method not implemented.');
 	}
 
-	private getAccessToken(token: string): string {
-		const parsedToken = JSON.parse(token) as OneDriveToken;
-		return parsedToken.access_token;
+	private async getAccessToken(token: string): Promise<string> {
+		const oldParsedToken = JSON.parse(token) as ExtendedOneDriveToken;
+
+		if (oldParsedToken.expires_in < Date.now()) {
+			oneDriveLogger('getAccessToken: Onedrive token expired', undefined, 'info');
+
+			const newToken = await this.refreshToken(oldParsedToken);
+
+			return newToken ? newToken.access_token : oldParsedToken.access_token;
+		}
+
+		return oldParsedToken.access_token;
 	}
 
 	private mapToUniversalFileEntityFormat(
@@ -330,6 +343,58 @@ export default class OneDriveStrategy implements IDriveStrategy {
 			return null;
 		}
 	}
+
+	private async refreshToken(
+		oldToken: ExtendedOneDriveToken
+	): Promise<Nullable<ExtendedOneDriveToken>> {
+		try {
+			const url = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
+
+			const params = new URLSearchParams();
+			params.append('client_id', this.clientId);
+			params.append('client_secret', this.clientSecret);
+			params.append('refresh_token', oldToken.refresh_token);
+			params.append('grant_type', 'refresh_token');
+			params.append('redirect_uri', this.redirectUri);
+
+			const res = await fetch(url, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: params,
+			});
+
+			const newToken: OneDriveToken = await res.json();
+
+			if (res.status === 200) {
+				const extendedOneDriveToken = this.getExtendedOneDriveToken(
+					newToken,
+					oldToken.driveId
+				);
+
+				const encryptedTokenData = EncryptionService.encrypt(
+					JSON.stringify(extendedOneDriveToken)
+				);
+
+				DatabaseService.updateToken(oldToken.driveId, encryptedTokenData);
+
+				return extendedOneDriveToken;
+			} else {
+				oneDriveLogger('refreshToken: Failed to refresh token');
+				return null;
+			}
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('refreshToken', { error: err.message, stack: err.stack });
+			}
+			return null;
+		}
+	}
+
+	private getExtendedOneDriveToken(token: OneDriveToken, driveId: string): ExtendedOneDriveToken {
+		return { ...token, driveId, expires_in: Date.now() + token.expires_in * 1000 };
+	}
 }
 
 type OneDriveToken = {
@@ -340,6 +405,8 @@ type OneDriveToken = {
 	scope: string;
 	user_id: string;
 };
+
+type ExtendedOneDriveToken = OneDriveToken & { driveId: string };
 
 type OneDriveFile = {
 	'@microsoft.graph.downloadUrl': string;
