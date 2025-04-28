@@ -1,4 +1,3 @@
-import { drive } from '@googleapis/drive';
 import { oneDriveLogger } from '../../logger/logger';
 import {
 	Nullable,
@@ -8,6 +7,7 @@ import {
 	WatchChangesChannel,
 	DriveChanges,
 	DriveType,
+	Status,
 } from '../../types/global.types';
 import { IDriveStrategy } from './IDriveStrategy';
 import { bytesToGigabytes, normalizeBytes } from '../../helpers/helpers';
@@ -171,20 +171,116 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	deleteFile(token: string, fileId: string): Promise<boolean> {
+	public async deleteFile(token: string, fileId: string): Promise<boolean> {
+		try {
+			const accessToken = await this.getAccessToken(token);
+			const res = await fetch(
+				'https://graph.microsoft.com/v1.0/users/me/drive/items/' + fileId,
+				{
+					method: 'DELETE',
+					headers: {
+						Authorization: 'Bearer ' + accessToken,
+					},
+				}
+			);
+
+			return res.ok;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('deleteFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
+			return false;
+		}
+	}
+
+	public async renameFile(token: string, fileId: string, name: string): Promise<boolean> {
 		throw new Error('Method not implemented.');
 	}
 
-	renameFile(token: string, fileId: string, name: string): Promise<boolean> {
-		throw new Error('Method not implemented.');
+	public async unshareFile(token: string, fileId: string): Promise<boolean> {
+		try {
+			const accessToken = await this.getAccessToken(token);
+
+			const getPermissionRes = await fetch(
+				`https://graph.microsoft.com/v1.0/users/me/drive/items/${fileId}/permissions`,
+				{
+					method: 'GET',
+					headers: {
+						Authorization: 'Bearer ' + accessToken,
+					},
+				}
+			);
+
+			if (!getPermissionRes.ok) return false;
+
+			const permissionData: PermissionData = await getPermissionRes.json();
+
+			const permission = permissionData.value.find(p => p.link?.scope === 'anonymous');
+
+			if (!permission) return false;
+
+			const deletePermissionRes = await fetch(
+				`https://graph.microsoft.com/v1.0/users/me/drive/items/${fileId}/permissions/${permission.id}`,
+				{
+					method: 'DELETE',
+					headers: {
+						Authorization: 'Bearer ' + accessToken,
+					},
+				}
+			);
+
+			return deletePermissionRes.ok;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('shareFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
+			return false;
+		}
 	}
 
-	shareFile(token: string, fileId: string): Promise<Nullable<string>> {
-		throw new Error('Method not implemented.');
-	}
+	public async shareFile(token: string, fileId: string): Promise<Nullable<string>> {
+		try {
+			const accessToken = await this.getAccessToken(token);
 
-	unshareFile(token: string, fileId: string): Promise<boolean> {
-		throw new Error('Method not implemented.');
+			const res = await fetch(
+				'https://graph.microsoft.com/v1.0/users/me/drive/items/' + fileId + '/createLink',
+				{
+					method: 'POST',
+					headers: {
+						Authorization: 'Bearer ' + accessToken,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						type: 'view',
+						scope: 'anonymous',
+					}),
+				}
+			);
+
+			if (!res.ok) return null;
+
+			const linkData: LinkData = await res.json();
+			const url = linkData.link?.webUrl;
+
+			return url ?? null;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('shareFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
+			return null;
+		}
 	}
 
 	createFile(
@@ -309,7 +405,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 			const data: GraphBatchResponse = await response.json();
 			const links = data.responses.map((res, i: number) => {
-				if (res.status === 200) {
+				if (res.status === Status.OK) {
 					const publicLink = res.body.value.find(
 						p => p.link && p.link.scope === 'anonymous'
 					);
@@ -367,7 +463,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 			const newToken: OneDriveToken = await res.json();
 
-			if (res.status === 200) {
+			if (res.ok) {
 				const extendedOneDriveToken = this.getExtendedOneDriveToken(
 					newToken,
 					oldToken.driveId
@@ -427,5 +523,23 @@ type GraphBatchResponse = {
 		status: number;
 		headers: Record<string, string>;
 		body: { value: Array<{ link?: { webUrl: string; scope: string } }> };
+	}>;
+};
+
+type LinkData = {
+	link?: {
+		webUrl: string;
+		scope: string;
+	};
+};
+
+type PermissionData = {
+	value: Array<{
+		id: string;
+		link?: {
+			type: string;
+			scope: string;
+			webUrl: string;
+		};
 	}>;
 };
