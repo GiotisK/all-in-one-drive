@@ -24,8 +24,8 @@ const CheckboxInput = styled.input`
 		content: '';
 		position: relative;
 		display: block;
-		width: 1em;
-		height: 1em;
+		width: 0.7em;
+		height: 0.7em;
 		border: 2px solid #ccc;
 		background: #fff;
 		border-radius: 4px;
@@ -35,10 +35,10 @@ const CheckboxInput = styled.input`
 	/* the tick element */
 	&:not(:checked) + ${Label}:after, &:checked + ${Label}:after {
 		content: '\\2713\\0020';
-		top: 0.3em;
-		left: 0.2em;
+		top: 0.1em;
+		left: 0.1em;
 		position: absolute;
-		font-size: 1.1em;
+		font-size: 1em;
 		line-height: 0.8;
 		color: #09ad7e;
 		transition: all 0.2s;

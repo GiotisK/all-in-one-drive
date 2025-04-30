@@ -8,6 +8,7 @@ const Container = styled.div`
 	display: flex;
 	flex-direction: column;
 	border-bottom: 0.5px solid ${({ theme }) => theme.colors.border};
+	margin-bottom: 10px;
 `;
 
 const FirstRow = styled.div`

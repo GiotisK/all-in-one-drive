@@ -54,7 +54,6 @@ export const DrivePage = (): JSX.Element => {
 			<InnerContainer>
 				<DriveSelectionProvider>
 					{sideMenuVisible && !isInsideFolder && <SideMenu />}
-
 					<DropZone>
 						<RowsScrollview ref={scrollViewRef}>
 							<TitleBanner
@@ -66,6 +65,7 @@ export const DrivePage = (): JSX.Element => {
 									setSideMenuVisible(prev => !prev);
 								}}
 							/>
+
 							<MenuBanner />
 							<LoadingBar />
 							<FilesList />
