@@ -283,13 +283,74 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	createFile(
+	public async createFile(
 		token: string,
 		fileType: FileType,
 		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>> {
-		throw new Error('Method not implemented.');
+		try {
+			const accessToken = await this.getAccessToken(token);
+			let url = '';
+			if (parentFolderId) {
+				url =
+					'https://graph.microsoft.com/v1.0/users/me/drive/items/' +
+					parentFolderId +
+					'/children';
+			} else {
+				url = 'https://graph.microsoft.com/v1.0/users/me/drive/root/children';
+			}
+
+			const payload =
+				fileType === 'folder'
+					? {
+							name: 'New Folder',
+							folder: {},
+							'@microsoft.graph.conflictBehavior': 'rename',
+					  }
+					: {
+							name: 'NewFile.txt',
+							file: {},
+							'@microsoft.graph.conflictBehavior': 'rename',
+					  };
+
+			const res = await fetch(url, {
+				method: 'POST',
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify(payload),
+			});
+
+			if (!res.ok) {
+				oneDriveLogger('createFile', {
+					error: res.statusText,
+				});
+			}
+
+			const data: OneDriveFile = await res.json();
+
+			const driveEmail = await this.getUserDriveEmail(token);
+
+			const fileEntities = this.mapToUniversalFileEntityFormat(
+				[data],
+				driveEmail,
+				driveId,
+				{}
+			);
+
+			return fileEntities.length > 0 ? fileEntities[0] : null;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('createFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
+			return null;
+		}
 	}
 
 	downloadFile(token: string, fileId: string, driveId: string): Promise<boolean> {
