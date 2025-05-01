@@ -51,21 +51,17 @@ export const DrivePage = (): JSX.Element => {
 
 	return isUserAuthenticated ? (
 		<OuterContainer>
+			<TitleBanner
+				onBurgerMenuClick={() => {
+					localStorage.setItem('sideMenuVisible', String(!sideMenuVisible));
+					setSideMenuVisible(prev => !prev);
+				}}
+			/>
 			<InnerContainer>
 				<DriveSelectionProvider>
 					{sideMenuVisible && !isInsideFolder && <SideMenu />}
 					<DropZone>
 						<RowsScrollview ref={scrollViewRef}>
-							<TitleBanner
-								onBurgerMenuClick={() => {
-									localStorage.setItem(
-										'sideMenuVisible',
-										String(!sideMenuVisible)
-									);
-									setSideMenuVisible(prev => !prev);
-								}}
-							/>
-
 							<MenuBanner />
 							<LoadingBar />
 							<FilesList />
