@@ -432,42 +432,6 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	private async downloadFileInternal(
-		accessToken: string,
-		fileId: string
-	): Promise<Nullable<Readable>> {
-		try {
-			const res = await fetch(
-				'https://graph.microsoft.com/v1.0/users/me/drive/items/' + fileId + '/content',
-				{
-					method: 'GET',
-					headers: {
-						Authorization: 'Bearer ' + accessToken,
-					},
-				}
-			);
-
-			const readableStream = res.body;
-
-			if (!readableStream) {
-				return null;
-			}
-
-			const nodeReadable = FilesystemService.toNodeReadable(res.body);
-
-			return nodeReadable;
-		} catch (err) {
-			if (err instanceof Error) {
-				oneDriveLogger('downloadFile', {
-					error: err.message,
-					stack: err.stack,
-				});
-			}
-
-			return null;
-		}
-	}
-
 	public async uploadFile(
 		token: string,
 		file: Express.Multer.File,
@@ -729,6 +693,42 @@ export default class OneDriveStrategy implements IDriveStrategy {
 			if (err instanceof Error) {
 				oneDriveLogger('getFileMetadata', { error: err.message, stack: err.stack });
 			}
+			return null;
+		}
+	}
+
+	private async downloadFileInternal(
+		accessToken: string,
+		fileId: string
+	): Promise<Nullable<Readable>> {
+		try {
+			const res = await fetch(
+				'https://graph.microsoft.com/v1.0/users/me/drive/items/' + fileId + '/content',
+				{
+					method: 'GET',
+					headers: {
+						Authorization: 'Bearer ' + accessToken,
+					},
+				}
+			);
+
+			const readableStream = res.body;
+
+			if (!readableStream) {
+				return null;
+			}
+
+			const nodeReadable = FilesystemService.toNodeReadable(res.body);
+
+			return nodeReadable;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('downloadFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
 			return null;
 		}
 	}
