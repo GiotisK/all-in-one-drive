@@ -198,7 +198,32 @@ export default class OneDriveStrategy implements IDriveStrategy {
 	}
 
 	public async renameFile(token: string, fileId: string, name: string): Promise<boolean> {
-		throw new Error('Method not implemented.');
+		try {
+			const accessToken = await this.getAccessToken(token);
+
+			const res = await fetch(
+				'https://graph.microsoft.com/v1.0/users/me/drive/items/' + fileId,
+				{
+					method: 'PATCH',
+					headers: {
+						Authorization: 'Bearer ' + accessToken,
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({ name }),
+				}
+			);
+
+			return res.ok;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('renameFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
+			return false;
+		}
 	}
 
 	public async unshareFile(token: string, fileId: string): Promise<boolean> {
