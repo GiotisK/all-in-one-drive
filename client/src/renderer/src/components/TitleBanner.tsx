@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { useTheme } from 'styled-components';
 import { Loader } from './Loader';
 import { UserMenu } from './UserMenu';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
@@ -8,6 +8,7 @@ import { useAppSelector } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
 import { useIsInsideFolder } from '../hooks/useIsInsideFolder';
+import { IconButton } from './IconButton';
 
 const BannerContainer = styled.div`
 	display: flex;
@@ -36,7 +37,7 @@ const LogoTitle = styled.p`
 	padding-left: 10px;
 	padding-top: 5px;
 	margin: 0;
-	margin-bottom: 3px;
+	margin-bottom: 5px;
 	font-size: 24px;
 	user-select: none;
 	cursor: pointer;
@@ -111,7 +112,9 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 	return (
 		<BannerContainer>
 			<LogoMenuContainer>
-				{!isInsideFolder && (
+				{isInsideFolder ? (
+					<BackButton />
+				) : (
 					<BurgerMenuButton onClick={props.onBurgerMenuClick}>
 						{createSvg(SvgNames.Burger, 24, 'white')}
 					</BurgerMenuButton>
@@ -135,5 +138,31 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 				{isAuthenticated && <UserMenu />}
 			</ToggleAndMenuContainer>
 		</BannerContainer>
+	);
+};
+
+const BackButtonContainer = styled.div`
+	user-select: none;
+	cursor: pointer;
+	align-self: center;
+`;
+
+const BackButton = () => {
+	const navigate = useNavigate();
+	const theme = useTheme();
+
+	const goBack = () => {
+		navigate(-1);
+	};
+
+	return (
+		<BackButtonContainer>
+			<IconButton
+				icon={SvgNames.Back}
+				size={20}
+				onClick={goBack}
+				color={theme?.colors.textPrimary}
+			/>
+		</BackButtonContainer>
 	);
 };

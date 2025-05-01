@@ -1,8 +1,4 @@
-import { styled, useTheme } from 'styled-components';
-import { SvgNames } from '../shared/utils/svg-utils';
-import { IconButton } from './IconButton';
-import { useNavigate } from 'react-router-dom';
-import { routes } from '../shared/constants/routes';
+import { styled } from 'styled-components';
 
 const Container = styled.div`
 	display: flex;
@@ -11,19 +7,9 @@ const Container = styled.div`
 	margin-bottom: 10px;
 `;
 
-const FirstRow = styled.div`
-	display: flex;
-	flex-direction: row;
-`;
-
 const SecondRow = styled.div`
 	display: flex;
 	flex-direction: row;
-`;
-
-const BackButtonContainer = styled.div`
-	user-select: none;
-	cursor: pointer;
 `;
 
 const TabTitle = styled.p`
@@ -41,11 +27,6 @@ enum Tab {
 }
 
 export const MenuBanner = () => {
-	const theme = useTheme();
-	const navigate = useNavigate();
-	const isUploading = false;
-	const shouldShowBackButton = location.pathname !== routes.drive;
-
 	const getTabWidth = (tab: Tab) => {
 		switch (tab) {
 			case Tab.Name:
@@ -59,29 +40,8 @@ export const MenuBanner = () => {
 		}
 	};
 
-	const goBack = () => {
-		navigate(-1);
-	};
-
 	return (
 		<Container>
-			<FirstRow>
-				{shouldShowBackButton && (
-					<BackButtonContainer
-						style={{
-							pointerEvents: isUploading ? 'none' : 'all',
-							cursor: isUploading ? 'default' : 'pointer',
-						}}
-					>
-						<IconButton
-							icon={SvgNames.Back}
-							size={23}
-							onClick={goBack}
-							color={theme?.colors.textPrimary}
-						/>
-					</BackButtonContainer>
-				)}
-			</FirstRow>
 			<SecondRow>
 				{Object.values(Tab).map((tab, index) => {
 					return (
