@@ -1,5 +1,5 @@
 import fs from 'fs';
-import internal from 'stream';
+import internal, { Readable } from 'stream';
 import open from 'open';
 import os from 'os';
 
@@ -43,6 +43,25 @@ class FileSystemService {
 				writeStream.end();
 				reject(null);
 			});
+		});
+	}
+
+	public toNodeReadable(webStream: ReadableStream) {
+		const reader = webStream.getReader();
+
+		return new Readable({
+			async read() {
+				try {
+					const { done, value } = await reader.read();
+					if (done) {
+						this.push(null); // No more data
+					} else {
+						this.push(Buffer.from(value)); // Push chunk
+					}
+				} catch (err) {
+					this.destroy(err as Error); // Emit error
+				}
+			},
 		});
 	}
 

@@ -13,6 +13,10 @@ import { IDriveStrategy } from './IDriveStrategy';
 import { bytesToGigabytes, normalizeBytes } from '../../helpers/helpers';
 import DatabaseService from '../database/DatabaseFactory';
 import EncryptionService from '../encryption/encryption.service';
+import FileProgressHelper from './helpers/FileProgressHelper';
+import FilesystemService from '../filesystem/filesystem.service';
+import fs from 'fs';
+import { Readable } from 'stream';
 
 type Credentials = {
 	client_id: string;
@@ -316,6 +320,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 	): Promise<Nullable<FileEntity>> {
 		try {
 			const accessToken = await this.getAccessToken(token);
+
 			let url = '';
 			if (parentFolderId) {
 				url =
@@ -378,21 +383,93 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	downloadFile(token: string, fileId: string, driveId: string): Promise<boolean> {
-		throw new Error('Method not implemented.');
+	public async downloadFile(token: string, fileId: string, driveId: string): Promise<boolean> {
+		try {
+			const accessToken = await this.getAccessToken(token);
+
+			const metadata = await this.getFileMetadata(accessToken, fileId);
+
+			if (!metadata) {
+				return false;
+			}
+
+			const res = await fetch(
+				'https://graph.microsoft.com/v1.0/users/me/drive/items/' + fileId + '/content',
+				{
+					method: 'GET',
+					headers: {
+						Authorization: 'Bearer ' + accessToken,
+					},
+				}
+			);
+
+			const readableStream = res.body;
+
+			if (!readableStream) {
+				return false;
+			}
+
+			const nodeReadable = FilesystemService.toNodeReadable(res.body);
+
+			FileProgressHelper.sendFileProgressEvent(nodeReadable, 'download', {
+				driveId,
+				fileId,
+				name: metadata.name,
+				size: metadata.size,
+			});
+
+			FilesystemService.saveFileToDownloads(nodeReadable, metadata.name);
+
+			return res.ok;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('downloadFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
+			return false;
+		}
 	}
 
-	uploadFile(
+	public async uploadFile(
 		token: string,
 		file: Express.Multer.File,
 		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>> {
-		throw new Error('Method not implemented.');
+		try {
+			const accessToken = this.getAccessToken(token);
+
+			return null;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('uploadFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
+			return null;
+		}
 	}
 
-	openFile(token: string, fileId: string): Promise<Nullable<string>> {
-		throw new Error('Method not implemented.');
+	public async openFile(token: string, fileId: string): Promise<Nullable<string>> {
+		try {
+			const accessToken = this.getAccessToken(token);
+
+			return '';
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('openFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
+			return null;
+		}
 	}
 
 	subscribeForChanges(token: string, driveId: string): Promise<WatchChangesChannel | null> {
@@ -576,6 +653,31 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 	private getExtendedOneDriveToken(token: OneDriveToken, driveId: string): ExtendedOneDriveToken {
 		return { ...token, driveId, expires_in: Date.now() + token.expires_in * 1000 };
+	}
+
+	private async getFileMetadata(token: string, fileId: string): Promise<Nullable<OneDriveFile>> {
+		try {
+			const response = await fetch(
+				`https://graph.microsoft.com/v1.0/me/drive/items/${fileId}`,
+				{
+					method: 'GET',
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+				}
+			);
+
+			if (!response.ok) return null;
+
+			const data: OneDriveFile = await response.json();
+
+			return data;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('getFileMetadata', { error: err.message, stack: err.stack });
+			}
+			return null;
+		}
 	}
 }
 
