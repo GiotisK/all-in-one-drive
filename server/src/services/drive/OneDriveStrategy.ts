@@ -387,13 +387,13 @@ export default class OneDriveStrategy implements IDriveStrategy {
 	public async downloadFile(token: string, fileId: string, driveId: string): Promise<boolean> {
 		try {
 			const accessToken = await this.getAccessToken(token);
-
 			const metadata = await this.getFileMetadata(accessToken, fileId);
 
 			if (!metadata) {
 				oneDriveLogger('downloadFile', {
 					error: 'File metadatanot found',
 				});
+
 				return false;
 			}
 
@@ -401,9 +401,42 @@ export default class OneDriveStrategy implements IDriveStrategy {
 				oneDriveLogger('downloadFile', {
 					error: 'Cannot download a folder',
 				});
+
+				return false;
+			}
+			const readable = await this.downloadFileInternal(accessToken, fileId);
+
+			if (!readable) {
 				return false;
 			}
 
+			FileProgressHelper.sendFileProgressEvent(readable, 'download', {
+				driveId,
+				fileId,
+				name: metadata.name,
+				size: metadata.size,
+			});
+
+			FilesystemService.saveFileToDownloads(readable, metadata.name);
+
+			return true;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('downloadFile', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+
+			return false;
+		}
+	}
+
+	private async downloadFileInternal(
+		accessToken: string,
+		fileId: string
+	): Promise<Nullable<Readable>> {
+		try {
 			const res = await fetch(
 				'https://graph.microsoft.com/v1.0/users/me/drive/items/' + fileId + '/content',
 				{
@@ -417,21 +450,12 @@ export default class OneDriveStrategy implements IDriveStrategy {
 			const readableStream = res.body;
 
 			if (!readableStream) {
-				return false;
+				return null;
 			}
 
 			const nodeReadable = FilesystemService.toNodeReadable(res.body);
 
-			FileProgressHelper.sendFileProgressEvent(nodeReadable, 'download', {
-				driveId,
-				fileId,
-				name: metadata.name,
-				size: metadata.size,
-			});
-
-			FilesystemService.saveFileToDownloads(nodeReadable, metadata.name);
-
-			return res.ok;
+			return nodeReadable;
 		} catch (err) {
 			if (err instanceof Error) {
 				oneDriveLogger('downloadFile', {
@@ -440,7 +464,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 				});
 			}
 
-			return false;
+			return null;
 		}
 	}
 
@@ -468,9 +492,27 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 	public async openFile(token: string, fileId: string): Promise<Nullable<string>> {
 		try {
-			const accessToken = this.getAccessToken(token);
+			const accessToken = await this.getAccessToken(token);
 
-			return '';
+			const metadata = await this.getFileMetadata(accessToken, fileId);
+
+			if (!metadata) {
+				oneDriveLogger('openFile', {
+					error: 'File metadata not found',
+				});
+
+				return null;
+			}
+
+			const readable = await this.downloadFileInternal(accessToken, fileId);
+
+			if (!readable) {
+				return null;
+			}
+
+			const path = await FilesystemService.saveFileToTemp(readable, metadata.name);
+
+			return path;
 		} catch (err) {
 			if (err instanceof Error) {
 				oneDriveLogger('openFile', {

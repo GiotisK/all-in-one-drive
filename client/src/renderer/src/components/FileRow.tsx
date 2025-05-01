@@ -132,9 +132,12 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	const menuTriggerRef = useRef(null);
 
 	const isDownloadFolderDisabled =
-		file.drive === DriveType.GoogleDrive || file.drive === DriveType.OneDrive;
+		(file.drive === DriveType.GoogleDrive || file.drive === DriveType.OneDrive) &&
+		file.type === FileType.Folder;
+
 	const { driveId, id, type, extension, date, drive, email, name, size, sharedLink, sizeBytes } =
 		file;
+
 	const isGoogleDriveFile = isNativeGoogleDriveFile(extension);
 
 	const { data: formats = [], isLoading: exportFormatsLoading } =
