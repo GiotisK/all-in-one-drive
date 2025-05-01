@@ -131,6 +131,8 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 
+	const isDownloadFolderDisabled =
+		file.drive === DriveType.GoogleDrive || file.drive === DriveType.OneDrive;
 	const { driveId, id, type, extension, date, drive, email, name, size, sharedLink, sizeBytes } =
 		file;
 	const isGoogleDriveFile = isNativeGoogleDriveFile(extension);
@@ -195,7 +197,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 	};
 
 	const onDownloadClick = () => {
-		if (file.drive === DriveType.GoogleDrive && file.type === FileType.Folder) {
+		if (isDownloadFolderDisabled) {
 			toast.error('Cannot download folder from Google Drive');
 			return;
 		}
@@ -218,7 +220,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 		{
 			text: isGoogleDriveFile ? 'Export' : 'Download',
 			onClick: isGoogleDriveFile ? onExportClick : onDownloadClick,
-			disabled: exportFormatsLoading,
+			disabled: exportFormatsLoading || isDownloadFolderDisabled,
 		},
 		{
 			text: 'Rename',

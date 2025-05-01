@@ -160,6 +160,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 			const driveEmail = await this.getUserDriveEmail(token);
 
 			const sharedLinks = await this.getSharedLinks(accessToken, fileIds);
+
 			const files = this.mapToUniversalFileEntityFormat(
 				filesData.value,
 				driveEmail,
@@ -390,6 +391,16 @@ export default class OneDriveStrategy implements IDriveStrategy {
 			const metadata = await this.getFileMetadata(accessToken, fileId);
 
 			if (!metadata) {
+				oneDriveLogger('downloadFile', {
+					error: 'File metadatanot found',
+				});
+				return false;
+			}
+
+			if (metadata.folder) {
+				oneDriveLogger('downloadFile', {
+					error: 'Cannot download a folder',
+				});
 				return false;
 			}
 
@@ -570,7 +581,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 			const links = data.responses.map((res, i: number) => {
 				if (res.status === Status.OK) {
 					const publicLink = res.body.value.find(
-						p => p.link && p.link.scope === 'anonymous'
+						p => p.link && !p.inheritedFrom && p.link.scope === 'anonymous'
 					);
 					const fileId = idToFileId[res.id];
 
@@ -710,7 +721,9 @@ type GraphBatchResponse = {
 		id: string;
 		status: number;
 		headers: Record<string, string>;
-		body: { value: Array<{ link?: { webUrl: string; scope: string } }> };
+		body: {
+			value: Array<{ inheritedFrom?: unknown; link?: { webUrl: string; scope: string } }>;
+		};
 	}>;
 };
 
