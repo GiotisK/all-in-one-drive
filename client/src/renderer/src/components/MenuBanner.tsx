@@ -14,6 +14,7 @@ const SecondRow = styled.div`
 
 const TabTitle = styled.p`
 	margin: 0;
+	margin-left: 5%;
 	color: ${({ theme }) => theme.colors.textPrimary};
 	font-size: 16px;
 	user-select: none;

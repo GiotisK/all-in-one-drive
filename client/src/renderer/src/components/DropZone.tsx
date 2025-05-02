@@ -63,8 +63,6 @@ export const DropZone = ({ children }: PropsWithChildren) => {
 	const [uploadDriveFile] = useUploadDriveFileMutation();
 	const dispatch = useAppDispatch();
 
-	let storedTarget: EventTarget | null = null;
-
 	const handleDragStart = (event: React.DragEvent<HTMLDivElement>) => {
 		event.preventDefault();
 		event.stopPropagation();
@@ -79,18 +77,15 @@ export const DropZone = ({ children }: PropsWithChildren) => {
 		event.preventDefault();
 		event.stopPropagation();
 		if (event.currentTarget.id === ContainerId) {
-			storedTarget = event.currentTarget;
 			setIsDragging(true);
 		}
 	};
 
-	const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
-		event.stopPropagation();
-		event.preventDefault();
-		if (storedTarget === event.target) {
-			storedTarget = null;
-			setIsDragging(false);
+	const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+		if (e.relatedTarget && e.currentTarget.contains(e.relatedTarget as Node)) {
+			return;
 		}
+		setIsDragging(false);
 	};
 
 	const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
