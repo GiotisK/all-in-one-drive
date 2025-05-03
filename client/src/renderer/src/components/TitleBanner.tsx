@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
 import { useIsInsideFolder } from '../hooks/useIsInsideFolder';
 import { IconButton } from './IconButton';
+import { useConnectDriveMutation, useGetVirtualQuotaQuery } from '../redux/rtk/driveApi';
 
 const BannerContainer = styled.div`
 	display: flex;
@@ -97,13 +98,17 @@ interface TitleBannerProps {
 }
 
 export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
-	const navigate = useNavigate();
+	const isVirtualDriveEnabled = useAppSelector(state => state.settings.isVirtualDriveEnabled);
 	const isAuthenticated = useAppSelector(state => state.user.isAuthenticated);
+	const navigate = useNavigate();
 	const isInsideFolder = useIsInsideFolder();
-
-	const virtualQuotaLoading = false;
-	const virtualQuotaStr = '5 / 5 GB';
-	const virtualDriveEnabled = false;
+	const [_connectDrive, { isLoading: isConnectDriveLoading }] = useConnectDriveMutation({
+		fixedCacheKey: 'connectDrive',
+	});
+	const { isLoading: virtualQuotaLoading, data: virtualQuota } = useGetVirtualQuotaQuery(
+		undefined,
+		{ skip: isConnectDriveLoading }
+	);
 
 	const navigateToDrivePath = () => {
 		navigate(routes.drive);
@@ -121,13 +126,13 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 				)}
 				<LogoTitle onClick={navigateToDrivePath}>aio drive</LogoTitle>
 			</LogoMenuContainer>
-			{virtualDriveEnabled && (
+			{isVirtualDriveEnabled && (
 				<QuotaLoaderContainer>
 					<QuotaStringLoader>Virtual Quota:</QuotaStringLoader>
 					{virtualQuotaLoading ? (
 						<Loader size={10} />
 					) : (
-						<QuotaGigabytes>{virtualQuotaStr}</QuotaGigabytes>
+						<QuotaGigabytes>{`${virtualQuota?.used} / ${virtualQuota?.total}GB`}</QuotaGigabytes>
 					)}
 				</QuotaLoaderContainer>
 			)}

@@ -6,7 +6,10 @@ import { useConnectDriveMutation } from '../redux/rtk/driveApi';
 export const useHandleAuthCodeFromUrl = () => {
 	const location = useLocation();
 	const [params] = useSearchParams();
-	const [connectDrive] = useConnectDriveMutation();
+	const [connectDrive] = useConnectDriveMutation({
+		fixedCacheKey: 'connectDrive',
+	});
+
 	const hasRun = useRef(false);
 
 	useEffect(() => {

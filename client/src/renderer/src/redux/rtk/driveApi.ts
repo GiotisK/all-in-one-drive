@@ -2,6 +2,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {
 	DriveChanges,
 	DriveEntity,
+	DriveQuota,
 	DriveType,
 	FileEntity,
 	FileType,
@@ -35,7 +36,7 @@ export const driveApi = createApi({
 		}),
 		deleteDrive: builder.mutation<void, { driveId: string }>({
 			query: ({ driveId }) => ({ url: `/${driveId}`, method: 'DELETE' }),
-			invalidatesTags: ['Drives'],
+			invalidatesTags: ['Drives', 'VirtualQuota'],
 		}),
 		getGoogleDriveFileExportFormats: builder.query<
 			string[],
@@ -127,7 +128,7 @@ export const driveApi = createApi({
 				method: 'POST',
 				body: { authCode },
 			}),
-			invalidatesTags: ['Files', 'Drives'],
+			invalidatesTags: ['Files', 'Drives', 'VirtualQuota'],
 		}),
 		watchDriveChanges: builder.query<WatchChangesChannel[], { driveIds: string[] }>({
 			query: ({ driveIds }) => ({
@@ -170,7 +171,6 @@ export const driveApi = createApi({
 							}
 						)
 					);
-
 					dispatch(
 						driveApi.util.updateQueryData(
 							'watchDriveChanges',
@@ -191,15 +191,18 @@ export const driveApi = createApi({
 				}
 			},
 		}),
+		getVirtualQuota: builder.query<DriveQuota, void>({
+			query: () => ({ url: 'virtual/quota', method: 'GET' }),
+			providesTags: ['VirtualQuota'],
+		}),
 	}),
-	tagTypes: ['Drives', 'Files'],
+	tagTypes: ['Drives', 'Files', 'VirtualQuota'],
 });
 
 export const {
 	useGetDriveRootFilesQuery,
 	useGetDriveFolderFilesQuery,
 	useGetDrivesQuery,
-	useLazyGetDrivesQuery,
 	useDeleteDriveMutation,
 	useDeleteFileMutation,
 	useGetGoogleDriveFileExportFormatsQuery,
@@ -214,4 +217,5 @@ export const {
 	useGetAuthLinkQuery,
 	useWatchDriveChangesQuery,
 	useGetDriveChangesQuery,
+	useGetVirtualQuotaQuery,
 } = driveApi;

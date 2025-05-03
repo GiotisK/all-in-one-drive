@@ -1,4 +1,4 @@
-import { generateUUID } from '../../../helpers/helpers';
+import { bytesToGigabytes, generateUUID } from '../../../helpers/helpers';
 import DatabaseService from '../../../services/database/DatabaseFactory';
 import { DriveDTO } from '../../../services/database/types';
 import EncryptionService from '../../../services/encryption/encryption.service';
@@ -10,6 +10,7 @@ import {
 	Nullable,
 	WatchChangesChannel,
 } from '../../../types/global.types';
+import { DriveQuotaBytes } from '../../../types/types';
 import { getDriveContextAndToken } from './drives.helpers';
 
 export class DrivesService {
@@ -59,7 +60,13 @@ export class DrivesService {
 			if (ctxAndToken) {
 				const { ctx, token } = ctxAndToken;
 				const quota = await ctx.getDriveQuota(token);
-				return quota;
+
+				if (quota === null) return null;
+
+				return {
+					used: bytesToGigabytes('' + quota?.used),
+					total: bytesToGigabytes('' + quota?.total),
+				};
 			}
 		}
 		return null;
@@ -70,7 +77,7 @@ export class DrivesService {
 
 		if (driveProperties) {
 			const driveEntities: DriveEntity[] = [];
-			const promiseArr: Promise<Nullable<DriveQuota>>[] = [];
+			const promiseArr: Promise<Nullable<DriveQuotaBytes>>[] = [];
 
 			try {
 				driveProperties.forEach(async properties => {
@@ -92,7 +99,10 @@ export class DrivesService {
 							id: id,
 							email,
 							type: driveType,
-							quota,
+							quota: {
+								used: bytesToGigabytes('' + quota?.used),
+								total: bytesToGigabytes('' + quota?.total),
+							},
 						});
 					}
 				});

@@ -1,11 +1,11 @@
 import {
 	DriveChanges,
-	DriveQuota,
 	FileEntity,
 	FileType,
 	Nullable,
 	WatchChangesChannel,
 } from '../../types/global.types';
+import { DriveQuotaBytes } from '../../types/types';
 import { IDriveStrategy } from './IDriveStrategy';
 
 export default class DriveContext {
@@ -31,7 +31,7 @@ export default class DriveContext {
 		return this.strategy.getUserDriveEmail(token);
 	}
 
-	public async getDriveQuota(token: string): Promise<Nullable<DriveQuota>> {
+	public async getDriveQuota(token: string): Promise<Nullable<DriveQuotaBytes>> {
 		return this.strategy.getDriveQuota(token);
 	}
 

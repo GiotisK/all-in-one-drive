@@ -1,17 +1,17 @@
 import {
 	FileEntity,
-	DriveQuota,
 	Nullable,
 	WatchChangesChannel,
 	DriveChanges,
 	FileType,
 } from '../../types/global.types';
+import { DriveQuotaBytes } from '../../types/types';
 
 export interface IDriveStrategy {
 	getAuthLink(): Promise<Nullable<string>>;
 	generateOAuth2token(authCode: string, driveId: string): Promise<string>;
 	getUserDriveEmail(token: string): Promise<string>;
-	getDriveQuota(token: string): Promise<Nullable<DriveQuota>>;
+	getDriveQuota(token: string): Promise<Nullable<DriveQuotaBytes>>;
 	getDriveFiles(
 		token: string,
 		driveId: string,

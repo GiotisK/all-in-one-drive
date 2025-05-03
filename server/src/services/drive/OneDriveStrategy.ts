@@ -1,7 +1,6 @@
 import { oneDriveLogger } from '../../logger/logger';
 import {
 	Nullable,
-	DriveQuota,
 	FileEntity,
 	FileType,
 	WatchChangesChannel,
@@ -15,10 +14,10 @@ import DatabaseService from '../database/DatabaseFactory';
 import EncryptionService from '../encryption/encryption.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
 import FilesystemService from '../filesystem/filesystem.service';
-import fs from 'fs';
 import fsPromises from 'fs/promises';
 import { Readable } from 'stream';
 import axios from 'axios';
+import { DriveQuotaBytes } from '../../types/types';
 
 type Credentials = {
 	client_id: string;
@@ -104,7 +103,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	public async getDriveQuota(token: string): Promise<Nullable<DriveQuota>> {
+	public async getDriveQuota(token: string): Promise<Nullable<DriveQuotaBytes>> {
 		try {
 			const accessToken = await this.getAccessToken(token);
 			const res = await fetch('https://graph.microsoft.com/v1.0/users/me/drives', {
@@ -119,8 +118,8 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 			if (driveInfo.value && driveInfo.value[0].quota) {
 				return {
-					total: bytesToGigabytes(driveInfo.value[0].quota.total),
-					used: bytesToGigabytes(driveInfo.value[0].quota.used),
+					total: driveInfo.value[0].quota.total,
+					used: driveInfo.value[0].quota.used,
 				};
 			}
 

@@ -5,6 +5,7 @@ import { openModal } from '../redux/slices/modal/modalSlice';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { useLogoutUserMutation } from '../redux/rtk/userApi';
 import { useOutsideClicker } from '../hooks/useOutsideClicker';
+import { toggleDriveMode } from '../redux/slices/settings/settingsSlice';
 
 const PopupMenuContainer = styled.div`
 	display: flex;
@@ -102,14 +103,13 @@ const SettingsText = styled.p`
 
 export const UserMenu = (): JSX.Element => {
 	const { email } = useAppSelector(state => state.user);
+	const isVirtualDriveEnabled = useAppSelector(state => state.settings.isVirtualDriveEnabled);
 	const dispatch = useAppDispatch();
 	const [menuVisible, setMenuVisible] = useState(false);
 	const menuRef = useRef(null);
 	const menuTriggerRef = useRef(null);
 	useOutsideClicker(menuRef, menuTriggerRef, () => setMenuVisible(false));
 	const [logoutUser] = useLogoutUserMutation();
-
-	const virtualDriveEnabled = true;
 
 	const getCapitalLetterFromUsername = () => {
 		return email.charAt(0).toUpperCase();
@@ -124,15 +124,21 @@ export const UserMenu = (): JSX.Element => {
 				},
 			},
 			{
+				title: isVirtualDriveEnabled
+					? 'Switch to all-in-one drive'
+					: 'Switch to virtual drive',
+				onClick: () => {
+					localStorage.setItem('isVirtualDriveEnabled', '' + !isVirtualDriveEnabled);
+					dispatch(toggleDriveMode());
+				},
+			},
+			{
 				title: 'Signout',
 				onClick: async () => {
 					logoutUser();
 				},
 			},
 		];
-
-		const indexToRemove = virtualDriveEnabled ? 2 : 1;
-		optionsMap.splice(indexToRemove, 1);
 
 		return optionsMap.map((option, index) => (
 			<SettingsContainer key={index} onClick={option.onClick}>

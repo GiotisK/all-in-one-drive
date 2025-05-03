@@ -1,6 +1,7 @@
 import { DriveEntity, FileEntity } from '../shared/types/global.types';
 import { useIsInsideFolder } from './useIsInsideFolder';
 import {
+	useConnectDriveMutation,
 	useGetDriveFolderFilesQuery,
 	useGetDriveRootFilesQuery,
 	useGetDrivesQuery,
@@ -10,7 +11,10 @@ import { useDriveSelectionContext } from './useDriveSelectionContext';
 
 export const useActiveDriveFiles = () => {
 	const { folderId, driveId } = useParams();
-	const { data: drives = [] } = useGetDrivesQuery();
+	const [_connectDrive, { isLoading: isConnectDriveLoading }] = useConnectDriveMutation({
+		fixedCacheKey: 'connectDrive',
+	});
+	const { data: drives = [] } = useGetDrivesQuery(undefined, { skip: isConnectDriveLoading });
 	const {
 		data: rootFiles = [],
 		isLoading: rootFilesLoading,

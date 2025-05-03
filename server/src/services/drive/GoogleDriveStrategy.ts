@@ -1,11 +1,10 @@
 import { OAuth2Client } from 'googleapis-common';
 import { IDriveStrategy } from './IDriveStrategy';
 import { drive, auth, drive_v3 } from '@googleapis/drive';
-import { bytesToGigabytes, generateUUID, normalizeBytes } from '../../helpers/helpers';
+import { generateUUID, normalizeBytes } from '../../helpers/helpers';
 import {
 	ChangedFileEntity,
 	DriveChanges,
-	DriveQuota,
 	DriveType,
 	FileEntity,
 	FileType,
@@ -19,6 +18,7 @@ import fs from 'fs';
 import FilesystemService from '../filesystem/filesystem.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
 import { googleDriveLogger } from '../../logger/logger';
+import { DriveQuotaBytes } from '../../types/types';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
@@ -101,19 +101,16 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		}
 	}
 
-	public async getDriveQuota(token: string): Promise<Nullable<DriveQuota>> {
+	public async getDriveQuota(token: string): Promise<Nullable<DriveQuotaBytes>> {
 		try {
 			this.setToken(token);
 			const res = await this.drive.about.get({ fields: 'storageQuota' });
 			const quota = res.data.storageQuota;
 
 			if (quota?.limit && quota?.usage) {
-				const totalSpaceInGb: string = bytesToGigabytes(quota.limit);
-				const usedSpaceInGb: string = bytesToGigabytes(quota.usage);
-
 				return {
-					used: usedSpaceInGb,
-					total: totalSpaceInGb,
+					used: +quota.usage,
+					total: +quota.limit,
 				};
 			}
 

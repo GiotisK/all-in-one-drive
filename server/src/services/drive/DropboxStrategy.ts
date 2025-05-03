@@ -1,7 +1,6 @@
-import { bytesToGigabytes, normalizeBytes } from '../../helpers/helpers';
+import { normalizeBytes } from '../../helpers/helpers';
 import {
 	Nullable,
-	DriveQuota,
 	FileEntity,
 	FileType,
 	WatchChangesChannel,
@@ -17,6 +16,7 @@ import FilesystemService from '../filesystem/filesystem.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
 import fs, { ReadStream } from 'fs';
 import { dropboxLogger } from '../../logger/logger';
+import { DriveQuotaBytes } from '../../types/types';
 
 export default class DropboxStrategy implements IDriveStrategy {
 	private dropbox: Dropbox;
@@ -87,7 +87,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 		});
 	}
 
-	getDriveQuota(token: string): Promise<Nullable<DriveQuota>> {
+	getDriveQuota(token: string): Promise<Nullable<DriveQuotaBytes>> {
 		return new Promise(async resolve => {
 			await this.setToken(token);
 
@@ -101,12 +101,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 						resolve(null);
 						return;
 					} else {
-						const totalSpaceInGb: string = bytesToGigabytes(
-							'' + result.allocation.allocated
-						);
-						const usedSpaceInGb: string = bytesToGigabytes('' + result.used);
-
-						resolve({ total: totalSpaceInGb, used: usedSpaceInGb });
+						resolve({ total: result.allocation.allocated, used: result.used });
 					}
 				}
 			);

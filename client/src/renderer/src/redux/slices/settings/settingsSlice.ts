@@ -4,6 +4,7 @@ import { SettingsState } from './types';
 
 const initialState: SettingsState = {
 	themeMode: (localStorage.getItem('theme') as ThemeMode) ?? 'light',
+	isVirtualDriveEnabled: localStorage.getItem('isVirtualDriveEnabled') ? true : false,
 };
 
 const settingsSlice = createSlice({
@@ -13,8 +14,11 @@ const settingsSlice = createSlice({
 		toggleTheme: (state: SettingsState) => {
 			state.themeMode = state.themeMode === 'light' ? 'dark' : 'light';
 		},
+		toggleDriveMode: (state: SettingsState) => {
+			state.isVirtualDriveEnabled = !state.isVirtualDriveEnabled;
+		},
 	},
 });
 
-export const { toggleTheme } = settingsSlice.actions;
+export const { toggleTheme, toggleDriveMode } = settingsSlice.actions;
 export default settingsSlice.reducer;
