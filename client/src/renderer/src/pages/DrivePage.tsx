@@ -27,10 +27,10 @@ const InnerContainer = styled.div`
 	display: flex;
 	flex-direction: row;
 	height: 100%;
+	overflow: auto;
 `;
 
 const RowsScrollview = styled.div`
-	flex: 1;
 	overflow: auto;
 	background-color: ${({ theme }) => theme.colors.background};
 `;

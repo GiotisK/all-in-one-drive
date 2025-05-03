@@ -5,6 +5,7 @@ import { useActiveDriveFiles } from '../hooks/useActiveDriveFiles';
 import { useGetDrivesQuery } from '../redux/rtk/driveApi';
 
 const LoaderContainer = styled.div`
+	height: 100px;
 	margin-top: 3%;
 `;
 const NoFilesText = styled.p`

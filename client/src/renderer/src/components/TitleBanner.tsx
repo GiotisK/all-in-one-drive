@@ -13,11 +13,9 @@ import { useConnectDriveMutation, useGetVirtualQuotaQuery } from '../redux/rtk/d
 
 const BannerContainer = styled.div`
 	display: flex;
-	position: sticky;
 	flex-direction: row;
 	align-items: center;
 	justify-content: space-between;
-	top: 0;
 	width: 100%;
 	height: 35px;
 	background-color: ${({ theme }) => theme.colors.bluePrimary};
