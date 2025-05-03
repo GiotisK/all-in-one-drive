@@ -11,6 +11,26 @@ type FileData = {
 };
 
 class FileProgressHelper {
+	public sendSimpleFileProgressUploadEvent(fileData: {
+		name: string;
+		fileId: string;
+		driveId: string;
+		percentage: number;
+	}) {
+		const { name, fileId, driveId, percentage } = fileData;
+
+		const progressData: ServerSideEventProgressData = {
+			name,
+			operationUuid: generateUUID(),
+			fileId,
+			driveId,
+			type: 'upload',
+			percentage,
+		};
+
+		SSEManager.sendNotification('upload' + '-progress-event', progressData);
+	}
+	
 	public sendFileProgressEvent(
 		data: internal.Readable,
 		type: FileOperationType,

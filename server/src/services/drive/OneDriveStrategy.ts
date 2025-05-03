@@ -16,7 +16,9 @@ import EncryptionService from '../encryption/encryption.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
 import FilesystemService from '../filesystem/filesystem.service';
 import fs from 'fs';
+import fsPromises from 'fs/promises';
 import { Readable } from 'stream';
+import axios from 'axios';
 
 type Credentials = {
 	client_id: string;
@@ -432,16 +434,105 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		}
 	}
 
+	private async createUploadSession(
+		accessToken: string,
+		fileName: string,
+		parentFolderId?: string
+	): Promise<string> {
+		const url = parentFolderId
+			? `https://graph.microsoft.com/v1.0/me/drive/items/${parentFolderId}:/${fileName}:/createUploadSession`
+			: `https://graph.microsoft.com/v1.0/me/drive/root:/${fileName}:/createUploadSession`;
+
+		const response = await axios.post(
+			url,
+			{
+				item: {
+					'@microsoft.graph.conflictBehavior': 'rename',
+					name: fileName,
+				},
+			},
+			{
+				headers: {
+					Authorization: `Bearer ${accessToken}`,
+					'Content-Type': 'application/json',
+				},
+			}
+		);
+
+		return response.data.uploadUrl;
+	}
+
 	public async uploadFile(
 		token: string,
 		file: Express.Multer.File,
 		driveId: string,
 		parentFolderId?: string
 	): Promise<Nullable<FileEntity>> {
-		try {
-			const accessToken = this.getAccessToken(token);
+		const { path, size, originalname } = file;
+		const fileHandle = await fsPromises.open(path, 'r');
+		let fileEntities: FileEntity[] = [];
 
-			return null;
+		try {
+			const accessToken = await this.getAccessToken(token);
+
+			const uploadUrl = await this.createUploadSession(
+				accessToken,
+				originalname,
+				parentFolderId
+			);
+
+			let start = 0;
+
+			while (start < size) {
+				const end = Math.min(start + 327680, size);
+				const { bytesRead, buffer } = await fileHandle.read({
+					buffer: Buffer.alloc(end - start),
+					offset: 0,
+					length: end - start,
+					position: start,
+				});
+
+				const headers = {
+					'Content-Length': bytesRead.toString(),
+					'Content-Range': `bytes ${start}-${end - 1}/${size}`,
+				};
+
+				const res = await fetch(uploadUrl, {
+					method: 'PUT',
+					headers,
+					body: buffer,
+				});
+
+				if (!res.ok) {
+					oneDriveLogger('uploadFile', {
+						error: res.statusText,
+					});
+
+					throw new Error(res.statusText);
+				}
+
+				const percent = Math.floor((end / size) * 100);
+
+				FileProgressHelper.sendSimpleFileProgressUploadEvent({
+					name: originalname,
+					fileId: '',
+					driveId,
+					percentage: percent,
+				});
+
+				start = end;
+
+				if (res.status === Status.CREATED) {
+					const data: OneDriveFile = await res.json();
+					const driveEmail = await this.getUserDriveEmail(token);
+					fileEntities = this.mapToUniversalFileEntityFormat(
+						[data],
+						driveEmail,
+						driveId,
+						{}
+					);
+				}
+			}
 		} catch (err) {
 			if (err instanceof Error) {
 				oneDriveLogger('uploadFile', {
@@ -449,8 +540,10 @@ export default class OneDriveStrategy implements IDriveStrategy {
 					stack: err.stack,
 				});
 			}
+		} finally {
+			await fileHandle.close();
 
-			return null;
+			return fileEntities.length > 0 ? fileEntities[0] : null;
 		}
 	}
 
