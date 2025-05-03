@@ -15,6 +15,13 @@ export default class DriveContext {
 		this.strategy = strategy;
 	}
 
+	public getOrCreateVirtualDriveFolder(
+		token: string,
+		driveId: string
+	): Promise<Nullable<string>> {
+		return this.strategy.getOrCreateVirtualDriveFolder(token, driveId);
+	}
+
 	public setStrategy(strategy: IDriveStrategy) {
 		this.strategy = strategy;
 	}

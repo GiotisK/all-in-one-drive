@@ -15,8 +15,9 @@ import * as dropboxV2Api from 'dropbox-v2-api';
 import FilesystemService from '../filesystem/filesystem.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
 import fs, { ReadStream } from 'fs';
-import { dropboxLogger } from '../../logger/logger';
+import { dropboxLogger, oneDriveLogger } from '../../logger/logger';
 import { DriveQuotaBytes } from '../../types/types';
+import { VirtualDriveFolderName } from '../constants';
 
 export default class DropboxStrategy implements IDriveStrategy {
 	private dropbox: Dropbox;
@@ -276,18 +277,18 @@ export default class DropboxStrategy implements IDriveStrategy {
 		token: string,
 		fileType: FileType,
 		driveId: string,
-		parentFolderId?: string
+		parentFolderId?: string,
+		givenPath?: string
 	): Promise<Nullable<FileEntity>> {
 		return new Promise(async resolve => {
 			await this.setToken(token);
+			let path = givenPath ?? '/New Folder';
 
 			if (fileType === FileType.File) {
 				dropboxLogger('createFile: Dropbox does not support file creation');
 				resolve(null);
 				return;
 			}
-
-			let path = '/New Folder';
 
 			if (parentFolderId) {
 				const metadata = await this.getFileMetadata(token, parentFolderId);
@@ -495,6 +496,46 @@ export default class DropboxStrategy implements IDriveStrategy {
 			} else {
 				dropboxLogger('uploadFile: Failed to upload file. "data" is empty');
 			}
+		});
+	}
+
+	getOrCreateVirtualDriveFolder(token: string, driveId: string): Promise<Nullable<string>> {
+		return new Promise(async resolve => {
+			await this.setToken(token);
+			const folder = await this.getFileMetadata(token, `/${VirtualDriveFolderName}`);
+
+			if (folder) {
+				oneDriveLogger(
+					'getOrCreateVirtualDriveFolder: Virtual drive folder already exists' +
+						folder.id,
+					undefined,
+					'info'
+				);
+
+				resolve(folder.id);
+				return;
+			} else {
+				oneDriveLogger(
+					'getOrCreateVirtualDriveFolder: Creating virtual drive folder',
+					undefined,
+					'info'
+				);
+
+				const newFolder = await this.createFile(
+					token,
+					FileType.Folder,
+					driveId,
+					undefined,
+					`/${VirtualDriveFolderName}`
+				);
+
+				if (newFolder) {
+					resolve(newFolder.id);
+					return;
+				}
+			}
+
+			resolve(null);
 		});
 	}
 

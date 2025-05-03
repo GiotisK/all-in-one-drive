@@ -9,7 +9,7 @@ import {
 	Status,
 } from '../../types/global.types';
 import { IDriveStrategy } from './IDriveStrategy';
-import { bytesToGigabytes, normalizeBytes } from '../../helpers/helpers';
+import { normalizeBytes } from '../../helpers/helpers';
 import DatabaseService from '../database/DatabaseFactory';
 import EncryptionService from '../encryption/encryption.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
@@ -38,6 +38,10 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		this.clientId = credentials.client_id;
 		this.clientSecret = credentials.client_secret;
 		this.scope = credentials.scope;
+	}
+
+	getOrCreateVirtualDriveFolder(token: string, driveId: string): Promise<Nullable<string>> {
+		throw new Error('Method not implemented.');
 	}
 
 	public async getAuthLink(): Promise<Nullable<string>> {

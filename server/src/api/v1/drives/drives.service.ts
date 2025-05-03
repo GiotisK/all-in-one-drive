@@ -24,11 +24,7 @@ export class DrivesService {
 		}
 	}
 
-	async generateAndSaveOAuth2Token(
-		authCode: string,
-		drive: DriveType,
-		userEmail: string
-	): Promise<boolean> {
+	async connectDrive(authCode: string, drive: DriveType, userEmail: string): Promise<boolean> {
 		const ctxAndToken = getDriveContextAndToken(drive);
 
 		if (ctxAndToken) {
@@ -39,6 +35,9 @@ export class DrivesService {
 			if (tokenData) {
 				const encryptedTokenData = EncryptionService.encrypt(tokenData);
 				const driveEmail = await ctx.getUserDriveEmail(tokenData);
+
+				await ctx.getOrCreateVirtualDriveFolder(tokenData, driveId);
+
 				const success = await DatabaseService.saveDrive(
 					encryptedTokenData,
 					driveEmail,

@@ -10,6 +10,9 @@ import { DriveQuotaBytes } from '../../types/types';
 import { IDriveStrategy } from './IDriveStrategy';
 
 export default class AioDriveStrategy implements IDriveStrategy {
+	getOrCreateVirtualDriveFolder(token: string, driveId: string): Promise<Nullable<string>> {
+		throw new Error('Method not implemented.');
+	}
 	getAuthLink(): Promise<Nullable<string>> {
 		throw new Error('Method not implemented.');
 	}

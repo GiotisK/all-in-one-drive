@@ -42,4 +42,5 @@ export interface IDriveStrategy {
 		driveEmail: string,
 		driveId: string
 	): Promise<Nullable<DriveChanges>>;
+	getOrCreateVirtualDriveFolder(token: string, driveId: string): Promise<Nullable<string>>;
 }

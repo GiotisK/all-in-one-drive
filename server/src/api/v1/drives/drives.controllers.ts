@@ -33,7 +33,7 @@ class DrivesController {
 		const { email } = res.locals;
 		const drive = req.params.drive;
 		const { authCode } = req.body;
-		const success = await DrivesService.generateAndSaveOAuth2Token(authCode, drive, email);
+		const success = await DrivesService.connectDrive(authCode, drive, email);
 		const statusId = success ? Status.OK : Status.INTERNAL_SERVER_ERROR;
 
 		res.status(statusId).send();

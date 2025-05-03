@@ -44,6 +44,10 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		this.drive = drive({ version: 'v3', auth: this.oAuth2Client });
 	}
 
+	getOrCreateVirtualDriveFolder(token: string): Promise<Nullable<string>> {
+		throw new Error('Method not implemented.');
+	}
+
 	public getAuthLink(): Promise<Nullable<string>> {
 		return new Promise(resolve => {
 			const authLink = this.oAuth2Client.generateAuthUrl({
