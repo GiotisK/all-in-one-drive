@@ -18,6 +18,7 @@ import fsPromises from 'fs/promises';
 import { Readable } from 'stream';
 import axios from 'axios';
 import { DriveQuotaBytes } from '../../types/types';
+import { VirtualDriveFolderName } from '../constants';
 
 type Credentials = {
 	client_id: string;
@@ -40,8 +41,56 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		this.scope = credentials.scope;
 	}
 
-	getOrCreateVirtualDriveFolder(token: string, driveId: string): Promise<Nullable<string>> {
-		throw new Error('Method not implemented.');
+	public async getOrCreateVirtualDriveFolder(
+		token: string,
+		driveId: string
+	): Promise<Nullable<string>> {
+		try {
+			const accessToken = await this.getAccessToken(token);
+
+			const res = await fetch(
+				`https://graph.microsoft.com/v1.0/users/me/drive/root:/${VirtualDriveFolderName}`,
+				{
+					method: 'GET',
+					headers: {
+						Authorization: `Bearer ${accessToken}`,
+					},
+				}
+			);
+
+			if (res.ok) {
+				const file: OneDriveFile = await res.json();
+				oneDriveLogger('getOrCreateVirtualDriveFolder: already exists', { file }, 'info');
+
+				return file.id;
+			} else {
+				oneDriveLogger(
+					'getOrCreateVirtualDriveFolder: Creating virtual drive folder',
+					undefined,
+					'info'
+				);
+
+				const virtualDriveFolder = await this.createFile(
+					token,
+					FileType.Folder,
+					driveId,
+					undefined,
+					VirtualDriveFolderName
+				);
+
+				if (virtualDriveFolder) {
+					return virtualDriveFolder.id;
+				}
+			}
+
+			return null;
+		} catch (err) {
+			if (err instanceof Error) {
+				oneDriveLogger('getAuthLink', { error: err.message, stack: err.stack });
+			}
+
+			return null;
+		}
 	}
 
 	public async getAuthLink(): Promise<Nullable<string>> {
@@ -322,11 +371,12 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		token: string,
 		fileType: FileType,
 		driveId: string,
-		parentFolderId?: string
+		parentFolderId?: string,
+		givenPath?: string
 	): Promise<Nullable<FileEntity>> {
 		try {
 			const accessToken = await this.getAccessToken(token);
-
+			let path = givenPath ?? '/New Folder';
 			let url = '';
 			if (parentFolderId) {
 				url =
@@ -340,7 +390,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 			const payload =
 				fileType === 'folder'
 					? {
-							name: 'New Folder',
+							name: path,
 							folder: {},
 							'@microsoft.graph.conflictBehavior': 'rename',
 					  }
