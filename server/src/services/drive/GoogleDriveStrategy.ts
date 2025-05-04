@@ -19,6 +19,7 @@ import FilesystemService from '../filesystem/filesystem.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
 import { googleDriveLogger } from '../../logger/logger';
 import { DriveQuotaBytes } from '../../types/types';
+import { VirtualDriveFolderName } from '../constants';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
 type GoogleDriveFile = drive_v3.Schema$File;
@@ -44,8 +45,65 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		this.drive = drive({ version: 'v3', auth: this.oAuth2Client });
 	}
 
-	getOrCreateVirtualDriveFolder(token: string): Promise<Nullable<string>> {
-		throw new Error('Method not implemented.');
+	public async getOrCreateVirtualDriveFolder(
+		token: string,
+		driveId: string
+	): Promise<Nullable<string>> {
+		try {
+			this.setToken(token);
+
+			const res = await this.drive.files.list({
+				q: `name = 'aio-drive' and mimeType = 'application/vnd.google-apps.folder' and trashed = false`,
+				pageSize: 1000,
+				fields: 'files(id, size, name, mimeType, createdTime, webViewLink, permissions)',
+			});
+
+			const files = res.data.files;
+
+			if (files && files.length) {
+				const virtualDriveFolderId = files[0].id;
+
+				if (virtualDriveFolderId) {
+					googleDriveLogger(
+						'getOrCreateVirtualDriveFolder: Virtual drive folder already exists ' +
+							virtualDriveFolderId,
+						undefined,
+						'info'
+					);
+					return virtualDriveFolderId;
+				}
+
+				return null;
+			}
+
+			googleDriveLogger(
+				'getOrCreateVirtualDriveFolder: Creating virtual drive folder',
+				undefined,
+				'info'
+			);
+
+			const file = await this.createFile(
+				token,
+				FileType.Folder,
+				driveId,
+				undefined,
+				VirtualDriveFolderName
+			);
+
+			if (file) {
+				return file.id;
+			}
+
+			return null;
+		} catch (err) {
+			if (err instanceof Error) {
+				googleDriveLogger('getOrCreateVirtualDriveFolder', {
+					error: err.message,
+					stack: err.stack,
+				});
+			}
+			return null;
+		}
 	}
 
 	public getAuthLink(): Promise<Nullable<string>> {
@@ -212,10 +270,12 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		token: string,
 		fileType: FileType,
 		driveId: string,
-		parentFolderId?: string
+		parentFolderId?: string,
+		givenPath?: string
 	): Promise<Nullable<FileEntity>> {
 		try {
 			this.setToken(token);
+			let path = givenPath ?? 'New Folder';
 			const mimeType =
 				fileType === FileType.Folder
 					? 'application/vnd.google-apps.folder'
@@ -223,7 +283,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 			const res = await this.drive.files.create({
 				requestBody: {
-					name: 'New Folder',
+					name: path,
 					mimeType,
 					parents: parentFolderId ? [parentFolderId] : [],
 				},
