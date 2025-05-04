@@ -1,3 +1,4 @@
+import { CSSProperties } from 'react';
 import { styled } from 'styled-components';
 
 const Container = styled.div`
@@ -28,16 +29,16 @@ enum Tab {
 }
 
 export const MenuBanner = () => {
-	const getTabWidth = (tab: Tab) => {
+	const getStyles = (tab: Tab): CSSProperties => {
 		switch (tab) {
 			case Tab.Name:
-				return '40%';
+				return { flex: 1, maxWidth: 300 };
 			case Tab.Size:
-				return '10%';
+				return { flex: 0.5, textAlign: 'center' };
 			case Tab.Drive:
-				return '20%';
+				return { flex: 0.5 };
 			case Tab.Date:
-				return '20%';
+				return { flex: 0.5 };
 		}
 	};
 
@@ -46,7 +47,7 @@ export const MenuBanner = () => {
 			<SecondRow>
 				{Object.values(Tab).map((tab, index) => {
 					return (
-						<div key={index} style={{ width: getTabWidth(tab) }}>
+						<div key={index} style={getStyles(tab)}>
 							<TabTitle>{tab}</TabTitle>
 						</div>
 					);

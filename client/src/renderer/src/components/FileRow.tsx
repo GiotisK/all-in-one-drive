@@ -30,25 +30,26 @@ const Container = styled.div`
 const ColumnBase = styled.div`
 	display: flex;
 	flex-direction: row;
-	justify-content: flex-start;
+	justify-content: center;
 	align-items: center;
 `;
 
 const FirstColumn = styled(ColumnBase)`
 	cursor: pointer;
-	width: 40%;
+	flex: 1;
+	max-width: 300px;
 `;
 
 const SecondColumn = styled(ColumnBase)`
-	width: 20%;
+	flex: 0.5;
 `;
 
 const ThirdColumn = styled(ColumnBase)`
-	width: 10%;
+	flex: 0.5;
 `;
 
 const FourthColumn = styled(ColumnBase)`
-	width: 20%;
+	flex: 0.5;
 `;
 
 const Text = styled.p`
@@ -280,7 +281,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 				<Text>{email}</Text>
 			</SecondColumn>
 			<ThirdColumn>
-				<Text>{size}</Text>
+				<Text style={{ textAlign: 'center' }}>{size}</Text>
 			</ThirdColumn>
 			<FourthColumn>
 				<Text>{date}</Text>

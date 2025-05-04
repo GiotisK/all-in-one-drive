@@ -29,10 +29,10 @@ export const FilesList = () => {
 	) : shouldShowEmptyState ? (
 		<NoFilesText>No files exist...</NoFilesText>
 	) : (
-		<>
+		<div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
 			{files.map(file => (
 				<FileRow key={file.id} file={file} />
 			))}
-		</>
+		</div>
 	);
 };
