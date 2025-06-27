@@ -20,7 +20,6 @@ const FileElementContainer = styled(ElementContainer)`
 `;
 
 const FolderElementContainer = styled(ElementContainer)<{ $folderColor: string }>`
-	z-index: 1;
 	position: relative;
 	height: 30px;
 	width: 40px;

@@ -2,10 +2,14 @@ import { CSSProperties } from 'react';
 import { styled } from 'styled-components';
 
 const Container = styled.div`
+	position: sticky;
+	top: 0;
+	background-color: ${({ theme }) => theme.colors.background};
 	display: flex;
 	flex-direction: column;
 	border-bottom: 0.5px solid ${({ theme }) => theme.colors.border};
 	margin-bottom: 10px;
+	z-index: 1;
 `;
 
 const SecondRow = styled.div`
