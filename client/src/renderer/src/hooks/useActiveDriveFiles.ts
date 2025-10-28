@@ -1,43 +1,16 @@
-import { DriveEntity, FileEntity } from '../shared/types/global.types';
 import { useIsInsideFolder } from './useIsInsideFolder';
-import {
-	useConnectDriveMutation,
-	useGetDriveFolderFilesQuery,
-	useGetDriveRootFilesQuery,
-	useGetDrivesQuery,
-} from '../redux/rtk/driveApi';
+import { useGetDriveFolderFilesQuery } from '../redux/rtk/driveApi';
 import { useParams } from 'react-router-dom';
-import { useDriveSelectionContext } from './useDriveSelectionContext';
 
 export const useActiveDriveFiles = () => {
 	const { folderId, driveId } = useParams();
-	const [_connectDrive, { isLoading: isConnectDriveLoading }] = useConnectDriveMutation({
-		fixedCacheKey: 'connectDrive',
-	});
-	const { data: drives = [] } = useGetDrivesQuery(undefined, { skip: isConnectDriveLoading });
-	const {
-		data: rootFiles = [],
-		isLoading: rootFilesLoading,
-		isSuccess: rootFilesSuccess,
-		isUninitialized: rootFilesUninitialized,
-	} = useGetDriveRootFilesQuery(
-		{ driveIds: drives.map(drive => drive.id) },
-		{
-			skip: !!folderId || !drives.length,
-		}
-	);
 
 	const {
 		isLoading: folderFilesLoading,
 		currentData: folderFilesCurrentData,
 		isSuccess: folderFilesSuccess,
 		isUninitialized: folderFilesUninitialized,
-	} = useGetDriveFolderFilesQuery(
-		{ driveId, folderId },
-		{ skip: !folderId || !driveId, refetchOnMountOrArgChange: true }
-	);
-
-	const { selectedDriveIds } = useDriveSelectionContext();
+	} = useGetDriveFolderFilesQuery({ driveId, folderId });
 
 	const isInsideFolder = useIsInsideFolder();
 
@@ -50,25 +23,9 @@ export const useActiveDriveFiles = () => {
 		folderFilesCurrentData === undefined && isInsideFolder ? true : false;
 
 	return {
-		files: isInsideFolder
-			? folderFilesCurrentData ?? []
-			: filterFiles(rootFiles, drives, selectedDriveIds),
-		isLoading:
-			rootFilesLoading ||
-			folderFilesLoading ||
-			shouldShowLoaderWhenEnteringFolderForTheFirstTime,
-		isSuccess: rootFilesSuccess || folderFilesSuccess,
-		isUninitialized: rootFilesUninitialized && folderFilesUninitialized,
+		files: folderFilesCurrentData ?? [],
+		isLoading: folderFilesLoading || shouldShowLoaderWhenEnteringFolderForTheFirstTime,
+		isSuccess: folderFilesSuccess,
+		isUninitialized: folderFilesUninitialized,
 	};
-};
-
-const filterFiles = (files: FileEntity[], drives: DriveEntity[], selectedDriveIds: string[]) => {
-	return files.filter(file =>
-		drives.some(
-			drive =>
-				drive.email === file.email &&
-				drive.type === file.drive &&
-				selectedDriveIds.includes(drive.id)
-		)
-	);
 };

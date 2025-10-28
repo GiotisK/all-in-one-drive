@@ -8,7 +8,7 @@ export const HomePage = () => {
 	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
 
 	useEffect(() => {
-		isUserAuthenticated ? navigate(routes.drive) : navigate(routes.login);
+		isUserAuthenticated ? navigate(routes.drives) : navigate(routes.login);
 	}, [isUserAuthenticated, navigate]);
 
 	return null;

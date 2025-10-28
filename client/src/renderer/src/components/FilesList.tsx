@@ -3,6 +3,7 @@ import { Loader } from '../components/Loader';
 import { styled } from 'styled-components';
 import { useActiveDriveFiles } from '../hooks/useActiveDriveFiles';
 import { useGetDrivesQuery } from '../redux/rtk/driveApi';
+import { MenuBanner } from './MenuBanner';
 
 const LoaderContainer = styled.div`
 	height: 100px;
@@ -30,6 +31,7 @@ export const FilesList = () => {
 		<NoFilesText>No files exist...</NoFilesText>
 	) : (
 		<div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+			<MenuBanner />
 			{files.map(file => (
 				<FileRow key={file.id} file={file} />
 			))}

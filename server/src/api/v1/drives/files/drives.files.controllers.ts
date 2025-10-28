@@ -34,7 +34,10 @@ class FilesController {
 		const { email: userEmail } = res.locals;
 		const { driveId, folderId } = req.params;
 
-		const files = await FilesService.getFolderFiles(driveId, userEmail, folderId);
+		const files =
+			folderId === 'root'
+				? await FilesService.getRootFiles(userEmail, [driveId])
+				: await FilesService.getFolderFiles(driveId, userEmail, folderId);
 
 		if (files) {
 			res.status(Status.OK).send(files);

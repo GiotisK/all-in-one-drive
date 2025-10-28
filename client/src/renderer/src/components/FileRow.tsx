@@ -173,7 +173,7 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
 
 	const onFileClick = async () => {
 		if (type === FileType.Folder) {
-			navigate(`${driveId}/${id}`);
+			navigate(`/drives/${driveId}/${id}`);
 		} else if (type === FileType.File) {
 			if (!canBeOpenedOnline(extension, sizeBytes)) {
 				toast.error(

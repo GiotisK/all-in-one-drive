@@ -41,7 +41,7 @@ export const LandingPage = (): JSX.Element => {
 	useAuthorizeUserQuery();
 
 	return isAuthenticated ? (
-		<Navigate to={routes.drive} />
+		<Navigate to={routes.drives} />
 	) : (
 		<LandingPageContainer>
 			<LandingPageTitle>aio drive</LandingPageTitle>

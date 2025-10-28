@@ -2,13 +2,15 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
 import { Theme } from './providers/Theme';
 import { ErrorPage } from './pages/ErrorPage';
-import { DrivePage } from './pages/DrivePage';
+import { DrivesPage } from './pages/DrivesPage';
 import { Provider } from 'react-redux';
 import store from './redux/store/store';
 import { HomePage } from './pages/HomePage';
 import { routes } from './shared/constants/routes';
 import { ThemedToastContainer } from './components/ThemedToastContainer';
 import { PendingFilesProvider } from './providers/PendingFilesProvider';
+import { DrivesList } from './components/DrivesList';
+import { FilesList } from './components/FilesList';
 
 const router = createBrowserRouter([
 	{
@@ -20,12 +22,16 @@ const router = createBrowserRouter([
 		element: <LandingPage />,
 	},
 	{
-		path: routes.drive,
-		element: <DrivePage />,
+		path: routes.drives,
+		element: <DrivesPage />,
 		children: [
 			{
-				path: ':driveId/:folderId',
-				element: <DrivePage />,
+				index: true,
+				element: <DrivesList />,
+			},
+			{
+				path: ':driveId/:folderId?',
+				element: <FilesList />,
 			},
 		],
 	},

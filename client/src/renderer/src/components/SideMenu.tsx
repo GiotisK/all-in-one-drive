@@ -1,15 +1,13 @@
 import { styled, useTheme } from 'styled-components';
-import { Checkbox } from './Checkbox';
-import { DriveRow } from './DriveRow';
 import { Loader } from './Loader';
 import { openModal } from '../redux/slices/modal/modalSlice';
 import { ModalKind } from '../redux/slices/modal/types';
 import { useAppDispatch } from '../redux/store/store';
 import { SvgNames } from '../shared/utils/svg-utils';
 import { IconButton } from './IconButton';
-import { useEffect, useState } from 'react';
 import { useGetDrivesQuery } from '../redux/rtk/driveApi';
-import { useDriveSelectionContext } from '../hooks/useDriveSelectionContext';
+import { DriveRow } from './DriveRow';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Container = styled.div`
 	padding: 0% 1% 0% 1%;
@@ -64,43 +62,24 @@ const LoaderContainer = styled.div`
 
 export const SideMenu = (): JSX.Element => {
 	const dispatch = useAppDispatch();
-	const { data: drives = [], isLoading: areDrivesLoading } = useGetDrivesQuery();
-	const [checked, setChecked] = useState(true);
+	const navigate = useNavigate();
 	const theme = useTheme();
-	const { selectedDriveIds, setSelectedDriveIds } = useDriveSelectionContext();
-
-	useEffect(() => {
-		setChecked(selectedDriveIds.length === drives.length);
-	}, [drives.length, selectedDriveIds.length]);
+	const { data: drives = [], isLoading: areDrivesLoading } = useGetDrivesQuery();
+	const { driveId } = useParams();
 
 	const onAddDriveClick = (): void => {
 		dispatch(openModal({ kind: ModalKind.AddDrive }));
 	};
 
-	const toggleCheckBox = () => {
-		checked ? setSelectedDriveIds([]) : setSelectedDriveIds(drives.map(drive => drive.id));
-	};
-
 	const onDriveClick = (driveId: string) => {
-		if (selectedDriveIds.includes(driveId)) {
-			setSelectedDriveIds(prevSelectedDrives =>
-				prevSelectedDrives.filter(selectedDriveId => selectedDriveId !== driveId)
-			);
-		} else {
-			setSelectedDriveIds(prevSelectedDrives => [...prevSelectedDrives, driveId]);
-		}
+		navigate(`${driveId}/root`);
 	};
 
 	return (
 		<Container>
 			<Header>
 				<HeaderAndCheckContainer>
-					<HeaderText onClick={toggleCheckBox}>Connected Drives</HeaderText>
-					<Checkbox
-						onChange={toggleCheckBox}
-						checked={checked}
-						style={{ marginLeft: '5%' }}
-					/>
+					<HeaderText>Connected Drives</HeaderText>
 				</HeaderAndCheckContainer>
 				<IconButton
 					icon={SvgNames.Plus}
@@ -128,7 +107,7 @@ export const SideMenu = (): JSX.Element => {
 							onDriveClick={() => {
 								onDriveClick(drive.id);
 							}}
-							active={selectedDriveIds.includes(drive.id)}
+							active={driveId === drive.id}
 							drive={drive}
 							key={drive.id}
 						/>

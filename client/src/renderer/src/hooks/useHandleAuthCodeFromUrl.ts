@@ -1,14 +1,16 @@
 import { useEffect, useRef } from 'react';
 import { DriveType, Nullable } from '../shared/types/global.types';
-import { useLocation, useSearchParams } from 'react-router-dom';
-import { useConnectDriveMutation } from '../redux/rtk/driveApi';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import { useConnectDriveMutation, useLazyGetDrivesQuery } from '../redux/rtk/driveApi';
 
 export const useHandleAuthCodeFromUrl = () => {
 	const location = useLocation();
+	const navigate = useNavigate();
 	const [params] = useSearchParams();
 	const [connectDrive] = useConnectDriveMutation({
 		fixedCacheKey: 'connectDrive',
 	});
+	const getDrivesQuery = useLazyGetDrivesQuery()[0];
 
 	const hasRun = useRef(false);
 
@@ -21,8 +23,11 @@ export const useHandleAuthCodeFromUrl = () => {
 		if (authCode && drive) {
 			connectDrive({ authCode, drive });
 			hasRun.current = true;
+			setTimeout(() => {
+				getDrivesQuery();
+			}, 3000);
 		}
-	}, [connectDrive, location.search, params]);
+	}, [connectDrive, getDrivesQuery, location.search, navigate, params]);
 };
 
 // Helpers

@@ -109,19 +109,16 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
 	);
 
 	const navigateToDrivePath = () => {
-		navigate(routes.drive);
+		navigate(routes.drives);
 	};
 
 	return (
 		<BannerContainer>
 			<LogoMenuContainer>
-				{isInsideFolder ? (
-					<BackButton />
-				) : (
-					<BurgerMenuButton onClick={props.onBurgerMenuClick}>
-						{createSvg(SvgNames.Burger, 24, 'white')}
-					</BurgerMenuButton>
-				)}
+				{isInsideFolder && <BackButton />}
+				<BurgerMenuButton onClick={props.onBurgerMenuClick}>
+					{createSvg(SvgNames.Burger, 24, 'white')}
+				</BurgerMenuButton>
 				<LogoTitle onClick={navigateToDrivePath}>aio drive</LogoTitle>
 			</LogoMenuContainer>
 			{isVirtualDriveEnabled && (

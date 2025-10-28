@@ -13,10 +13,6 @@ export const driveApi = createApi({
 	reducerPath: 'driveApi',
 	baseQuery: fetchBaseQuery({ baseUrl: 'http://localhost:8000/drives', credentials: 'include' }),
 	endpoints: builder => ({
-		getDriveRootFiles: builder.query<FileEntity[], { driveIds: string[] }>({
-			query: ({ driveIds }) => ({ url: '/files', method: 'POST', body: { driveIds } }),
-			providesTags: ['Files'],
-		}),
 		getDriveFolderFiles: builder.query<FileEntity[], { driveId?: string; folderId?: string }>({
 			query: ({ driveId, folderId }) => ({
 				url: `${driveId}/folders/${folderId}/files`,
@@ -36,7 +32,7 @@ export const driveApi = createApi({
 		}),
 		deleteDrive: builder.mutation<void, { driveId: string }>({
 			query: ({ driveId }) => ({ url: `/${driveId}`, method: 'DELETE' }),
-			invalidatesTags: ['Drives', 'VirtualQuota'],
+			invalidatesTags: ['Drives', 'Files', 'VirtualQuota'],
 		}),
 		getGoogleDriveFileExportFormats: builder.query<
 			string[],
@@ -147,32 +143,6 @@ export const driveApi = createApi({
 					const { data } = await queryFulfilled;
 					dispatch(
 						driveApi.util.updateQueryData(
-							'getDriveRootFiles',
-							{ driveIds: [driveId] },
-							draft => {
-								data.changes.forEach(changedFileEntity => {
-									const index = draft.findIndex(
-										fileEntity => fileEntity.id === changedFileEntity.id
-									);
-									if (index !== -1) {
-										if (changedFileEntity.removed) {
-											draft.splice(index, 1);
-										} else {
-											draft[index].name = changedFileEntity.name;
-											draft[index] = {
-												...draft[index],
-												name: changedFileEntity.name,
-												sharedLink: changedFileEntity.sharedLink,
-												date: changedFileEntity.date,
-											};
-										}
-									}
-								});
-							}
-						)
-					);
-					dispatch(
-						driveApi.util.updateQueryData(
 							'watchDriveChanges',
 							{ driveIds: [driveId] },
 							draft => {
@@ -200,9 +170,9 @@ export const driveApi = createApi({
 });
 
 export const {
-	useGetDriveRootFilesQuery,
 	useGetDriveFolderFilesQuery,
 	useGetDrivesQuery,
+	useLazyGetDrivesQuery,
 	useDeleteDriveMutation,
 	useDeleteFileMutation,
 	useGetGoogleDriveFileExportFormatsQuery,
