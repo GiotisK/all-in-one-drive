@@ -124,7 +124,7 @@ export const driveApi = createApi({
 				method: 'POST',
 				body: { authCode },
 			}),
-			invalidatesTags: ['Files', 'Drives', 'VirtualQuota'],
+			invalidatesTags: ['Files', 'VirtualQuota'],
 		}),
 		watchDriveChanges: builder.query<WatchChangesChannel[], { driveIds: string[] }>({
 			query: ({ driveIds }) => ({

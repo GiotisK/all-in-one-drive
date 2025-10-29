@@ -17,16 +17,18 @@ export const useHandleAuthCodeFromUrl = () => {
 	useEffect(() => {
 		if (hasRun.current) return;
 
-		const authCode = params.get('code');
-		const drive = getDriveFromAuthCodeUrl(location.search);
+		const startConnectDrive = async () => {
+			const authCode = params.get('code');
+			const drive = getDriveFromAuthCodeUrl(location.search);
 
-		if (authCode && drive) {
-			connectDrive({ authCode, drive });
-			hasRun.current = true;
-			setTimeout(() => {
+			if (authCode && drive) {
+				hasRun.current = true;
+				await connectDrive({ authCode, drive }).unwrap();
 				getDrivesQuery();
-			}, 3000);
-		}
+			}
+		};
+
+		startConnectDrive();
 	}, [connectDrive, getDrivesQuery, location.search, navigate, params]);
 };
 
