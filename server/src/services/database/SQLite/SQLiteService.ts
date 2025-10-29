@@ -15,6 +15,19 @@ export class SqliteDBService implements IDatabaseService {
 		});
 	}
 
+	public async checkDriveExistance(driveEmail: string, driveType: DriveType): Promise<boolean> {
+		try {
+			const getDriveQuery = this.db.prepare<[string, string], SQLiteUserSchema>(
+				'SELECT * FROM drives WHERE email = ? AND driveType = ?'
+			);
+			const drive = getDriveQuery.get(driveEmail, driveType);
+
+			return !!drive;
+		} catch {
+			return false;
+		}
+	}
+
 	connect(): void {
 		this.db
 			.prepare(

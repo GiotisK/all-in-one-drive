@@ -33,8 +33,15 @@ export class DrivesService {
 			const tokenData = await ctx.generateOAuth2token(authCode, driveId);
 
 			if (tokenData) {
-				const encryptedTokenData = EncryptionService.encrypt(tokenData);
 				const driveEmail = await ctx.getUserDriveEmail(tokenData);
+
+				const exists = await DatabaseService.checkDriveExistance(driveEmail, drive);
+
+				if (exists) {
+					return false;
+				}
+
+				const encryptedTokenData = EncryptionService.encrypt(tokenData);
 
 				await ctx.getOrCreateVirtualDriveFolder(tokenData, driveId);
 
