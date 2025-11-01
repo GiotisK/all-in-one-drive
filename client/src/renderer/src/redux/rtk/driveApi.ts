@@ -18,12 +18,7 @@ export const driveApi = createApi({
                 url: `${driveId}/folders/${folderId}/files`,
             }),
             providesTags: (result, _error, { driveId }) =>
-                result
-                    ? [
-                          { type: 'Files', id: driveId },
-                          'Files', // optional, to easily invalidate all drive files
-                      ]
-                    : ['Files'],
+                result ? [{ type: 'Files', id: driveId }] : ['Files'],
         }),
         deleteFile: builder.mutation<void, { driveId: string; fileId: string }>({
             query: ({ driveId, fileId }) => ({
@@ -38,9 +33,9 @@ export const driveApi = createApi({
         }),
         deleteDrive: builder.mutation<void, { driveId: string }>({
             query: ({ driveId }) => ({ url: `/${driveId}`, method: 'DELETE' }),
-            invalidatesTags: (result, error, { driveId }) => [
+            invalidatesTags: (_result, _error, { driveId }) => [
                 'Drives',
-                { type: 'Files', id: driveId }, // this will clear all files for that drive
+                { type: 'Files', id: driveId },
                 'VirtualQuota',
             ],
         }),

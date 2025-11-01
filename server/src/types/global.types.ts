@@ -94,7 +94,6 @@ export type FileEntity = {
 	extension: string;
 	sharedLink: Nullable<string>;
 	sizeBytes: number;
-	thumbnailLink: Nullable<string>;
 };
 
 export type ChangedFileEntity = {

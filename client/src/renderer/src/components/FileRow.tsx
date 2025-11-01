@@ -270,8 +270,6 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
         }
     };
 
-    console.log('===file link', file.thumbnailLink);
-
     return (
         <Container>
             <FirstColumn onClick={onFileClick}>

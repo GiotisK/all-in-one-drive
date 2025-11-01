@@ -777,7 +777,6 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const isPubliclyShared = this.isFilePubliclyShared(file);
 			const sharedLink = isPubliclyShared && file.webViewLink ? file.webViewLink : null;
 			const sizeBytes = parseInt(file.size ?? '0', 10);
-			const thumbnailLink = file.thumbnailLink ?? null;
 
 			return {
 				id: file.id ?? '',
@@ -791,7 +790,6 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				extension: extension || '-',
 				sharedLink,
 				sizeBytes,
-				thumbnailLink,
 			};
 		});
 
