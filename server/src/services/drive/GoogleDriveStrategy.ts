@@ -207,7 +207,8 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const driveEmail = await this.getUserDriveEmail(token);
 
 			if (files) {
-				return this.mapToUniversalFileEntityFormat(files, driveEmail, driveId);
+				const thumbnails = await this.getThumbnails(files || [], token);
+				return this.mapToUniversalFileEntityFormat(files, thumbnails, driveEmail, driveId);
 			}
 
 			googleDriveLogger('getDriveFiles: Error getting drive files. "files" is undefined');
@@ -292,7 +293,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 			const driveEmail = await this.getUserDriveEmail(token);
 
-			return this.mapToUniversalFileEntityFormat([res.data], driveEmail, driveId)[0];
+			return this.mapToUniversalFileEntityFormat([res.data], {}, driveEmail, driveId)[0];
 		} catch (err) {
 			if (err instanceof Error) {
 				googleDriveLogger('createFile', {
@@ -376,6 +377,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				const driveEmail = await this.getUserDriveEmail(token);
 				const fileEntities = this.mapToUniversalFileEntityFormat(
 					[res.data],
+					{},
 					driveEmail,
 					driveId
 				);
@@ -632,6 +634,31 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		return watchChangesChannel;
 	}
 
+	private async getThumbnails(files: GoogleDriveFile[], token: string) {
+		const thumbNails: Record<string, string> = {};
+
+		const promiseArr = files.map(async file => {
+			if (!file.thumbnailLink || !file.id) return;
+
+			try {
+				const res = await fetch(file.thumbnailLink, {
+					headers: { Authorization: `Bearer ${token}` },
+				});
+				const buffer = await res.arrayBuffer();
+				const base64 = Buffer.from(buffer).toString('base64');
+				const mime = res.headers.get('content-type');
+
+				thumbNails[file.id] = `data:${mime};base64,${base64}`;
+			} catch (err) {
+				// ignore errors
+			}
+		});
+
+		await Promise.all(promiseArr);
+
+		return thumbNails;
+	}
+
 	private async downloadFileInternal(
 		fileId: string,
 		driveId?: string,
@@ -766,6 +793,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 	private mapToUniversalFileEntityFormat(
 		files: GoogleDriveFile[],
+		imgs: Record<string, string>,
 		driveEmail: string,
 		driveId: string
 	): FileEntity[] {
@@ -777,6 +805,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const isPubliclyShared = this.isFilePubliclyShared(file);
 			const sharedLink = isPubliclyShared && file.webViewLink ? file.webViewLink : null;
 			const sizeBytes = parseInt(file.size ?? '0', 10);
+			const thumbnail = file.id ? imgs[file.id] : null;
 
 			return {
 				id: file.id ?? '',
@@ -790,6 +819,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				extension: extension || '-',
 				sharedLink,
 				sizeBytes,
+				thumbnail,
 			};
 		});
 
