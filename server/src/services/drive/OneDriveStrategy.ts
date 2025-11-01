@@ -696,6 +696,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 				extension: extension,
 				sharedLink,
 				sizeBytes,
+				thumbnailLink: null,
 			};
 		});
 

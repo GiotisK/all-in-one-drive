@@ -201,7 +201,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const res = await this.drive.files.list({
 				q: filesQuery,
 				pageSize: 1000,
-				fields: 'files(id, size, name, mimeType, createdTime, webViewLink, permissions)',
+				fields: 'files(id, size, name, mimeType, createdTime, webViewLink, permissions, thumbnailLink)',
 			});
 			const files = res.data.files;
 			const driveEmail = await this.getUserDriveEmail(token);
@@ -777,6 +777,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 			const isPubliclyShared = this.isFilePubliclyShared(file);
 			const sharedLink = isPubliclyShared && file.webViewLink ? file.webViewLink : null;
 			const sizeBytes = parseInt(file.size ?? '0', 10);
+			const thumbnailLink = file.thumbnailLink ?? null;
 
 			return {
 				id: file.id ?? '',
@@ -790,6 +791,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				extension: extension || '-',
 				sharedLink,
 				sizeBytes,
+				thumbnailLink,
 			};
 		});
 

@@ -9,31 +9,31 @@ import { useServerSideProgressEvent } from './useServerSideProgressEvent';
 const DRIVE_NOTIFICATION_SUBSCRIPTION_URL = `${config.baseURL}/drives/subscribe`;
 
 export const useServerSideEvents = () => {
-	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
-	const { isSuccess: getDrivesSuccesss } = useGetDrivesQuery();
+    const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
+    const { isSuccess: getDrivesSuccesss } = useGetDrivesQuery();
 
-	const { eventSource, openStream } = useEventSource({
-		url: DRIVE_NOTIFICATION_SUBSCRIPTION_URL,
-	});
+    const { eventSource, openStream } = useEventSource({
+        url: DRIVE_NOTIFICATION_SUBSCRIPTION_URL,
+    });
 
-	useServerSideChangesEvent(eventSource);
-	useServerSideProgressEvent(eventSource);
+    useServerSideChangesEvent(eventSource);
+    useServerSideProgressEvent(eventSource);
 
-	useEventSourceEvents({
-		eventSource,
-		listeners: [
-			{
-				eventName: 'connected',
-				listener: () => {
-					console.log('[SSE]-[connected]');
-				},
-			},
-		],
-	});
+    useEventSourceEvents({
+        eventSource,
+        listeners: [
+            {
+                eventName: 'connected',
+                listener: () => {
+                    console.log('[SSE]-[connected]');
+                },
+            },
+        ],
+    });
 
-	useEffect(() => {
-		if (isUserAuthenticated) {
-			openStream();
-		}
-	}, [getDrivesSuccesss, isUserAuthenticated, openStream]);
+    useEffect(() => {
+        if (isUserAuthenticated) {
+            openStream();
+        }
+    }, [getDrivesSuccesss, isUserAuthenticated, openStream]);
 };

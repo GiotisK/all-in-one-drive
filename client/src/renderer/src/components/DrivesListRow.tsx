@@ -9,88 +9,88 @@ import { createSvg, SvgNames } from '../shared/utils/svg-utils';
 import { useNavigate } from 'react-router-dom';
 
 const Container = styled.div`
-	display: flex;
-	flex-direction: row;
-	align-items: center;
-	margin-left: 10px;
-	padding: 5px 0 5px 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 10px;
+    padding: 5px 0 5px 10px;
 `;
 
 const ColumnBase = styled.div`
-	display: flex;
-	flex-direction: row;
-	justify-content: center;
-	align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 `;
 
 const FirstColumn = styled(ColumnBase)`
-	cursor: pointer;
-	flex: 1;
-	max-width: 300px;
+    cursor: pointer;
+    flex: 1;
+    max-width: 300px;
 `;
 
 const SecondColumn = styled(ColumnBase)`
-	flex: 0.5;
+    flex: 0.5;
 `;
 
 const ThirdColumn = styled(ColumnBase)`
-	flex: 0.5;
+    flex: 0.5;
 `;
 
 const Text = styled.p`
-	margin: 0;
-	margin-left: 2%;
-	width: 90%;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	font-size: 14px;
-	margin-right: 5%;
-	color: ${({ theme }) => theme.colors.textPrimary};
+    margin: 0;
+    margin-left: 2%;
+    width: 90%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 14px;
+    margin-right: 5%;
+    color: ${({ theme }) => theme.colors.textPrimary};
 `;
 
 const TrashcanDiv = styled.div`
-	cursor: pointer;
-	margin-right: 5%;
-	transition: all 0.2s ease;
+    cursor: pointer;
+    margin-right: 5%;
+    transition: all 0.2s ease;
 
-	&:hover {
-		transform: scale(1.3);
-		-webkit-transform: scale(1.3);
-		-ms-transform: scale(1.3);
-	}
+    &:hover {
+        transform: scale(1.3);
+        -webkit-transform: scale(1.3);
+        -ms-transform: scale(1.3);
+    }
 `;
 export const DrivesListRow = ({ drive }: { drive: DriveEntity }): JSX.Element => {
-	const dispatch = useAppDispatch();
-	const navigate = useNavigate();
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
 
-	const { type, email, quota } = drive;
+    const { type, email, quota } = drive;
 
-	const onDeleteDriveClick = (): void => {
-		dispatch(openModal({ kind: ModalKind.Delete, state: { entity: drive } }));
-	};
+    const onDeleteDriveClick = (): void => {
+        dispatch(openModal({ kind: ModalKind.Delete, state: { entity: drive } }));
+    };
 
-	const navigateToDrive = (): void => {
-		navigate(`${drive.id}/root`);
-	};
+    const navigateToDrive = (): void => {
+        navigate(`${drive.id}/root`);
+    };
 
-	return (
-		<Container>
-			<FirstColumn onClick={navigateToDrive}>
-				<FileElement type={FileType.Folder} />
-				<Text>{email}</Text>
-			</FirstColumn>
-			<SecondColumn>
-				<div style={{ marginRight: 10 }}>{CreateDriveSvg(type, 25)}</div>
-			</SecondColumn>
-			<ThirdColumn>
-				<Text>
-					{quota.used} / {quota.total} GB
-				</Text>
-				<TrashcanDiv onClick={onDeleteDriveClick}>
-					{createSvg(SvgNames.Trashcan, 25, 'gray')}
-				</TrashcanDiv>
-			</ThirdColumn>
-		</Container>
-	);
+    return (
+        <Container>
+            <FirstColumn onClick={navigateToDrive}>
+                <FileElement type={FileType.Folder} />
+                <Text>{email}</Text>
+            </FirstColumn>
+            <SecondColumn>
+                <div style={{ marginRight: 10 }}>{CreateDriveSvg(type, 25)}</div>
+            </SecondColumn>
+            <ThirdColumn>
+                <Text>
+                    {quota.used} / {quota.total} GB
+                </Text>
+                <TrashcanDiv onClick={onDeleteDriveClick}>
+                    {createSvg(SvgNames.Trashcan, 25, 'gray')}
+                </TrashcanDiv>
+            </ThirdColumn>
+        </Container>
+    );
 };

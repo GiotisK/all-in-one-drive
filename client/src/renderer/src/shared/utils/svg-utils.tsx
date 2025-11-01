@@ -16,56 +16,56 @@ import { ReactComponent as Moon } from '../../assets/svgs/moon.svg';
 import { Nullable } from '../types/global.types';
 
 export enum SvgNames {
-	AddFile = 'add-file',
-	AddFolder = 'add-folder',
-	Burger = 'burger',
-	Close = 'close',
-	Plus = 'plus',
-	Trashcan = 'trashcan',
-	OneDrive = 'onedrive',
-	GoogleDrive = 'googledrive',
-	Dropbox = 'dropbox',
-	Link = 'link',
-	Dots = 'dots',
-	HandDown = 'hand-down',
-	Back = 'back',
-	Sun = 'sun',
-	Moon = 'moon',
+    AddFile = 'add-file',
+    AddFolder = 'add-folder',
+    Burger = 'burger',
+    Close = 'close',
+    Plus = 'plus',
+    Trashcan = 'trashcan',
+    OneDrive = 'onedrive',
+    GoogleDrive = 'googledrive',
+    Dropbox = 'dropbox',
+    Link = 'link',
+    Dots = 'dots',
+    HandDown = 'hand-down',
+    Back = 'back',
+    Sun = 'sun',
+    Moon = 'moon',
 }
 
 export const createSvg = (name: SvgNames, size = 24, color = 'black'): Nullable<JSX.Element> => {
-	switch (name) {
-		case SvgNames.AddFile:
-			return <AddFile color={color} width={size} height={size} />;
-		case SvgNames.AddFolder:
-			return <AddFolder color={color} width={size} height={size} />;
-		case SvgNames.Burger:
-			return <Burger color={color} width={size} height={size} />;
-		case SvgNames.Close:
-			return <Close color={color} width={size} height={size} />;
-		case SvgNames.Plus:
-			return <Plus color={color} width={size} height={size} />;
-		case SvgNames.Trashcan:
-			return <Trashcan color={color} width={size} height={size} />;
-		case SvgNames.OneDrive:
-			return <OneDrive color={color} width={size} height={size} />;
-		case SvgNames.GoogleDrive:
-			return <GoogleDrive color={color} width={size} height={size} />;
-		case SvgNames.Dropbox:
-			return <Dropbox color={color} width={size} height={size} />;
-		case SvgNames.Link:
-			return <Link color={color} width={size} height={size} />;
-		case SvgNames.Dots:
-			return <Dots color={color} width={size} height={size} />;
-		case SvgNames.HandDown:
-			return <HandDown color={color} width={size} height={size} />;
-		case SvgNames.Back:
-			return <Back color={color} width={size} height={size} />;
-		case SvgNames.Sun:
-			return <Sun color={color} width={size} height={size} />;
-		case SvgNames.Moon:
-			return <Moon color={color} width={size} height={size} />;
-		default:
-			return null;
-	}
+    switch (name) {
+        case SvgNames.AddFile:
+            return <AddFile color={color} width={size} height={size} />;
+        case SvgNames.AddFolder:
+            return <AddFolder color={color} width={size} height={size} />;
+        case SvgNames.Burger:
+            return <Burger color={color} width={size} height={size} />;
+        case SvgNames.Close:
+            return <Close color={color} width={size} height={size} />;
+        case SvgNames.Plus:
+            return <Plus color={color} width={size} height={size} />;
+        case SvgNames.Trashcan:
+            return <Trashcan color={color} width={size} height={size} />;
+        case SvgNames.OneDrive:
+            return <OneDrive color={color} width={size} height={size} />;
+        case SvgNames.GoogleDrive:
+            return <GoogleDrive color={color} width={size} height={size} />;
+        case SvgNames.Dropbox:
+            return <Dropbox color={color} width={size} height={size} />;
+        case SvgNames.Link:
+            return <Link color={color} width={size} height={size} />;
+        case SvgNames.Dots:
+            return <Dots color={color} width={size} height={size} />;
+        case SvgNames.HandDown:
+            return <HandDown color={color} width={size} height={size} />;
+        case SvgNames.Back:
+            return <Back color={color} width={size} height={size} />;
+        case SvgNames.Sun:
+            return <Sun color={color} width={size} height={size} />;
+        case SvgNames.Moon:
+            return <Moon color={color} width={size} height={size} />;
+        default:
+            return null;
+    }
 };

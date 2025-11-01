@@ -10,110 +10,110 @@ import { DriveRow } from './DriveRow';
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Container = styled.div`
-	padding: 0% 1% 0% 1%;
-	background-color: ${({ theme }) => theme.colors.panelBackground};
-	padding: 0% 1% 0% 1%;
-	width: 200px;
-	display: flex;
-	flex-direction: column;
-	user-select: none;
+    padding: 0% 1% 0% 1%;
+    background-color: ${({ theme }) => theme.colors.panelBackground};
+    padding: 0% 1% 0% 1%;
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
 `;
 
 const Header = styled.div`
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: center;
-	border-bottom: 1px solid ${({ theme }) => theme.colors.border};
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid ${({ theme }) => theme.colors.border};
 `;
 
 const HeaderText = styled.div`
-	font-size: 16px;
-	color: ${({ theme }) => theme.colors.textPrimary};
-	cursor: pointer;
-	user-select: none;
+    font-size: 16px;
+    color: ${({ theme }) => theme.colors.textPrimary};
+    cursor: pointer;
+    user-select: none;
 `;
 
 const NoDrivesText = styled.p`
-	text-align: center;
-	margin: 0;
-	margin-top: 5%;
-	color: gray;
-	font-size: 16px;
+    text-align: center;
+    margin: 0;
+    margin-top: 5%;
+    color: gray;
+    font-size: 16px;
 `;
 
 const NoDrivesTextClickable = styled(NoDrivesText)`
-	cursor: pointer;
-	font-size: 14px;
-	text-decoration: underline;
+    cursor: pointer;
+    font-size: 14px;
+    text-decoration: underline;
 `;
 
 const HeaderAndCheckContainer = styled.div`
-	display: flex;
-	flex: 1;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
 `;
 
 const LoaderContainer = styled.div`
-	margin-top: 5%;
+    margin-top: 5%;
 `;
 
 export const SideMenu = (): JSX.Element => {
-	const dispatch = useAppDispatch();
-	const navigate = useNavigate();
-	const theme = useTheme();
-	const { data: drives = [], isLoading: areDrivesLoading } = useGetDrivesQuery();
-	const { driveId } = useParams();
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+    const theme = useTheme();
+    const { data: drives = [], isLoading: areDrivesLoading } = useGetDrivesQuery();
+    const { driveId } = useParams();
 
-	const onAddDriveClick = (): void => {
-		dispatch(openModal({ kind: ModalKind.AddDrive }));
-	};
+    const onAddDriveClick = (): void => {
+        dispatch(openModal({ kind: ModalKind.AddDrive }));
+    };
 
-	const onDriveClick = (driveId: string) => {
-		navigate(`${driveId}/root`);
-	};
+    const onDriveClick = (driveId: string) => {
+        navigate(`${driveId}/root`);
+    };
 
-	return (
-		<Container>
-			<Header>
-				<HeaderAndCheckContainer>
-					<HeaderText>Connected Drives</HeaderText>
-				</HeaderAndCheckContainer>
-				<IconButton
-					icon={SvgNames.Plus}
-					size={20}
-					color={theme?.colors.panelSvg}
-					onClick={onAddDriveClick}
-				/>
-			</Header>
+    return (
+        <Container>
+            <Header>
+                <HeaderAndCheckContainer>
+                    <HeaderText>Connected Drives</HeaderText>
+                </HeaderAndCheckContainer>
+                <IconButton
+                    icon={SvgNames.Plus}
+                    size={20}
+                    color={theme?.colors.panelSvg}
+                    onClick={onAddDriveClick}
+                />
+            </Header>
 
-			{areDrivesLoading ? (
-				<LoaderContainer>
-					<Loader size={15} />
-				</LoaderContainer>
-			) : !drives.length ? (
-				<>
-					<NoDrivesText>There are no connected drives...</NoDrivesText>
-					<NoDrivesTextClickable onClick={onAddDriveClick}>
-						Add a drive
-					</NoDrivesTextClickable>
-				</>
-			) : (
-				drives.map(drive => {
-					return (
-						<DriveRow
-							onDriveClick={() => {
-								onDriveClick(drive.id);
-							}}
-							active={driveId === drive.id}
-							drive={drive}
-							key={drive.id}
-						/>
-					);
-				})
-			)}
-		</Container>
-	);
+            {areDrivesLoading ? (
+                <LoaderContainer>
+                    <Loader size={15} />
+                </LoaderContainer>
+            ) : !drives.length ? (
+                <>
+                    <NoDrivesText>There are no connected drives...</NoDrivesText>
+                    <NoDrivesTextClickable onClick={onAddDriveClick}>
+                        Add a drive
+                    </NoDrivesTextClickable>
+                </>
+            ) : (
+                drives.map(drive => {
+                    return (
+                        <DriveRow
+                            onDriveClick={() => {
+                                onDriveClick(drive.id);
+                            }}
+                            active={driveId === drive.id}
+                            drive={drive}
+                            key={drive.id}
+                        />
+                    );
+                })
+            )}
+        </Container>
+    );
 };

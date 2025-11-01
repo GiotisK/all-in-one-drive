@@ -668,6 +668,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				extension: extension,
 				sharedLink,
 				sizeBytes,
+				thumbnailLink: null,
 			};
 		});
 

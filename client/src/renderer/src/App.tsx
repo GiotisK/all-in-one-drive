@@ -13,45 +13,45 @@ import { DrivesList } from './components/DrivesList';
 import { FilesList } from './components/FilesList';
 
 const router = createBrowserRouter([
-	{
-		path: routes.home,
-		element: <HomePage />,
-	},
-	{
-		path: routes.login,
-		element: <LandingPage />,
-	},
-	{
-		path: routes.drives,
-		element: <DrivesPage />,
-		children: [
-			{
-				index: true,
-				element: <DrivesList />,
-			},
-			{
-				path: ':driveId/:folderId?',
-				element: <FilesList />,
-			},
-		],
-	},
-	{
-		path: '*',
-		element: <ErrorPage />,
-	},
+    {
+        path: routes.home,
+        element: <HomePage />,
+    },
+    {
+        path: routes.login,
+        element: <LandingPage />,
+    },
+    {
+        path: routes.drives,
+        element: <DrivesPage />,
+        children: [
+            {
+                index: true,
+                element: <DrivesList />,
+            },
+            {
+                path: ':driveId/:folderId?',
+                element: <FilesList />,
+            },
+        ],
+    },
+    {
+        path: '*',
+        element: <ErrorPage />,
+    },
 ]);
 
 function App() {
-	return (
-		<Provider store={store}>
-			<PendingFilesProvider>
-				<Theme>
-					<ThemedToastContainer />
-					<RouterProvider router={router} />
-				</Theme>
-			</PendingFilesProvider>
-		</Provider>
-	);
+    return (
+        <Provider store={store}>
+            <PendingFilesProvider>
+                <Theme>
+                    <ThemedToastContainer />
+                    <RouterProvider router={router} />
+                </Theme>
+            </PendingFilesProvider>
+        </Provider>
+    );
 }
 
 export default App;

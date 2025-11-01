@@ -14,56 +14,56 @@ import { useHandleAuthCodeFromUrl } from '../hooks/useHandleAuthCodeFromUrl';
 import { useServerSideEvents } from '../hooks/useServerSideEvents';
 
 const OuterContainer = styled.div`
-	display: flex;
-	flex-direction: column;
-	height: 100%;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 `;
 
 const InnerContainer = styled.div`
-	display: flex;
-	flex-direction: row;
-	height: 100%;
-	overflow: auto;
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    overflow: auto;
 `;
 
 const RowsScrollview = styled.div`
-	overflow: auto;
-	background-color: ${({ theme }) => theme.colors.background};
+    overflow: auto;
+    background-color: ${({ theme }) => theme.colors.background};
 `;
 
 export const DrivesPage = (): JSX.Element => {
-	const scrollViewRef = useRef<HTMLDivElement>(null);
-	const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
-	const isSideMenuVisible =
-		localStorage.getItem('sideMenuVisible') === null
-			? true
-			: localStorage.getItem('sideMenuVisible') === 'true';
-	const [sideMenuVisible, setSideMenuVisible] = useState(isSideMenuVisible);
+    const scrollViewRef = useRef<HTMLDivElement>(null);
+    const isUserAuthenticated = useAppSelector(state => state.user.isAuthenticated);
+    const isSideMenuVisible =
+        localStorage.getItem('sideMenuVisible') === null
+            ? true
+            : localStorage.getItem('sideMenuVisible') === 'true';
+    const [sideMenuVisible, setSideMenuVisible] = useState(isSideMenuVisible);
 
-	useHandleAuthCodeFromUrl();
-	useServerSideEvents();
-	useRestoreScrollPosition(scrollViewRef);
+    useHandleAuthCodeFromUrl();
+    useServerSideEvents();
+    useRestoreScrollPosition(scrollViewRef);
 
-	const toggleSideMenu = () => {
-		setSideMenuVisible(prev => !prev);
-	};
+    const toggleSideMenu = () => {
+        setSideMenuVisible(prev => !prev);
+    };
 
-	return isUserAuthenticated ? (
-		<OuterContainer>
-			<TitleBanner onBurgerMenuClick={toggleSideMenu} />
-			<InnerContainer>
-				{sideMenuVisible && <SideMenu />}
-				<DropZone>
-					<RowsScrollview ref={scrollViewRef}>
-						<LoadingBar />
-						<Outlet />
-						<FloatingButtonsContainer />
-					</RowsScrollview>
-				</DropZone>
-			</InnerContainer>
-			<ModalContainer />
-		</OuterContainer>
-	) : (
-		<Navigate to={routes.login} />
-	);
+    return isUserAuthenticated ? (
+        <OuterContainer>
+            <TitleBanner onBurgerMenuClick={toggleSideMenu} />
+            <InnerContainer>
+                {sideMenuVisible && <SideMenu />}
+                <DropZone>
+                    <RowsScrollview ref={scrollViewRef}>
+                        <LoadingBar />
+                        <Outlet />
+                        <FloatingButtonsContainer />
+                    </RowsScrollview>
+                </DropZone>
+            </InnerContainer>
+            <ModalContainer />
+        </OuterContainer>
+    ) : (
+        <Navigate to={routes.login} />
+    );
 };
