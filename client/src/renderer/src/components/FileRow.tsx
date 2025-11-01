@@ -273,7 +273,12 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
     return (
         <Container>
             <FirstColumn onClick={onFileClick}>
-                <FileElement type={type} extension={extension} />
+                {file.thumbnail ? (
+                    <img src={file.thumbnail} style={{ height: 36, width: 32 }} />
+                ) : (
+                    <FileElement type={type} extension={extension} />
+                )}
+
                 <Text>{name}</Text>
             </FirstColumn>
             <SecondColumn>
