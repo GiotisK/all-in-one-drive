@@ -50,6 +50,7 @@ const ThirdColumn = styled(ColumnBase)`
 
 const FourthColumn = styled(ColumnBase)`
     flex: 0.5;
+    padding-right: 30px;
 `;
 
 const Text = styled.p`
@@ -109,7 +110,6 @@ const MenuRowText = styled.p`
 `;
 
 const LoaderContainer = styled.div`
-    margin-left: 5px;
     margin-top: 5px;
 `;
 
@@ -290,23 +290,20 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
             </ThirdColumn>
             <FourthColumn>
                 <Text>{date}</Text>
+                {exportFormatsLoading || shareDriveFileLoading ? (
+                    <LoaderContainer>
+                        <Loader size={8} />
+                    </LoaderContainer>
+                ) : sharedLink ? (
+                    <IconButton
+                        icon={SvgNames.Link}
+                        color={theme?.colors.green}
+                        size={20}
+                        onClick={copyToClipboard}
+                    />
+                ) : null}
                 {filemenu}
             </FourthColumn>
-
-            {sharedLink && (
-                <IconButton
-                    icon={SvgNames.Link}
-                    color={theme?.colors.green}
-                    size={20}
-                    onClick={copyToClipboard}
-                />
-            )}
-
-            {(exportFormatsLoading || shareDriveFileLoading) && (
-                <LoaderContainer>
-                    <Loader size={8} />
-                </LoaderContainer>
-            )}
         </Container>
     );
 };

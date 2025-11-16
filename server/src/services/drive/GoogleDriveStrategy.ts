@@ -18,7 +18,7 @@ import fs from 'fs';
 import FilesystemService from '../filesystem/filesystem.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
 import { googleDriveLogger } from '../../logger/logger';
-import { DriveQuotaBytes } from '../../types/types';
+import { DriveQuotaBytes, ThumbnailsMap } from '../../types/types';
 import { VirtualDriveFolderName } from '../constants';
 
 type Credentials = typeof auth.OAuth2.prototype.credentials;
@@ -634,8 +634,8 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 		return watchChangesChannel;
 	}
 
-	private async getThumbnails(files: GoogleDriveFile[], token: string) {
-		const thumbNails: Record<string, string> = {};
+	private async getThumbnails(files: GoogleDriveFile[], token: string): Promise<ThumbnailsMap> {
+		const thumbNails: ThumbnailsMap = {};
 
 		const promiseArr = files.map(async file => {
 			if (!file.thumbnailLink || !file.id) return;
@@ -649,9 +649,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 				const mime = res.headers.get('content-type');
 
 				thumbNails[file.id] = `data:${mime};base64,${base64}`;
-			} catch (err) {
-				// ignore errors
-			}
+			} catch (err) {}
 		});
 
 		await Promise.all(promiseArr);
@@ -793,7 +791,7 @@ export default class GoogleDriveStrategy implements IDriveStrategy {
 
 	private mapToUniversalFileEntityFormat(
 		files: GoogleDriveFile[],
-		imgs: Record<string, string>,
+		imgs: ThumbnailsMap,
 		driveEmail: string,
 		driveId: string
 	): FileEntity[] {

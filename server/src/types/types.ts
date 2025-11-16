@@ -6,3 +6,5 @@ export type DriveQuotaBytes = {
 	used: number;
 	total: number;
 };
+
+export type ThumbnailsMap = Record<string, string>;

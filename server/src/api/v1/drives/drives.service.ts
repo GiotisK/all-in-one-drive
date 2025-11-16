@@ -35,7 +35,11 @@ export class DrivesService {
 			if (tokenData) {
 				const driveEmail = await ctx.getUserDriveEmail(tokenData);
 
-				const exists = await DatabaseService.checkDriveExistance(driveEmail, drive);
+				const exists = await DatabaseService.checkDriveExistance(
+					userEmail,
+					driveEmail,
+					drive
+				);
 
 				if (exists) {
 					return false;

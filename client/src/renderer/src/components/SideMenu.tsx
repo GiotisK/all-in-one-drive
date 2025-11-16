@@ -83,7 +83,7 @@ export const SideMenu = (): JSX.Element => {
                 </HeaderAndCheckContainer>
                 <IconButton
                     icon={SvgNames.Plus}
-                    size={20}
+                    size={18}
                     color={theme?.colors.panelSvg}
                     onClick={onAddDriveClick}
                 />

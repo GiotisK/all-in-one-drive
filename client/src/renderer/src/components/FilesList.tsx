@@ -30,7 +30,14 @@ export const FilesList = () => {
     ) : shouldShowEmptyState ? (
         <NoFilesText>No files exist...</NoFilesText>
     ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+        <div
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flex: 1,
+                height: '100%',
+            }}
+        >
             <MenuBanner />
             {files.map(file => (
                 <FileRow key={file.id} file={file} />

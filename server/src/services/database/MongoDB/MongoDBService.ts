@@ -91,6 +91,30 @@ export class MongoDBService implements IDatabaseService {
 		}
 	}
 
+	public async checkDriveExistance(
+		userEmail: string,
+		driveEmail: string,
+		driveType: DriveType
+	): Promise<boolean> {
+		try {
+			const user = await User.findOne({
+				email: userEmail,
+			}).exec();
+
+			if (!user) {
+				return false;
+			}
+
+			const foundDrive = user.drives.find(
+				drive => drive.email === driveEmail && drive.driveType === driveType
+			);
+
+			return !!foundDrive;
+		} catch (e) {
+			return false;
+		}
+	}
+
 	public async getDrive(userEmail: string, driveId: string): Promise<Nullable<DriveDTO>> {
 		try {
 			const user = await User.findOne({

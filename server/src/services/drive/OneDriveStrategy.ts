@@ -17,7 +17,7 @@ import FilesystemService from '../filesystem/filesystem.service';
 import fsPromises from 'fs/promises';
 import { Readable } from 'stream';
 import axios from 'axios';
-import { DriveQuotaBytes } from '../../types/types';
+import { DriveQuotaBytes, ThumbnailsMap } from '../../types/types';
 import { VirtualDriveFolderName } from '../constants';
 
 type Credentials = {
@@ -194,7 +194,9 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		try {
 			const accessToken = await this.getAccessToken(token);
 			const baseUrl = 'https://graph.microsoft.com/v1.0/users/me/drive';
-			const filesSuffix = folderId ? `/items/${folderId}/children` : '/root/children';
+			const filesSuffix = folderId
+				? `/items/${folderId}/children?$expand=thumbnails`
+				: '/root/children?$expand=thumbnails';
 			const url = `${baseUrl}${filesSuffix}`;
 
 			const res = await fetch(url, {
@@ -215,8 +217,11 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 			const sharedLinks = await this.getSharedLinks(accessToken, fileIds);
 
+			const thumbNails = this.getThumbnails(filesData.value);
+
 			const files = this.mapToUniversalFileEntityFormat(
 				filesData.value,
+				thumbNails,
 				driveEmail,
 				driveId,
 				sharedLinks
@@ -421,6 +426,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 			const fileEntities = this.mapToUniversalFileEntityFormat(
 				[data],
+				{},
 				driveEmail,
 				driveId,
 				{}
@@ -580,6 +586,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 					const driveEmail = await this.getUserDriveEmail(token);
 					fileEntities = this.mapToUniversalFileEntityFormat(
 						[data],
+						{},
 						driveEmail,
 						driveId,
 						{}
@@ -651,6 +658,21 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		throw new Error('Method not implemented.');
 	}
 
+	private getThumbnails(files: OneDriveFile[]): ThumbnailsMap {
+		const thumbNailsMap: ThumbnailsMap = {};
+
+		files.forEach((file: OneDriveFile) => {
+			const extension = this.extractExtension(file.name);
+			const url = file.thumbnails?.[0]?.small?.url;
+
+			if (url && !this.isAudioFile(extension)) {
+				thumbNailsMap[file.id] = url;
+			}
+		});
+
+		return thumbNailsMap;
+	}
+
 	private async getAccessToken(token: string): Promise<string> {
 		const oldParsedToken = JSON.parse(token) as ExtendedOneDriveToken;
 
@@ -667,6 +689,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 	private mapToUniversalFileEntityFormat(
 		files: OneDriveFile[],
+		imgs: ThumbnailsMap,
 		driveEmail: string,
 		driveId: string,
 		sharedLinksMap: Nullable<SharedLinksMap>
@@ -677,12 +700,10 @@ export default class OneDriveStrategy implements IDriveStrategy {
 			const size = fileType === FileType.File ? normalizeBytes('' + file.size) : '';
 			const normalizedDate = file.createdDateTime?.substring(0, 10) ?? '';
 			const extension =
-				fileType === FileType.File
-					? fileName.substring(fileName.lastIndexOf('.') + 1)
-					: '-';
-
+				fileType === FileType.File ? this.extractExtension(fileName ?? '') : '-';
 			const sharedLink = sharedLinksMap?.[file.id] ?? null;
 			const sizeBytes = file.size ?? 0;
+			const thumbnail = imgs[file.id] ?? null;
 
 			return {
 				id: file.id ?? '',
@@ -696,6 +717,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 				extension: extension,
 				sharedLink,
 				sizeBytes,
+				thumbnail,
 			};
 		});
 
@@ -878,6 +900,16 @@ export default class OneDriveStrategy implements IDriveStrategy {
 			return null;
 		}
 	}
+
+	private isAudioFile(extension: string): boolean {
+		return ['mp3', 'wav', 'flac', 'aac', 'm4a', 'ogg', 'oga', 'wma', 'aiff', 'alac'].includes(
+			extension.toLowerCase()
+		);
+	}
+
+	private extractExtension(fileName: string): string {
+		return fileName.substring(fileName.lastIndexOf('.') + 1);
+	}
 }
 
 type OneDriveToken = {
@@ -900,6 +932,7 @@ type OneDriveFile = {
 	createdDateTime: string;
 	lastModifiedDateTime: string;
 	folder: unknown;
+	thumbnails?: [{ small?: { url: string } }];
 };
 
 type SharedLinksMap = Record<string, string>;

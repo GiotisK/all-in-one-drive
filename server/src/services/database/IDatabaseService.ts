@@ -16,5 +16,9 @@ export interface IDatabaseService {
 	getDrive(userEmail: string, driveId: string): Promise<Nullable<DriveDTO>>;
 	deleteDrive(userEmail: string, driveId: string): Promise<boolean>;
 	updateToken(driveId: string, encryptedTokenData: string): Promise<boolean>;
-	checkDriveExistance(driveEmail: string, driveType: DriveType): Promise<boolean>;
+	checkDriveExistance(
+		useEmail: string,
+		driveEmail: string,
+		driveType: DriveType
+	): Promise<boolean>;
 }

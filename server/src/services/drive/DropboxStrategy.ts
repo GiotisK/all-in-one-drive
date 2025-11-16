@@ -16,8 +16,9 @@ import FilesystemService from '../filesystem/filesystem.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
 import fs, { ReadStream } from 'fs';
 import { dropboxLogger, oneDriveLogger } from '../../logger/logger';
-import { DriveQuotaBytes } from '../../types/types';
+import { DriveQuotaBytes, ThumbnailsMap } from '../../types/types';
 import { VirtualDriveFolderName } from '../constants';
+import { Readable } from 'stream';
 
 export default class DropboxStrategy implements IDriveStrategy {
 	private dropbox: Dropbox;
@@ -117,11 +118,13 @@ export default class DropboxStrategy implements IDriveStrategy {
 		return new Promise(async resolve => {
 			await this.setToken(token);
 
+			const folderPath = folderId ?? '';
+
 			this.dropbox<ListFilesResult>(
 				{
 					resource: 'files/list_folder',
 					parameters: {
-						path: folderId ?? '',
+						path: folderPath,
 						recursive: false,
 						include_deleted: false,
 						include_has_explicit_shared_members: false,
@@ -137,11 +140,13 @@ export default class DropboxStrategy implements IDriveStrategy {
 						return;
 					}
 
+					const thumbnails = await this.getThumbnails(result.entries);
 					const driveEmail = await this.getUserDriveEmail(token);
 					const sharedLinks = await this.getSharedLinks(token);
 
 					const filesEntities = this.mapToUniversalFileEntityFormat(
 						result.entries,
+						thumbnails,
 						driveEmail,
 						driveId,
 						sharedLinks ?? {}
@@ -326,6 +331,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 
 					const fileEntities = this.mapToUniversalFileEntityFormat(
 						[metadata],
+						{},
 						driveEmail,
 						driveId,
 						{}
@@ -472,6 +478,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 					} else {
 						const fileEntities = this.mapToUniversalFileEntityFormat(
 							[result],
+							{},
 							driveEmail,
 							driveId,
 							{}
@@ -637,24 +644,84 @@ export default class DropboxStrategy implements IDriveStrategy {
 		return tokenData;
 	}
 
+	private async getThumbnails(files: DropboxFile[]): Promise<ThumbnailsMap> {
+		const promiseArr = files.map(file => {
+			return new Promise<{ id: string; img: string } | null>(async resolve => {
+				let hasError = false;
+				const data = this.dropbox<unknown, Readable>(
+					{
+						resource: 'files/get_thumbnail_v2',
+						parameters: {
+							format: 'png',
+							mode: 'strict',
+							quality: 'quality_80',
+							resource: {
+								'.tag': 'path',
+								path: file.id,
+							},
+							size: 'w64h64',
+						},
+					},
+					async (err, _result) => {
+						if (err) {
+							resolve(null);
+							hasError = true;
+							dropboxLogger('getThumbnails: error on data', err);
+						}
+					}
+				);
+
+				if (hasError) {
+					return;
+				}
+
+				let chunks: Buffer[] = [];
+
+				data.on('data', chunk => {
+					chunks.push(chunk);
+				});
+
+				data.on('end', () => {
+					const buffer = Buffer.concat(chunks);
+					const img = buffer.toString('base64');
+					resolve({ id: file.id, img: `data:image/png;base64,${img}` });
+				});
+
+				data.on('error', (err) => {
+					dropboxLogger('getThumbnails: error on data', err);
+					resolve(null);
+				});
+			});
+		});
+
+		const responses = await Promise.all(promiseArr);
+
+		const thumbnailsMap: ThumbnailsMap = {};
+
+		responses.forEach(res => {
+			if (res) {
+				thumbnailsMap[res.id] = res.img;
+			}
+		});
+
+		return thumbnailsMap;
+	}
+
 	private mapToUniversalFileEntityFormat(
 		files: DropboxFile[],
+		imgs: ThumbnailsMap,
 		driveEmail: string,
 		driveId: string,
 		sharedLinks: SharedLinksMap
 	): FileEntity[] {
 		const fileEntities: FileEntity[] = files.map(file => {
-			const fileName = file.name;
 			const fileType = file['.tag'] === 'folder' ? FileType.Folder : FileType.File;
 			const size = fileType === FileType.File ? normalizeBytes('' + file.size) : '';
 			const normalizedDate = file.client_modified?.substring(0, 10) ?? '';
-			const extension =
-				fileType === FileType.File
-					? fileName.substring(fileName.lastIndexOf('.') + 1)
-					: '-';
-
+			const extension = this.extractFormat(file);
 			const sharedLink = sharedLinks[file.id] ?? null;
 			const sizeBytes = file.size ?? 0;
+			const thumbnail = file.id ? imgs[file.id] : null;
 
 			return {
 				id: file.id ?? '',
@@ -668,6 +735,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				extension: extension,
 				sharedLink,
 				sizeBytes,
+				thumbnail,
 			};
 		});
 
@@ -726,6 +794,10 @@ export default class DropboxStrategy implements IDriveStrategy {
 			);
 		});
 	}
+
+	private extractFormat(file: DropboxFile) {
+		return FileType.File ? file.name.substring(file.name.lastIndexOf('.') + 1) : '-';
+	}
 }
 
 // Self defined types since dropbox-v2-api doesn't provide ts support
@@ -760,10 +832,10 @@ type Dropbox = {
 		) => void
 	) => void;
 } & {
-	<T>(
+	<T, G = void>(
 		options: { resource: string; parameters?: {}; readStream?: ReadStream },
 		callback: (err: any, result: T, response?: any) => void
-	): void;
+	): G;
 };
 
 type DropboxToken = {

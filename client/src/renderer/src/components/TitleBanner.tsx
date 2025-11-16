@@ -127,7 +127,9 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
                     {virtualQuotaLoading ? (
                         <Loader size={10} />
                     ) : (
-                        <QuotaGigabytes>{`${virtualQuota?.used} / ${virtualQuota?.total}GB`}</QuotaGigabytes>
+                        <QuotaGigabytes>{`${virtualQuota?.used ?? ''} / ${
+                            virtualQuota?.total ?? ''
+                        }GB`}</QuotaGigabytes>
                     )}
                 </QuotaLoaderContainer>
             )}
