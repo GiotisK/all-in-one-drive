@@ -28,6 +28,7 @@ const InnerContainer = styled.div`
 
 const RowsScrollview = styled.div`
     overflow: auto;
+    height: 100%;
     background-color: ${({ theme }) => theme.colors.background};
 `;
 
