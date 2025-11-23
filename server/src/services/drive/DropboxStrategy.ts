@@ -19,6 +19,9 @@ import { dropboxLogger, oneDriveLogger } from '../../logger/logger';
 import { DriveQuotaBytes, ThumbnailsMap } from '../../types/types';
 import { VirtualDriveFolderName } from '../constants';
 import { Readable } from 'stream';
+import { chunkArray } from './helpers/array-utils';
+
+const THUMBNAILS_REQUEST_MAX_BATCH = 25;
 
 export default class DropboxStrategy implements IDriveStrategy {
 	private dropbox: Dropbox;
@@ -645,66 +648,55 @@ export default class DropboxStrategy implements IDriveStrategy {
 	}
 
 	private async getThumbnails(files: DropboxFile[]): Promise<ThumbnailsMap> {
-		const promiseArr = files.map(file => {
-			return new Promise<{ id: string; img: string } | null>(async resolve => {
-				let hasError = false;
-				const data = this.dropbox<unknown, Readable>(
+		const batches = chunkArray(files, THUMBNAILS_REQUEST_MAX_BATCH);
+
+		const promises = batches.map(batch => {
+			return new Promise<ThumbnailsMap>(async resolve => {
+				const thumbnailsMap: ThumbnailsMap = {};
+
+				const entries = batch.map(file => ({
+					format: 'png',
+					mode: 'strict',
+					path: file.id,
+					quality: 'quality_80',
+					size: 'w64h64',
+				}));
+
+				this.dropbox<ThumbnailsBatchResult, Readable>(
 					{
-						resource: 'files/get_thumbnail_v2',
+						resource: 'files/get_thumbnail_batch',
 						parameters: {
-							format: 'png',
-							mode: 'strict',
-							quality: 'quality_80',
-							resource: {
-								'.tag': 'path',
-								path: file.id,
-							},
-							size: 'w64h64',
+							entries,
 						},
 					},
-					async (err, _result) => {
+					async (err, result) => {
 						if (err) {
-							resolve(null);
-							hasError = true;
-							dropboxLogger('getThumbnails: error on data', err);
+							dropboxLogger('getThumbnails: error: ', err);
+							resolve({});
+							return;
 						}
+
+						result.entries.forEach(entry => {
+							if (entry.metadata?.id) {
+								thumbnailsMap[
+									entry.metadata.id
+								] = `data:image/png;base64,${entry.thumbnail}`;
+							}
+						});
+
+						resolve(thumbnailsMap);
 					}
 				);
-
-				if (hasError) {
-					return;
-				}
-
-				let chunks: Buffer[] = [];
-
-				data.on('data', chunk => {
-					chunks.push(chunk);
-				});
-
-				data.on('end', () => {
-					const buffer = Buffer.concat(chunks);
-					const img = buffer.toString('base64');
-					resolve({ id: file.id, img: `data:image/png;base64,${img}` });
-				});
-
-				data.on('error', (err) => {
-					dropboxLogger('getThumbnails: error on data', err);
-					resolve(null);
-				});
 			});
 		});
 
-		const responses = await Promise.all(promiseArr);
+		const thumbnailMaps = await Promise.all(promises);
 
-		const thumbnailsMap: ThumbnailsMap = {};
+		const combinedThumbnailMap = thumbnailMaps.reduce((acc, obj) => {
+			return { ...acc, ...obj };
+		}, {});
 
-		responses.forEach(res => {
-			if (res) {
-				thumbnailsMap[res.id] = res.img;
-			}
-		});
-
-		return thumbnailsMap;
+		return combinedThumbnailMap;
 	}
 
 	private mapToUniversalFileEntityFormat(
@@ -796,7 +788,9 @@ export default class DropboxStrategy implements IDriveStrategy {
 	}
 
 	private extractFormat(file: DropboxFile) {
-		return FileType.File ? file.name.substring(file.name.lastIndexOf('.') + 1) : '-';
+		return FileType.File
+			? file.name.substring(file.name.lastIndexOf('.') + 1).toLowerCase()
+			: '-';
 	}
 }
 
@@ -852,6 +846,7 @@ type SharedLink = {
 
 type SharedLinksMap = Record<string, string>;
 
+type ThumbnailsBatchResult = { entries: { metadata?: { id: string }; thumbnail: string }[] };
 type AllocationResult = { allocation: { allocated: number }; used: number };
 type ListFilesResult = { entries: DropboxFile[] };
 type AccountResult = { email: string };
