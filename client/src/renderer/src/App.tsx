@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { LandingPage } from './pages/LandingPage';
+import { LoginPage } from './pages/LoginPage';
 import { Theme } from './providers/Theme';
 import { ErrorPage } from './pages/ErrorPage';
 import { DrivesPage } from './pages/DrivesPage';
@@ -19,7 +19,7 @@ const router = createBrowserRouter([
     },
     {
         path: routes.login,
-        element: <LandingPage />,
+        element: <LoginPage />,
     },
     {
         path: routes.drives,
