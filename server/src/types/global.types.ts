@@ -67,6 +67,7 @@ export enum DriveType {
 	GoogleDrive = 'googledrive',
 	Dropbox = 'dropbox',
 	OneDrive = 'onedrive',
+	VirtualDrive = 'virtualdrive',
 }
 
 export type DriveQuota = {

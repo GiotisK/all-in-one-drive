@@ -16,6 +16,9 @@ export const CreateDriveSvg = (drive: DriveType, size = 35): Nullable<JSX.Elemen
         case DriveType.OneDrive:
             svgName = SvgNames.OneDrive;
             break;
+        case DriveType.VirtualDrive:
+            svgName = SvgNames.VirtualDrive;
+            break;
     }
 
     return createSvg(svgName, size, theme?.colors.textSecondary);

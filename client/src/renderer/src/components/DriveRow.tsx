@@ -85,9 +85,10 @@ interface IProps {
     drive: DriveEntity;
     active: boolean;
     onDriveClick: () => void;
+    styles?: React.CSSProperties;
 }
 
-export const DriveRow = ({ drive, active, onDriveClick }: IProps): JSX.Element => {
+export const DriveRow = ({ drive, active, onDriveClick, styles = {} }: IProps): JSX.Element => {
     const dispatch = useAppDispatch();
     const theme = useTheme();
 
@@ -101,7 +102,10 @@ export const DriveRow = ({ drive, active, onDriveClick }: IProps): JSX.Element =
     };
 
     return (
-        <DriveElementContainer onClick={onDriveClick} style={{ opacity: active ? 1 : 0.5 }}>
+        <DriveElementContainer
+            onClick={onDriveClick}
+            style={{ ...styles, opacity: active ? 1 : 0.5 }}
+        >
             <DriveSvgContainer>{CreateDriveSvg(drive.type, 25)}</DriveSvgContainer>
 
             <EmailQuotaContainer>

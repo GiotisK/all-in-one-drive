@@ -15,6 +15,13 @@ const NoFilesText = styled.p`
     font-size: 16px;
 `;
 
+const DrivesContainer = styled.div`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    paddingtop: 10px;
+`;
+
 export const DrivesList = () => {
     const { data: drives = [], isLoading: areDrivesLoading } = useGetDrivesQuery();
     const { isSuccess: drivesSuccess } = useGetDrivesQuery();
@@ -28,10 +35,10 @@ export const DrivesList = () => {
     ) : shouldShowEmptyState ? (
         <NoFilesText>No connected drives...</NoFilesText>
     ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', flex: 1, paddingTop: 10 }}>
+        <DrivesContainer>
             {drives.map(drive => (
                 <DrivesListRow key={drive.id} drive={drive} />
             ))}
-        </div>
+        </DrivesContainer>
     );
 };

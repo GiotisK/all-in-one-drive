@@ -1,6 +1,6 @@
 import { bytesToGigabytes } from '../../../../helpers/helpers';
 import DatabaseService from '../../../../services/database/DatabaseFactory';
-import { DriveQuota, Nullable } from '../../../../types/global.types';
+import { DriveEntity, DriveQuota, DriveType, Nullable } from '../../../../types/global.types';
 import { getDriveContextAndToken } from '../drives.helpers';
 
 class VirtualDriveService {
@@ -31,6 +31,21 @@ class VirtualDriveService {
 		const used = quotas.reduce((acc, cur) => acc + (cur?.used || 0), 0);
 
 		return { used: bytesToGigabytes('' + used), total: bytesToGigabytes('' + total) };
+	}
+
+	async getVirtualDrive(userEmail: string): Promise<Nullable<DriveEntity>> {
+		const quota = await this.getVirtualQuota(userEmail);
+
+		if (!quota) {
+			return null;
+		}
+
+		return {
+			id: 'virtual-drive',
+			email: userEmail,
+			type: DriveType.VirtualDrive,
+			quota,
+		};
 	}
 }
 

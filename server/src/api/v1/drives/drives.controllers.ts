@@ -16,6 +16,8 @@ import { AuthLocals } from '../../../types/types';
 
 import SSEManager from '../../../services/sse/SSEManager';
 
+import VirtualDrivesService from './virtual/drives.virtual.service';
+
 class DrivesController {
 	public async authLink(
 		req: Request<{ drive: DriveType }>,
@@ -57,9 +59,15 @@ class DrivesController {
 
 	public async getDrives(_req: Request, res: Response<DriveEntity[], AuthLocals>): Promise<void> {
 		const { email } = res.locals;
-		const driveEntities = await DrivesService.getDrives(email);
+
+		let driveEntities = await DrivesService.getDrives(email);
+		const virtualDriveEntity = await VirtualDrivesService.getVirtualDrive(email);
 
 		if (driveEntities) {
+			if (virtualDriveEntity) {
+				driveEntities.unshift(virtualDriveEntity);
+			}
+
 			res.status(Status.OK).send(driveEntities);
 		} else {
 			res.status(Status.INTERNAL_SERVER_ERROR).send();

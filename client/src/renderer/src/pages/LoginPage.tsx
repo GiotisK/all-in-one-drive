@@ -37,16 +37,11 @@ const ThemeToggleWrapper = styled.div`
 
 export const LoginPage = (): JSX.Element => {
     const isAuthenticated = useAppSelector(state => state.user.isAuthenticated);
-    const isVirtualDriveEnabled = useAppSelector(state => state.settings.isVirtualDriveEnabled);
 
     useAuthorizeUserQuery();
 
     return isAuthenticated ? (
-        isVirtualDriveEnabled ? (
-            <Navigate to={routes.virtual} />
-        ) : (
-            <Navigate to={routes.drives} />
-        )
+        <Navigate to={routes.drives} />
     ) : (
         <LandingPageContainer>
             <LandingPageTitle>aio drive</LandingPageTitle>

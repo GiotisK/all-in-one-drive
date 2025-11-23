@@ -8,6 +8,7 @@ import { IconButton } from './IconButton';
 import { useGetDrivesQuery } from '../redux/rtk/driveApi';
 import { DriveRow } from './DriveRow';
 import { useNavigate, useParams } from 'react-router-dom';
+import { DriveType } from '../shared/types/global.types';
 
 const Container = styled.div`
     padding: 0% 1% 0% 1%;
@@ -110,6 +111,11 @@ export const SideMenu = (): JSX.Element => {
                             active={driveId === drive.id}
                             drive={drive}
                             key={drive.id}
+                            styles={
+                                drive.type === DriveType.VirtualDrive
+                                    ? { borderStyle: 'dashed' }
+                                    : {}
+                            }
                         />
                     );
                 })

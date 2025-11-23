@@ -13,6 +13,8 @@ import { ReactComponent as HandDown } from '../../assets/svgs/hand-down.svg';
 import { ReactComponent as Back } from '../../assets/svgs/back.svg';
 import { ReactComponent as Sun } from '../../assets/svgs/sun.svg';
 import { ReactComponent as Moon } from '../../assets/svgs/moon.svg';
+import { ReactComponent as VirtualDrive } from '../../assets/svgs/virtualdrive.svg';
+
 import { Nullable } from '../types/global.types';
 
 export enum SvgNames {
@@ -31,6 +33,7 @@ export enum SvgNames {
     Back = 'back',
     Sun = 'sun',
     Moon = 'moon',
+    VirtualDrive = 'virtualdrive',
 }
 
 export const createSvg = (name: SvgNames, size = 24, color = 'black'): Nullable<JSX.Element> => {
@@ -65,6 +68,8 @@ export const createSvg = (name: SvgNames, size = 24, color = 'black'): Nullable<
             return <Sun color={color} width={size} height={size} />;
         case SvgNames.Moon:
             return <Moon color={color} width={size} height={size} />;
+        case SvgNames.VirtualDrive:
+            return <VirtualDrive color={color} width={size} height={size} />;
         default:
             return null;
     }
