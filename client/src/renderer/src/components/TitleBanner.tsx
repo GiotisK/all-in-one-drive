@@ -2,7 +2,6 @@ import styled, { useTheme } from 'styled-components';
 import { UserMenu } from './UserMenu';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 import { ThemeToggle } from './Toggle/ThemeToggle';
-import { Nullable } from '../shared/types/global.types';
 import { useAppSelector } from '../redux/store/store';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';

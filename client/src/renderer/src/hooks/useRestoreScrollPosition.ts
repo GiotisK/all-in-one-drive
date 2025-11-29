@@ -14,7 +14,6 @@ export const useRestoreScrollPosition = (ref: React.RefObject<HTMLDivElement>) =
             setTimeout(() => {
                 ref.current?.scrollTo({
                     top: scrollPositions[location.pathname] || 0,
-                    behavior: 'instant',
                 });
             }, 20);
         }
