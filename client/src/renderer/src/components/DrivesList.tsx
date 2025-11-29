@@ -19,7 +19,7 @@ const DrivesContainer = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
-    paddingtop: 10px;
+    padding-top: 10px;
 `;
 
 export const DrivesList = () => {

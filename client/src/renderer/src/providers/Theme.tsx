@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import { DefaultTheme, ThemeProvider } from 'styled-components';
 import { useAppSelector } from '../redux/store/store';
 
@@ -43,6 +43,10 @@ const darkTheme: DefaultTheme = {
 export const Theme = ({ children }: PropsWithChildren): JSX.Element => {
     const themeMode = useAppSelector(state => state.settings.themeMode);
     const theme = themeMode === 'light' ? lightTheme : darkTheme;
+
+    useEffect(() => {
+        document.body.style.backgroundColor = theme.colors.background;
+    }, [theme.colors.background, themeMode]);
 
     return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 };
