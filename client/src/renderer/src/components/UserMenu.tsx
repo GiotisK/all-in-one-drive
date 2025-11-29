@@ -5,7 +5,6 @@ import { openModal } from '../redux/slices/modal/modalSlice';
 import { useAppDispatch, useAppSelector } from '../redux/store/store';
 import { useLogoutUserMutation } from '../redux/rtk/userApi';
 import { useOutsideClicker } from '../hooks/useOutsideClicker';
-import { toggleDriveMode } from '../redux/slices/settings/settingsSlice';
 
 const PopupMenuContainer = styled.div`
     display: flex;
@@ -103,7 +102,6 @@ const SettingsText = styled.p`
 
 export const UserMenu = (): JSX.Element => {
     const { email } = useAppSelector(state => state.user);
-    const isVirtualDriveEnabled = useAppSelector(state => state.settings.isVirtualDriveEnabled);
     const dispatch = useAppDispatch();
     const [menuVisible, setMenuVisible] = useState(false);
     const menuRef = useRef(null);
@@ -121,15 +119,6 @@ export const UserMenu = (): JSX.Element => {
                 title: 'Add a drive',
                 onClick: () => {
                     dispatch(openModal({ kind: ModalKind.AddDrive }));
-                },
-            },
-            {
-                title: isVirtualDriveEnabled
-                    ? 'Switch to all-in-one drive'
-                    : 'Switch to virtual drive',
-                onClick: () => {
-                    localStorage.setItem('isVirtualDriveEnabled', '' + !isVirtualDriveEnabled);
-                    dispatch(toggleDriveMode());
                 },
             },
             {

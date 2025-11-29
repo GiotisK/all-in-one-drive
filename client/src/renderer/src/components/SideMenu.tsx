@@ -49,7 +49,7 @@ const NoDrivesTextClickable = styled(NoDrivesText)`
     text-decoration: underline;
 `;
 
-const HeaderAndCheckContainer = styled.div`
+const HeaderContainer = styled.div`
     display: flex;
     flex: 1;
     flex-direction: row;
@@ -79,9 +79,9 @@ export const SideMenu = (): JSX.Element => {
     return (
         <Container>
             <Header>
-                <HeaderAndCheckContainer>
+                <HeaderContainer>
                     <HeaderText>Connected Drives</HeaderText>
-                </HeaderAndCheckContainer>
+                </HeaderContainer>
                 <IconButton
                     icon={SvgNames.Plus}
                     size={18}

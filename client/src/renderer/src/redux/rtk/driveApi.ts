@@ -2,7 +2,6 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import {
     DriveChanges,
     DriveEntity,
-    DriveQuota,
     DriveType,
     FileEntity,
     FileType,
@@ -36,7 +35,6 @@ export const driveApi = createApi({
             invalidatesTags: (_result, _error, { driveId }) => [
                 'Drives',
                 { type: 'Files', id: driveId },
-                'VirtualQuota',
             ],
         }),
         getGoogleDriveFileExportFormats: builder.query<
@@ -129,7 +127,7 @@ export const driveApi = createApi({
                 method: 'POST',
                 body: { authCode },
             }),
-            invalidatesTags: ['Files', 'VirtualQuota'],
+            invalidatesTags: ['Files'],
         }),
         watchDriveChanges: builder.query<WatchChangesChannel[], { driveIds: string[] }>({
             query: ({ driveIds }) => ({
@@ -166,12 +164,8 @@ export const driveApi = createApi({
                 }
             },
         }),
-        getVirtualQuota: builder.query<DriveQuota, void>({
-            query: () => ({ url: 'virtual/quota', method: 'GET' }),
-            providesTags: ['VirtualQuota'],
-        }),
     }),
-    tagTypes: ['Drives', 'Files', 'VirtualQuota'],
+    tagTypes: ['Drives', 'Files'],
 });
 
 export const {
@@ -192,5 +186,4 @@ export const {
     useGetAuthLinkQuery,
     useWatchDriveChangesQuery,
     useGetDriveChangesQuery,
-    useGetVirtualQuotaQuery,
 } = driveApi;

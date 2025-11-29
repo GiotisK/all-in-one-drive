@@ -1,5 +1,4 @@
 import styled, { useTheme } from 'styled-components';
-import { Loader } from './Loader';
 import { UserMenu } from './UserMenu';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 import { ThemeToggle } from './Toggle/ThemeToggle';
@@ -9,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { routes } from '../shared/constants/routes';
 import { useIsInsideFolder } from '../hooks/useIsInsideFolder';
 import { IconButton } from './IconButton';
-import { useConnectDriveMutation, useGetVirtualQuotaQuery } from '../redux/rtk/driveApi';
 
 const BannerContainer = styled.div`
     display: flex;
@@ -53,27 +51,6 @@ const BurgerMenuButton = styled.div`
     }
 `;
 
-const QuotaLoaderContainer = styled.div`
-    margin-left: auto;
-    margin-right: 150px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-`;
-
-const QuotaStringLoader = styled.p`
-    margin: 0;
-    margin-right: 5px;
-    color: white;
-    font-size: 14px;
-`;
-
-const QuotaGigabytes = styled.span`
-    font-weight: bold;
-    font-size: 13px;
-    color: white;
-`;
-
 const ThemeToggleWrapper = styled.div`
     margin-right: 20px;
 `;
@@ -85,9 +62,7 @@ const ToggleAndMenuContainer = styled.div`
 `;
 
 interface TitleBannerProps {
-    virtualDriveEnabled?: boolean;
     popupMenu?: boolean;
-    virtualQuota?: Nullable<string>;
     email?: string;
     onBurgerMenuClick?: () => void;
     onAddDriveClick?: () => void;
@@ -96,17 +71,9 @@ interface TitleBannerProps {
 }
 
 export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
-    const isVirtualDriveEnabled = useAppSelector(state => state.settings.isVirtualDriveEnabled);
     const isAuthenticated = useAppSelector(state => state.user.isAuthenticated);
     const navigate = useNavigate();
     const isInsideFolder = useIsInsideFolder();
-    const [_connectDrive, { isLoading: isConnectDriveLoading }] = useConnectDriveMutation({
-        fixedCacheKey: 'connectDrive',
-    });
-    const { isLoading: virtualQuotaLoading, data: virtualQuota } = useGetVirtualQuotaQuery(
-        undefined,
-        { skip: isConnectDriveLoading }
-    );
 
     const navigateToDrivePath = () => {
         navigate(routes.drives);
@@ -121,18 +88,6 @@ export const TitleBanner = (props: TitleBannerProps): JSX.Element => {
                 </BurgerMenuButton>
                 <LogoTitle onClick={navigateToDrivePath}>aio drive</LogoTitle>
             </LogoMenuContainer>
-            {isVirtualDriveEnabled && (
-                <QuotaLoaderContainer>
-                    <QuotaStringLoader>Virtual Quota:</QuotaStringLoader>
-                    {virtualQuotaLoading ? (
-                        <Loader size={10} />
-                    ) : (
-                        <QuotaGigabytes>{`${virtualQuota?.used ?? ''} / ${
-                            virtualQuota?.total ?? ''
-                        }GB`}</QuotaGigabytes>
-                    )}
-                </QuotaLoaderContainer>
-            )}
             <ToggleAndMenuContainer>
                 <ThemeToggleWrapper>
                     <ThemeToggle />
