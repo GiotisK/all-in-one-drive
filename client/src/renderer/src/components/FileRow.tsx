@@ -16,6 +16,7 @@ import {
     useGetGoogleDriveFileExportFormatsQuery,
     useLazyOpenDriveFileQuery,
     useShareDriveFileMutation,
+    useGetThumbnailLinkQuery,
 } from '../redux/rtk/driveApi';
 import { useOutsideClicker } from '../hooks/useOutsideClicker';
 
@@ -151,6 +152,10 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
         );
     const [shareDriveFile, { isLoading: shareDriveFileLoading }] = useShareDriveFileMutation();
     const [downloadDriveFile] = useDownloadDriveFileMutation();
+    const { data } = useGetThumbnailLinkQuery(
+        { driveId, fileId: id },
+        { skip: !file.hasThumbnail }
+    );
     const [trigger] = useLazyOpenDriveFileQuery();
 
     useOutsideClicker(menuRef, menuTriggerRef, () => setMenuToggle(false));
@@ -273,8 +278,8 @@ export const FileRow = ({ file }: IProps): JSX.Element => {
     return (
         <Container>
             <FirstColumn onClick={onFileClick}>
-                {file.thumbnail ? (
-                    <img src={file.thumbnail} style={{ height: 36, width: 32 }} />
+                {file.hasThumbnail && data ? (
+                    <img src={data} style={{ height: 36, width: 32 }} />
                 ) : (
                     <FileElement type={type} extension={extension} />
                 )}

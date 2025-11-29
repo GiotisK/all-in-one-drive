@@ -213,6 +213,26 @@ export class FilesService {
 
 		return null;
 	}
+
+	public async getThumbnailLink(
+		driveId: string,
+		userEmail: string,
+		fileId: string
+	): Promise<Nullable<string>> {
+		const drive = await DatabaseService.getDrive(userEmail, driveId);
+
+		if (drive) {
+			const { driveType, token: encryptedToken } = drive;
+			const ctxAndToken = getDriveContextAndToken(driveType, encryptedToken);
+
+			if (ctxAndToken) {
+				const { ctx, token } = ctxAndToken;
+				return ctx.getThumbnailLink(token, fileId);
+			}
+		}
+
+		return null;
+	}
 }
 
 export default new FilesService();

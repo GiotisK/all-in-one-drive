@@ -114,4 +114,8 @@ export default class DriveContext {
 	): Promise<Nullable<DriveChanges>> {
 		return this.strategy.fetchDriveChanges(token, startPageToken, driveId);
 	}
+
+	public async getThumbnailLink(token: string, fileId: string): Promise<Nullable<string>> {
+		return this.strategy.getThumbnailLink(token, fileId);
+	}
 }

@@ -17,7 +17,7 @@ import FilesystemService from '../filesystem/filesystem.service';
 import fsPromises from 'fs/promises';
 import { Readable } from 'stream';
 import axios from 'axios';
-import { DriveQuotaBytes, ThumbnailsMap } from '../../types/types';
+import { DriveQuotaBytes } from '../../types/types';
 import { VirtualDriveFolderName } from '../constants';
 
 type Credentials = {
@@ -217,11 +217,8 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 			const sharedLinks = await this.getSharedLinks(accessToken, fileIds);
 
-			const thumbNails = this.getThumbnails(filesData.value);
-
 			const files = this.mapToUniversalFileEntityFormat(
 				filesData.value,
-				thumbNails,
 				driveEmail,
 				driveId,
 				sharedLinks
@@ -426,7 +423,6 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 			const fileEntities = this.mapToUniversalFileEntityFormat(
 				[data],
-				{},
 				driveEmail,
 				driveId,
 				{}
@@ -586,7 +582,6 @@ export default class OneDriveStrategy implements IDriveStrategy {
 					const driveEmail = await this.getUserDriveEmail(token);
 					fileEntities = this.mapToUniversalFileEntityFormat(
 						[data],
-						{},
 						driveEmail,
 						driveId,
 						{}
@@ -642,6 +637,21 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		}
 	}
 
+	public async getThumbnailLink(token: string, fileId: string): Promise<Nullable<string>> {
+		try {
+			const accessToken = await this.getAccessToken(token);
+			const metadata = await this.getFileMetadata(accessToken, fileId);
+
+			if (!metadata || !metadata.thumbnails) {
+				return null;
+			}
+
+			return metadata.thumbnails[0]?.small?.url ?? null;
+		} catch {
+			return null;
+		}
+	}
+
 	subscribeForChanges(token: string, driveId: string): Promise<WatchChangesChannel | null> {
 		throw new Error('Method not implemented.');
 	}
@@ -656,21 +666,6 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		driveId: string
 	): Promise<Nullable<DriveChanges>> {
 		throw new Error('Method not implemented.');
-	}
-
-	private getThumbnails(files: OneDriveFile[]): ThumbnailsMap {
-		const thumbNailsMap: ThumbnailsMap = {};
-
-		files.forEach((file: OneDriveFile) => {
-			const extension = this.extractExtension(file.name);
-			const url = file.thumbnails?.[0]?.small?.url;
-
-			if (url && !this.isAudioFile(extension)) {
-				thumbNailsMap[file.id] = url;
-			}
-		});
-
-		return thumbNailsMap;
 	}
 
 	private async getAccessToken(token: string): Promise<string> {
@@ -689,7 +684,6 @@ export default class OneDriveStrategy implements IDriveStrategy {
 
 	private mapToUniversalFileEntityFormat(
 		files: OneDriveFile[],
-		imgs: ThumbnailsMap,
 		driveEmail: string,
 		driveId: string,
 		sharedLinksMap: Nullable<SharedLinksMap>
@@ -703,7 +697,9 @@ export default class OneDriveStrategy implements IDriveStrategy {
 				fileType === FileType.File ? this.extractExtension(fileName ?? '') : '-';
 			const sharedLink = sharedLinksMap?.[file.id] ?? null;
 			const sizeBytes = file.size ?? 0;
-			const thumbnail = imgs[file.id] ?? null;
+			const hasThumbnail = this.isAudioFile(extension)
+				? false
+				: (file.thumbnails && file.thumbnails.length > 0) ?? false;
 
 			return {
 				id: file.id ?? '',
@@ -717,7 +713,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 				extension: extension,
 				sharedLink,
 				sizeBytes,
-				thumbnail,
+				hasThumbnail,
 			};
 		});
 
@@ -840,14 +836,17 @@ export default class OneDriveStrategy implements IDriveStrategy {
 		return { ...token, driveId, expires_in: Date.now() + token.expires_in * 1000 };
 	}
 
-	private async getFileMetadata(token: string, fileId: string): Promise<Nullable<OneDriveFile>> {
+	private async getFileMetadata(
+		accessToken: string,
+		fileId: string
+	): Promise<Nullable<OneDriveFile>> {
 		try {
 			const response = await fetch(
-				`https://graph.microsoft.com/v1.0/me/drive/items/${fileId}`,
+				`https://graph.microsoft.com/v1.0/me/drive/items/${fileId}?$expand=thumbnails`,
 				{
 					method: 'GET',
 					headers: {
-						Authorization: `Bearer ${token}`,
+						Authorization: `Bearer ${accessToken}`,
 					},
 				}
 			);

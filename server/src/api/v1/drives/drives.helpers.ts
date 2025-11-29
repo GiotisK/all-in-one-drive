@@ -14,6 +14,8 @@ export const getDriveStrategyFromString = (drive: string): Nullable<IDriveStrate
 			return new DropboxStrategy();
 		case DriveType.OneDrive:
 			return new OneDriveStrategy();
+		case DriveType.VirtualDrive:
+			return null;
 		default:
 			return null;
 	}

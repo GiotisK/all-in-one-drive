@@ -60,6 +60,7 @@ export enum Status {
 	NO_CONTENT = 204,
 	BAD_REQUEST = 400,
 	UNAUTHORIZED = 401,
+	NOT_FOUND = 404,
 	INTERNAL_SERVER_ERROR = 500,
 }
 
@@ -95,7 +96,7 @@ export type FileEntity = {
 	extension: string;
 	sharedLink: Nullable<string>;
 	sizeBytes: number;
-	thumbnail: Nullable<string>;
+	hasThumbnail: boolean;
 };
 
 export type ChangedFileEntity = {

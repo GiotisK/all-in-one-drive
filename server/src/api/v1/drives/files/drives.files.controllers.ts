@@ -5,6 +5,7 @@ import {
 	CreateFileRequestBody,
 	DriveType,
 	FileEntity,
+	Nullable,
 	PatchFileRequestBody,
 	PatchFileResponse,
 	Status,
@@ -184,6 +185,21 @@ class FilesController {
 			res.download(filePath);
 		} else {
 			res.status(Status.INTERNAL_SERVER_ERROR).end();
+		}
+	}
+
+	public async getThumbnailLink(
+		req: Request<{ driveId: string; fileId: string }, void, void>,
+		res: Response<Nullable<string>, AuthLocals>
+	): Promise<void> {
+		const { email: userEmail } = res.locals;
+		const { driveId, fileId } = req.params;
+
+		const thumbnail = await FilesService.getThumbnailLink(driveId, userEmail, fileId);
+		if (thumbnail) {
+			res.status(Status.OK).send(thumbnail);
+		} else {
+			res.status(Status.NOT_FOUND).end();
 		}
 	}
 }

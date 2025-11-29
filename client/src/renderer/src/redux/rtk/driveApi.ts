@@ -164,8 +164,16 @@ export const driveApi = createApi({
                 }
             },
         }),
+        getThumbnailLink: builder.query<string, { driveId: string; fileId: string }>({
+            query: ({ driveId, fileId }) => ({
+                url: `${driveId}/files/${fileId}/thumbnailLink`,
+                responseHandler: res => res.text(),
+            }),
+            providesTags: (result, _error, { fileId }) =>
+                result ? [{ type: 'Thumbnails', id: fileId }] : ['Thumbnails'],
+        }),
     }),
-    tagTypes: ['Drives', 'Files'],
+    tagTypes: ['Drives', 'Files', 'Thumbnails'],
 });
 
 export const {
@@ -186,4 +194,5 @@ export const {
     useGetAuthLinkQuery,
     useWatchDriveChangesQuery,
     useGetDriveChangesQuery,
+    useGetThumbnailLinkQuery,
 } = driveApi;

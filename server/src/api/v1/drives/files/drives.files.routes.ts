@@ -7,6 +7,7 @@ const router: Router = express.Router();
 router.get('/:driveId/folders/:folderId/files', authorize, FilesController.getFolderFiles);
 router.get('/:driveId/files/:fileId/download', authorize, FilesController.downloadFile);
 router.get('/:driveId/files/:fileId/open', authorize, FilesController.openFile);
+router.get('/:driveId/files/:fileId/thumbnailLink', authorize, FilesController.getThumbnailLink);
 
 router.post('/files', authorize, FilesController.getRootFiles);
 router.post('/:driveId/files', authorize, FilesController.createFile);

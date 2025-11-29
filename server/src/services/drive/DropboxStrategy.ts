@@ -143,7 +143,8 @@ export default class DropboxStrategy implements IDriveStrategy {
 						return;
 					}
 
-					const thumbnails = await this.getThumbnails(result.entries);
+					const fileIds = result.entries.map(entry => entry.id);
+					const thumbnails = await this.getThumbnails(fileIds);
 					const driveEmail = await this.getUserDriveEmail(token);
 					const sharedLinks = await this.getSharedLinks(token);
 
@@ -565,6 +566,19 @@ export default class DropboxStrategy implements IDriveStrategy {
 		throw new Error('Method not implemented.');
 	}
 
+	public async getThumbnailLink(token: string, fileId: string): Promise<Nullable<string>> {
+		return new Promise(async resolve => {
+			await this.setToken(token);
+			try {
+				const thumbnails = await this.getThumbnails([fileId]);
+
+				resolve(thumbnails[fileId] ?? null);
+			} catch {
+				resolve(null);
+			}
+		});
+	}
+
 	private async setToken(tokenStr: string) {
 		return new Promise<void>(async resolve => {
 			try {
@@ -647,17 +661,17 @@ export default class DropboxStrategy implements IDriveStrategy {
 		return tokenData;
 	}
 
-	private async getThumbnails(files: DropboxFile[]): Promise<ThumbnailsMap> {
-		const batches = chunkArray(files, THUMBNAILS_REQUEST_MAX_BATCH);
+	private async getThumbnails(fileIds: string[]): Promise<ThumbnailsMap> {
+		const batches = chunkArray(fileIds, THUMBNAILS_REQUEST_MAX_BATCH);
 
 		const promises = batches.map(batch => {
 			return new Promise<ThumbnailsMap>(async resolve => {
 				const thumbnailsMap: ThumbnailsMap = {};
 
-				const entries = batch.map(file => ({
+				const entries = batch.map(fileId => ({
 					format: 'png',
 					mode: 'strict',
-					path: file.id,
+					path: fileId,
 					quality: 'quality_80',
 					size: 'w64h64',
 				}));
@@ -692,9 +706,12 @@ export default class DropboxStrategy implements IDriveStrategy {
 
 		const thumbnailMaps = await Promise.all(promises);
 
-		const combinedThumbnailMap = thumbnailMaps.reduce((acc, obj) => {
-			return { ...acc, ...obj };
-		}, {});
+		const combinedThumbnailMap = thumbnailMaps.reduce(
+			(acc: ThumbnailsMap, obj: ThumbnailsMap) => {
+				return { ...acc, ...obj };
+			},
+			{}
+		);
 
 		return combinedThumbnailMap;
 	}
@@ -713,13 +730,13 @@ export default class DropboxStrategy implements IDriveStrategy {
 			const extension = this.extractFormat(file);
 			const sharedLink = sharedLinks[file.id] ?? null;
 			const sizeBytes = file.size ?? 0;
-			const thumbnail = file.id ? imgs[file.id] : null;
+			const hasThumbnail = imgs[file.id] ? true : false;
 
 			return {
 				id: file.id ?? '',
 				name: file.name ?? '-',
 				drive: DriveType.Dropbox,
-				driveId: driveId,
+				driveId,
 				email: driveEmail,
 				type: fileType,
 				size: size,
@@ -727,7 +744,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 				extension: extension,
 				sharedLink,
 				sizeBytes,
-				thumbnail,
+				hasThumbnail,
 			};
 		});
 

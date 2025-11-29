@@ -1,4 +1,4 @@
-import styled, { useTheme } from 'styled-components';
+import styled from 'styled-components';
 import { UserMenu } from './UserMenu';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
 import { ThemeToggle } from './Toggle/ThemeToggle';
@@ -105,7 +105,6 @@ const BackButtonContainer = styled.div`
 
 const BackButton = () => {
     const navigate = useNavigate();
-    const theme = useTheme();
 
     const goBack = () => {
         navigate(-1);
@@ -113,12 +112,7 @@ const BackButton = () => {
 
     return (
         <BackButtonContainer>
-            <IconButton
-                icon={SvgNames.Back}
-                size={20}
-                onClick={goBack}
-                color={theme?.colors.textPrimary}
-            />
+            <IconButton icon={SvgNames.Back} size={20} onClick={goBack} color={'white'} />
         </BackButtonContainer>
     );
 };
