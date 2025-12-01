@@ -10,7 +10,8 @@ export interface IDatabaseService {
 		driveEmail: string,
 		userEmail: string,
 		drive: DriveType,
-		driveId: string
+		driveId: string,
+		virtualFolderId: string
 	): Promise<boolean>;
 	getAllDrives(userEmail: string): Promise<Nullable<DriveDTO[]>>;
 	getDrive(userEmail: string, driveId: string): Promise<Nullable<DriveDTO>>;

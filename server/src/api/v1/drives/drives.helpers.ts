@@ -1,3 +1,4 @@
+import AioDriveStrategy from '../../../services/drive/AioDriveStrategy';
 import DriveContext from '../../../services/drive/DriveContext';
 import DropboxStrategy from '../../../services/drive/DropboxStrategy';
 import GoogleDriveStrategy from '../../../services/drive/GoogleDriveStrategy';
@@ -15,7 +16,7 @@ export const getDriveStrategyFromString = (drive: string): Nullable<IDriveStrate
 		case DriveType.OneDrive:
 			return new OneDriveStrategy();
 		case DriveType.VirtualDrive:
-			return null;
+			return new AioDriveStrategy();
 		default:
 			return null;
 	}

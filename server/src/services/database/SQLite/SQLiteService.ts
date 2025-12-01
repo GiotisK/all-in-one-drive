@@ -70,7 +70,8 @@ export class SqliteDBService implements IDatabaseService {
 		driveEmail: string,
 		userEmail: string,
 		drive: DriveType,
-		driveId: string
+		driveId: string,
+		virtualFolderId: string
 	): Promise<boolean> {
 		try {
 			const getUserQuery = this.db.prepare<string, SQLiteUserSchema>(
@@ -80,10 +81,19 @@ export class SqliteDBService implements IDatabaseService {
 
 			if (!user) return false;
 
-			const insertDriveQuery = this.db.prepare<[string, number, string, string, DriveType]>(
-				'INSERT INTO drives (id, user_id, email, token, driveType) VALUES (?, ?, ?, ?, ?)'
+			const insertDriveQuery = this.db.prepare<
+				[string, number, string, string, DriveType, string]
+			>(
+				'INSERT INTO drives (id, user_id, email, token, driveType, virtualFolderId) VALUES (?, ?, ?, ?, ?, ?)'
 			);
-			insertDriveQuery.run(driveId, user.id, driveEmail, encryptedTokenData, drive);
+			insertDriveQuery.run(
+				driveId,
+				user.id,
+				driveEmail,
+				encryptedTokenData,
+				drive,
+				virtualFolderId
+			);
 
 			return true;
 		} catch {

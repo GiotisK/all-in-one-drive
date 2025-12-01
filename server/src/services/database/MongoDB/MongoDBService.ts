@@ -58,14 +58,16 @@ export class MongoDBService implements IDatabaseService {
 		driveEmail: string,
 		userEmail: string,
 		driveType: DriveType,
-		driveId: string
+		driveId: string,
+		virtualFolderId: string
 	): Promise<boolean> {
 		try {
 			const drive = {
 				_id: driveId,
 				email: driveEmail,
 				token: encryptedTokenData,
-				driveType: driveType,
+				driveType,
+				virtualFolderId,
 			};
 
 			const updatedUser = await User.findOneAndUpdate(

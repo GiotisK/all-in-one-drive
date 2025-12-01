@@ -47,14 +47,19 @@ export class DrivesService {
 
 				const encryptedTokenData = EncryptionService.encrypt(tokenData);
 
-				await ctx.getOrCreateVirtualDriveFolder(tokenData, driveId);
+				const virtualFolderId = await ctx.getOrCreateVirtualDriveFolder(tokenData, driveId);
+
+				if (!virtualFolderId) {
+					//todo: log info message
+				}
 
 				const success = await DatabaseService.saveDrive(
 					encryptedTokenData,
 					driveEmail,
 					userEmail,
 					drive,
-					driveId
+					driveId,
+					virtualFolderId ?? ''
 				);
 				return success;
 			}

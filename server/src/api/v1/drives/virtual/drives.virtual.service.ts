@@ -4,7 +4,7 @@ import { DriveEntity, DriveQuota, DriveType, Nullable } from '../../../../types/
 import { getDriveContextAndToken } from '../drives.helpers';
 
 class VirtualDriveService {
-	async getVirtualQuota(userEmail: string): Promise<Nullable<DriveQuota>> {
+	public async getVirtualQuota(userEmail: string): Promise<Nullable<DriveQuota>> {
 		const drives = await DatabaseService.getAllDrives(userEmail);
 
 		if (!drives) {
@@ -33,7 +33,7 @@ class VirtualDriveService {
 		return { used: bytesToGigabytes('' + used), total: bytesToGigabytes('' + total) };
 	}
 
-	async getVirtualDrive(userEmail: string): Promise<Nullable<DriveEntity>> {
+	public async getVirtualDrive(userEmail: string): Promise<Nullable<DriveEntity>> {
 		const quota = await this.getVirtualQuota(userEmail);
 
 		if (!quota) {
@@ -41,7 +41,7 @@ class VirtualDriveService {
 		}
 
 		return {
-			id: 'virtual-drive',
+			id: 'virtual',
 			email: userEmail,
 			type: DriveType.VirtualDrive,
 			quota,

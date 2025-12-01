@@ -104,7 +104,7 @@ export const DriveRow = ({ drive, active, onDriveClick, styles = {} }: IProps): 
     return (
         <DriveElementContainer
             onClick={onDriveClick}
-            style={{ ...styles, opacity: active ? 1 : 0.5 }}
+            style={{ ...styles, opacity: active ? 1 : 0.7 }}
         >
             <DriveSvgContainer>{CreateDriveSvg(drive.type, 25)}</DriveSvgContainer>
 

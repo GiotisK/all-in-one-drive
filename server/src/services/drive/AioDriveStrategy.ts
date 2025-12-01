@@ -10,6 +10,9 @@ import { DriveQuotaBytes } from '../../types/types';
 import { IDriveStrategy } from './IDriveStrategy';
 
 export default class AioDriveStrategy implements IDriveStrategy {
+	getThumbnailLink(token: string, fileId: string): Promise<Nullable<string>> {
+		throw new Error('Method not implemented.');
+	}
 	getOrCreateVirtualDriveFolder(token: string, driveId: string): Promise<Nullable<string>> {
 		throw new Error('Method not implemented.');
 	}
@@ -30,7 +33,7 @@ export default class AioDriveStrategy implements IDriveStrategy {
 		driveId: string,
 		folderId?: string
 	): Promise<Nullable<FileEntity[]>> {
-		throw new Error('Method not implemented.');
+		return Promise.resolve([]);
 	}
 	deleteFile(token: string, fileId: string): Promise<boolean> {
 		throw new Error('Method not implemented.');
