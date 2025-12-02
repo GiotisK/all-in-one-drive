@@ -13,3 +13,10 @@ export interface UserDTO {
 	email: string;
 	password: string;
 }
+
+export interface VirtualFolderDTO {
+	id: string;
+	name: string;
+	parentFolderId?: string;
+	userId: number;
+}

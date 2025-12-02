@@ -3,7 +3,7 @@ import { DriveType, Nullable } from '../../../types/global.types';
 import { IDatabaseService } from '../IDatabaseService';
 import { DriveDTO, UserDTO } from '../types';
 
-type SQLiteDriveSchema = DriveDTO & { user_id: number };
+type SQLiteDriveSchema = DriveDTO & { userId: number };
 type SQLiteUserSchema = Omit<UserDTO, 'drives'>;
 
 export class SqliteDBService implements IDatabaseService {
@@ -29,12 +29,23 @@ export class SqliteDBService implements IDatabaseService {
 			.prepare(
 				`CREATE TABLE IF NOT EXISTS drives (
 					id TEXT PRIMARY KEY,
- 					user_id INTEGER NOT NULL,
+ 					userId INTEGER NOT NULL,
 					email TEXT NOT NULL,
 					virtualFolderId TEXT DEFAULT '',
 					token TEXT NOT NULL,
 					driveType TEXT NOT NULL,
-					FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE)`
+					FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE)`
+			)
+			.run();
+
+		this.db
+			.prepare(
+				`CREATE TABLE IF NOT EXISTS virtualfolders (
+					id TEXT PRIMARY KEY,
+					name TEXT NOT NULL,
+ 					userId INTEGER NOT NULL,
+					parentFolderId TEXT DEFAULT '',
+					FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE)`
 			)
 			.run();
 	}
@@ -84,7 +95,7 @@ export class SqliteDBService implements IDatabaseService {
 			const insertDriveQuery = this.db.prepare<
 				[string, number, string, string, DriveType, string]
 			>(
-				'INSERT INTO drives (id, user_id, email, token, driveType, virtualFolderId) VALUES (?, ?, ?, ?, ?, ?)'
+				'INSERT INTO drives (id, userId, email, token, driveType, virtualFolderId) VALUES (?, ?, ?, ?, ?, ?)'
 			);
 			insertDriveQuery.run(
 				driveId,
@@ -104,7 +115,7 @@ export class SqliteDBService implements IDatabaseService {
 	public async getAllDrives(userEmail: string): Promise<Nullable<DriveDTO[]>> {
 		try {
 			const getDrivesOfUserQuery = this.db.prepare<string, SQLiteDriveSchema>(
-				'SELECT * FROM users JOIN drives ON users.id = drives.user_id WHERE users.email = ?'
+				'SELECT * FROM users JOIN drives ON users.id = drives.userId WHERE users.email = ?'
 			);
 
 			const drives = getDrivesOfUserQuery.all(userEmail);

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { AuthLocals } from '../../../../types/types';
-import FilesService from './drives.files.service';
+import { AuthLocals } from '../../../../../types/types';
+import FilesService from './drives.virtual.files.service';
 import {
 	CreateFileRequestBody,
 	DriveType,
@@ -9,9 +9,9 @@ import {
 	PatchFileRequestBody,
 	PatchFileResponse,
 	Status,
-} from '../../../../types/global.types';
+} from '../../../../../types/global.types';
 
-class FilesController {
+class VirtualDriveFilesController {
 	public async getRootFiles(
 		req: Request<never, void, { driveIds: string[] }>,
 		res: Response<FileEntity[], AuthLocals>
@@ -204,4 +204,4 @@ class FilesController {
 	}
 }
 
-export default new FilesController();
+export default new VirtualDriveFilesController();

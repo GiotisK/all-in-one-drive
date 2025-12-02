@@ -1,8 +1,8 @@
-import DatabaseService from '../../../../services/database/DatabaseFactory';
-import { FileEntity, FileType, Nullable } from '../../../../types/global.types';
-import { getDriveContextAndToken } from '../drives.helpers';
+import DatabaseService from '../../../../../services/database/DatabaseFactory';
+import { FileEntity, FileType, Nullable } from '../../../../../types/global.types';
+import { getDriveContextAndToken } from '../../drives.helpers';
 
-export class FilesService {
+export class VirtualDriveFilesService {
 	async getRootFiles(userEmail: string, driveIds: string[]): Promise<Nullable<FileEntity[]>> {
 		const fileEntities: Array<FileEntity[]> = [];
 		const allDrives = await DatabaseService.getAllDrives(userEmail);
@@ -235,4 +235,4 @@ export class FilesService {
 	}
 }
 
-export default new FilesService();
+export default new VirtualDriveFilesService();
