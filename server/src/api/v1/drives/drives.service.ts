@@ -1,5 +1,5 @@
 import { bytesToGigabytes, generateUUID } from '../../../helpers/helpers';
-import DatabaseService from '../../../services/database/DatabaseFactory';
+import { DriveRepository } from '../../../services/database/DatabaseFactory';
 import { DriveDTO } from '../../../services/database/types';
 import EncryptionService from '../../../services/encryption/encryption.service';
 import {
@@ -35,7 +35,7 @@ export class DrivesService {
 			if (tokenData) {
 				const driveEmail = await ctx.getUserDriveEmail(tokenData);
 
-				const exists = await DatabaseService.checkDriveExistance(
+				const exists = await DriveRepository.checkDriveExistance(
 					userEmail,
 					driveEmail,
 					drive
@@ -53,7 +53,7 @@ export class DrivesService {
 					//todo: log info message
 				}
 
-				const success = await DatabaseService.saveDrive(
+				const success = await DriveRepository.saveDrive(
 					encryptedTokenData,
 					driveEmail,
 					userEmail,
@@ -68,7 +68,7 @@ export class DrivesService {
 	}
 
 	async getDriveQuota(userEmail: string, driveId: string): Promise<Nullable<DriveQuota>> {
-		const drive = await DatabaseService.getDrive(userEmail, driveId);
+		const drive = await DriveRepository.getDrive(userEmail, driveId);
 		if (drive) {
 			const { driveType, token: encryptedTokenAsString } = drive;
 			const ctxAndToken = getDriveContextAndToken(driveType, encryptedTokenAsString);
@@ -88,7 +88,7 @@ export class DrivesService {
 	}
 
 	async getDrives(userEmail: string): Promise<Nullable<DriveEntity[]>> {
-		const driveProperties = await DatabaseService.getAllDrives(userEmail);
+		const driveProperties = await DriveRepository.getAllDrives(userEmail);
 
 		if (driveProperties) {
 			const driveEntities: DriveEntity[] = [];
@@ -132,7 +132,7 @@ export class DrivesService {
 	}
 
 	public async deleteDrive(userEmail: string, driveId: string): Promise<Nullable<boolean>> {
-		return DatabaseService.deleteDrive(userEmail, driveId);
+		return DriveRepository.deleteDrive(userEmail, driveId);
 	}
 
 	public async subscribeForDriveChanges(
@@ -143,7 +143,7 @@ export class DrivesService {
 			const drivesPromises: Promise<Nullable<DriveDTO>>[] = [];
 
 			driveIds.forEach(driveId => {
-				drivesPromises.push(DatabaseService.getDrive(userEmail, driveId));
+				drivesPromises.push(DriveRepository.getDrive(userEmail, driveId));
 			});
 
 			const drives = await Promise.all(drivesPromises);
@@ -178,7 +178,7 @@ export class DrivesService {
 		id: string,
 		resourceId: string
 	): Promise<boolean> {
-		const drive = await DatabaseService.getDrive(userEmail, driveId);
+		const drive = await DriveRepository.getDrive(userEmail, driveId);
 		if (!drive) {
 			return false;
 		}
@@ -200,7 +200,7 @@ export class DrivesService {
 		userEmail: string,
 		startPageToken: string
 	): Promise<Nullable<DriveChanges>> {
-		const drive = await DatabaseService.getDrive(userEmail, driveId);
+		const drive = await DriveRepository.getDrive(userEmail, driveId);
 		if (!drive) {
 			return null;
 		}

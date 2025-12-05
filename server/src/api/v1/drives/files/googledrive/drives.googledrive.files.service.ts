@@ -1,4 +1,4 @@
-import DatabaseService from '../../../../../services/database/DatabaseFactory';
+import { DriveRepository } from '../../../../../services/database/DatabaseFactory';
 import GoogleDriveStrategy from '../../../../../services/drive/GoogleDriveStrategy';
 import { DriveType, Nullable } from '../../../../../types/global.types';
 import { getDriveContextAndToken } from '../../drives.helpers';
@@ -9,7 +9,7 @@ class GoogleDriveFilesService {
 		driveId: string,
 		fileId: string
 	): Promise<Nullable<string[]>> {
-		const drive = await DatabaseService.getDrive(userEmail, driveId);
+		const drive = await DriveRepository.getDrive(userEmail, driveId);
 
 		if (drive?.driveType === DriveType.GoogleDrive) {
 			const { driveType, token: encryptedToken } = drive;
@@ -26,7 +26,7 @@ class GoogleDriveFilesService {
 	}
 
 	public async exportFile(userEmail: string, driveId: string, fileId: string, mimeType: string) {
-		const drive = await DatabaseService.getDrive(userEmail, driveId);
+		const drive = await DriveRepository.getDrive(userEmail, driveId);
 
 		if (drive?.driveType === DriveType.GoogleDrive) {
 			const { driveType, token: encryptedToken } = drive;

@@ -1,5 +1,4 @@
 import express from 'express';
-import dotenv from 'dotenv';
 import cors from 'cors';
 import cookieparser from 'cookie-parser';
 import {
@@ -11,9 +10,6 @@ import {
 	virtualDriveFilesRouter,
 } from './src/api/v1/';
 import { createTunnel } from './src/tunnel/localtunnel';
-import DatabaseService from './src/services/database/DatabaseFactory';
-
-dotenv.config();
 
 const app = express();
 const port = parseInt(process.env.PORT || '8000');
@@ -34,7 +30,5 @@ app.use('/drives', [drivesRouter, drivesFilesRouter]);
 app.listen(port, () => {
 	console.log(`[server]: Server is running at http://localhost:${port}`);
 });
-
-DatabaseService.connect();
 
 module.exports = app;

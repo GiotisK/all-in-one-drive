@@ -1,6 +1,6 @@
 import { isAcceptablePasswordLength, isEmailFormat } from './user.helpers';
 import EncryptionService from '../../../services/encryption/encryption.service';
-import DatabaseService from '../../../services/database/DatabaseFactory';
+import { UserRepository } from '../../../services/database/DatabaseFactory';
 
 export class UserService {
 	async registerUser(email: string, password: string): Promise<boolean> {
@@ -12,7 +12,7 @@ export class UserService {
 		}
 
 		const hashedPassword = await EncryptionService.hashPassword(password);
-		const userSaveSuccess = await DatabaseService.saveUser(email, hashedPassword);
+		const userSaveSuccess = await UserRepository.saveUser(email, hashedPassword);
 
 		return userSaveSuccess;
 	}
@@ -21,7 +21,7 @@ export class UserService {
 		email: string,
 		password: string
 	): Promise<{ success: boolean; token: string; email: string }> {
-		const user = await DatabaseService.getUser(email);
+		const user = await UserRepository.getUser(email);
 
 		if (user && user.password) {
 			const isPasswordCorrect = await EncryptionService.comparePasswordWithHash(

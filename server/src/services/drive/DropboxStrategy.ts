@@ -7,7 +7,6 @@ import {
 	DriveChanges,
 	DriveType,
 } from '../../types/global.types';
-import DatabaseService from '../database/DatabaseFactory';
 import EncryptionService from '../encryption/encryption.service';
 import { IDriveStrategy } from './IDriveStrategy';
 //@ts-ignore -- no types for dropbox
@@ -20,6 +19,7 @@ import { DriveQuotaBytes, ThumbnailsMap } from '../../types/types';
 import { VirtualDriveFolderName } from '../constants';
 import { Readable } from 'stream';
 import { chunkArray } from './helpers/array-utils';
+import { DriveRepository } from '../database/DatabaseFactory';
 
 const THUMBNAILS_REQUEST_MAX_BATCH = 25;
 
@@ -602,7 +602,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 						const encryptedTokenData = EncryptionService.encrypt(
 							JSON.stringify(newToken)
 						);
-						DatabaseService.updateToken(driveId, encryptedTokenData);
+						DriveRepository.updateToken(driveId, encryptedTokenData);
 					} else {
 						dropboxLogger('setToken: Failed to refresh token. New token is empty');
 						resolve();

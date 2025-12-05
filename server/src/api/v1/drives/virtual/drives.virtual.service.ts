@@ -1,11 +1,11 @@
 import { bytesToGigabytes } from '../../../../helpers/helpers';
-import DatabaseService from '../../../../services/database/DatabaseFactory';
+import { DriveRepository } from '../../../../services/database/DatabaseFactory';
 import { DriveEntity, DriveQuota, DriveType, Nullable } from '../../../../types/global.types';
 import { getDriveContextAndToken } from '../drives.helpers';
 
 class VirtualDriveService {
 	public async getVirtualQuota(userEmail: string): Promise<Nullable<DriveQuota>> {
-		const drives = await DatabaseService.getAllDrives(userEmail);
+		const drives = await DriveRepository.getAllDrives(userEmail);
 
 		if (!drives) {
 			return null;

@@ -1,16 +1,29 @@
-import { DatabaseTypeConfig } from './config'; // Import the configuration
-import { IDatabaseService } from './IDatabaseService';
+import { DatabaseTypeConfig } from './config';
+import { IDriveRepository } from './interface/IDriveRepository';
+import { IUserRepository } from './interface/IUserRepository';
 import { MongoDBService } from './MongoDB/MongoDBService';
+import { MongoDBDriveRepository } from './MongoDB/repositories/MongoDBDriveRepository';
+import { MongoDBUserRepository } from './MongoDB/repositories/MongoDBUserRepository';
+import { SQLiteDriveRepository } from './SQLite/repositories/SQLiteDriveRepository';
+import { SQLiteUserRepository } from './SQLite/repositories/SQLiteUserRepository';
 import { SqliteDBService } from './SQLite/SQLiteService';
 
-let DatabaseService: IDatabaseService;
+let DriveRepository: IDriveRepository;
+let UserRepository: IUserRepository;
 
-if (DatabaseTypeConfig === 'mongodb') {
-	DatabaseService = new MongoDBService();
-} else if (DatabaseTypeConfig === 'sqlite') {
-	DatabaseService = new SqliteDBService();
+if (DatabaseTypeConfig === 'sqlite') {
+	const sqliteDbService = SqliteDBService.getInstance();
+
+	DriveRepository = new SQLiteDriveRepository(sqliteDbService.connection);
+	UserRepository = new SQLiteUserRepository(sqliteDbService.connection);
+} else if (DatabaseTypeConfig === 'mongodb') {
+	const mongoDbService = new MongoDBService();
+	mongoDbService.connect();
+
+	DriveRepository = new MongoDBDriveRepository();
+	UserRepository = new MongoDBUserRepository();
 } else {
 	throw new Error('Unsupported database type');
 }
 
-export default DatabaseService;
+export { DriveRepository, UserRepository };

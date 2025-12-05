@@ -10,7 +10,6 @@ import {
 } from '../../types/global.types';
 import { IDriveStrategy } from './IDriveStrategy';
 import { normalizeBytes } from '../../helpers/helpers';
-import DatabaseService from '../database/DatabaseFactory';
 import EncryptionService from '../encryption/encryption.service';
 import FileProgressHelper from './helpers/FileProgressHelper';
 import FilesystemService from '../filesystem/filesystem.service';
@@ -19,6 +18,7 @@ import { Readable } from 'stream';
 import axios from 'axios';
 import { DriveQuotaBytes } from '../../types/types';
 import { VirtualDriveFolderName } from '../constants';
+import { DriveRepository } from '../database/DatabaseFactory';
 
 type Credentials = {
 	client_id: string;
@@ -817,7 +817,7 @@ export default class OneDriveStrategy implements IDriveStrategy {
 					JSON.stringify(extendedOneDriveToken)
 				);
 
-				DatabaseService.updateToken(oldToken.driveId, encryptedTokenData);
+				DriveRepository.updateToken(oldToken.driveId, encryptedTokenData);
 
 				return extendedOneDriveToken;
 			} else {
