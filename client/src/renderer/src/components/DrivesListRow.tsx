@@ -1,6 +1,6 @@
 import { DriveEntity, FileType } from '../shared/types/global.types';
 import { styled } from 'styled-components';
-import { CreateDriveSvg } from '../shared/utils/utils';
+import { CreateDriveSvg, isVirtualDrive } from '../shared/utils/utils';
 import { useAppDispatch } from '../redux/store/store';
 import { FileElement } from './FileElement';
 import { openModal } from '../redux/slices/modal/modalSlice';
@@ -87,9 +87,11 @@ export const DrivesListRow = ({ drive }: { drive: DriveEntity }): JSX.Element =>
                 <Text>
                     {quota.used} / {quota.total} GB
                 </Text>
-                <TrashcanDiv onClick={onDeleteDriveClick}>
-                    {createSvg(SvgNames.Trashcan, 25, 'gray')}
-                </TrashcanDiv>
+                {!isVirtualDrive(type) && (
+                    <TrashcanDiv onClick={onDeleteDriveClick}>
+                        {createSvg(SvgNames.Trashcan, 25, 'gray')}
+                    </TrashcanDiv>
+                )}
             </ThirdColumn>
         </Container>
     );

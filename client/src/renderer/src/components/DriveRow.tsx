@@ -1,6 +1,6 @@
 import styled, { useTheme } from 'styled-components';
 import { SvgNames, createSvg } from '../shared/utils/svg-utils';
-import { CreateDriveSvg } from '../shared/utils/utils';
+import { CreateDriveSvg, isVirtualDrive } from '../shared/utils/utils';
 import { DriveEntity, DriveQuota } from '../shared/types/global.types';
 import { ModalKind } from '../redux/slices/modal/types';
 import { openModal } from '../redux/slices/modal/modalSlice';
@@ -114,9 +114,11 @@ export const DriveRow = ({ drive, active, onDriveClick, styles = {} }: IProps): 
             </EmailQuotaContainer>
 
             <TrashCanAndIndicatorContainer>
-                <TrashcanDiv onClick={onDeleteDriveClick}>
-                    {createSvg(SvgNames.Trashcan, 25, 'gray')}
-                </TrashcanDiv>
+                {!isVirtualDrive(drive.type) && (
+                    <TrashcanDiv onClick={onDeleteDriveClick}>
+                        {createSvg(SvgNames.Trashcan, 25, 'gray')}
+                    </TrashcanDiv>
+                )}
                 <ActiveIndicator
                     style={{
                         backgroundColor: active ? theme?.colors.green : theme?.colors.border,

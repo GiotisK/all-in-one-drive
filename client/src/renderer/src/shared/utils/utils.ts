@@ -53,3 +53,7 @@ export const canBeOpenedOnline = (fileExtension: string, size: number): boolean 
             imageExtensions.includes(fileExtension))
     );
 };
+
+export const isVirtualDrive = (type: DriveType) => {
+    return type === DriveType.VirtualDrive;
+};
