@@ -1,14 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cookieparser from 'cookie-parser';
-import {
-	userRouter,
-	drivesRouter,
-	drivesFilesRouter,
-	googleDriveFilesRouter,
-	virtualDriveRouter,
-	virtualDriveFilesRouter,
-} from './src/api/v1/';
+import { userRouter, drivesRouter, drivesFilesRouter, googleDriveFilesRouter } from './src/api/v1/';
 import { createTunnel } from './src/tunnel/localtunnel';
 
 const app = express();
@@ -25,7 +18,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: frontendURL, credentials: true }));
 app.use(cookieparser());
 app.use('/users', userRouter);
-app.use('/drives/virtual', [virtualDriveRouter, virtualDriveFilesRouter]);
 app.use('/drives/googledrive/:driveId/files', googleDriveFilesRouter);
 app.use('/drives', [drivesRouter, drivesFilesRouter]);
 
