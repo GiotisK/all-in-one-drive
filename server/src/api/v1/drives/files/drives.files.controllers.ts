@@ -11,23 +11,7 @@ import {
 	Status,
 } from '../../../../types/global.types';
 
-class VirtualDriveFilesController {
-	public async getRootFiles(
-		req: Request<never, void, { driveIds: string[] }>,
-		res: Response<FileEntity[], AuthLocals>
-	): Promise<void> {
-		const { email } = res.locals;
-		const { driveIds } = req.body;
-
-		const files = await FilesService.getRootFiles(email, driveIds);
-
-		if (files) {
-			res.status(Status.OK).send(files);
-		} else {
-			res.status(Status.INTERNAL_SERVER_ERROR).end();
-		}
-	}
-
+class DriveFilesController {
 	public async getFolderFiles(
 		req: Request<{ driveId: string; folderId: string }>,
 		res: Response<FileEntity[], AuthLocals>
@@ -35,10 +19,7 @@ class VirtualDriveFilesController {
 		const { email: userEmail } = res.locals;
 		const { driveId, folderId } = req.params;
 
-		const files =
-			folderId === 'root'
-				? await FilesService.getRootFiles(userEmail, [driveId])
-				: await FilesService.getFolderFiles(driveId, userEmail, folderId);
+		const files = await FilesService.getFolderFiles(driveId, userEmail, folderId);
 
 		if (files) {
 			res.status(Status.OK).send(files);
@@ -204,4 +185,4 @@ class VirtualDriveFilesController {
 	}
 }
 
-export default new VirtualDriveFilesController();
+export default new DriveFilesController();

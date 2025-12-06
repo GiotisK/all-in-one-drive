@@ -121,7 +121,7 @@ export default class DropboxStrategy implements IDriveStrategy {
 		return new Promise(async resolve => {
 			await this.setToken(token);
 
-			const folderPath = folderId ?? '';
+			const folderPath = folderId !== 'root' ? folderId : '';
 
 			this.dropbox<ListFilesResult>(
 				{
